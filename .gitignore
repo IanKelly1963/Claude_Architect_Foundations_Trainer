@@ -1,0 +1,13 @@
+# Generated intermediates from tools/check.sh
+bank.js
+extracted.js
+app.js
+
+# Exported study progress (personal data, machine-specific)
+ccarf-progress-*.json
+
+# OS / editor noise
+Thumbs.db
+desktop.ini
+.DS_Store
+*.swp

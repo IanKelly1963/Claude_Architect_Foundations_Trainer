@@ -1,0 +1,5 @@
+# The build concatenates src/ verbatim, so line endings must be stable
+# across machines or the generated HTML and the sed-based checks diverge.
+* text=auto eol=lf
+*.cmd text eol=crlf
+*.png binary

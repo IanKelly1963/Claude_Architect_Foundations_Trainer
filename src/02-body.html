@@ -1,0 +1,37 @@
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="tb-row">
+      <div class="brand">
+        <b>Architect Trainer</b>
+        <span>CCAR-F &middot; Foundations</span>
+      </div>
+      <div class="readypill" title="Task statements at or above the 85% mastery gate">
+        <span class="lbl">Readiness</span>
+        <span class="val" id="tbReady">&ndash;</span>
+      </div>
+      <div class="tb-actions">
+        <button class="btn ghost sm" id="btnTheme" title="Toggle light / dark">&#9789;</button>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs" role="tablist">
+      <button role="tab" data-v="dashboard" aria-selected="true">Dashboard</button>
+      <button role="tab" data-v="learn" aria-selected="false">Learn</button>
+      <button role="tab" data-v="practice" aria-selected="false">Practice</button>
+      <button role="tab" data-v="exam" aria-selected="false">Mock Exam</button>
+      <button role="tab" data-v="cards" aria-selected="false">Flashcards</button>
+      <button role="tab" data-v="progress" aria-selected="false">Progress</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div id="banner"></div>
+  <section class="view on" id="v-dashboard"></section>
+  <section class="view" id="v-learn"></section>
+  <section class="view" id="v-practice"></section>
+  <section class="view" id="v-exam"></section>
+  <section class="view" id="v-cards"></section>
+  <section class="view" id="v-progress"></section>
+</main>
+
+<script>
