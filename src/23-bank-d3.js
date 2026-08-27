@@ -78,7 +78,7 @@
   note:"Answer `/memory` on the exam. In current Claude Code the two have separated: **`/memory`** lists and opens memory file *locations* and toggles auto memory, while **`/context`** shows which files actually **loaded** into the current session. For live debugging today, `/context` is the one that answers 'did it load?'.",
   refs:[{label:"Claude Code: Memory", url:"https://code.claude.com/docs/en/memory"}] },
 
-{ id:"d3-3.1-e", domain:3, ts:"3.1", scenario:0, type:"single",
+{ id:"d3-3.1-e", domain:3, ts:"3.1", scenario:4, type:"single",
   stem:"How does Claude Code combine CLAUDE.md files found at several levels of the directory hierarchy?",
   options:[
     {k:"A", text:"All discovered files are concatenated into context, ordered from the root downwards."},
@@ -263,13 +263,13 @@
     why:"`.claude/rules/` files take a `paths` frontmatter field holding a list of glob patterns. The rule loads only when Claude reads a file matching one of them.",
     distractors:{
       B:"There is no `scope` field for rule files.",
-      C:"The field is `paths` and it takes a list; `applies-to` is not a recognised key.",
+      C:"Path scoping takes a list of glob patterns rather than a single string value, and the key that carries it is `paths`.",
       D:"Rule scoping is by glob pattern, not by a natural language condition."
     }
   },
   refs:[{label:"Claude Code: Memory", url:"https://code.claude.com/docs/en/memory"}] },
 
-{ id:"d3-3.3-c", domain:3, ts:"3.3", scenario:0, type:"single",
+{ id:"d3-3.3-c", domain:3, ts:"3.3", scenario:4, type:"single",
   stem:"What is the context-cost advantage of path-scoped rules over unconditional instructions?",
   options:[
     {k:"A", text:"They load only when Claude works with matching files, so irrelevant context is avoided."},
@@ -326,7 +326,7 @@
   },
   refs:[{label:"Claude Code: Memory", url:"https://code.claude.com/docs/en/memory"}] },
 
-{ id:"d3-3.3-f", domain:3, ts:"3.3", scenario:0, type:"single",
+{ id:"d3-3.3-f", domain:3, ts:"3.3", scenario:4, type:"single",
   stem:"When should you prefer a path-scoped rule over a subdirectory CLAUDE.md?",
   options:[
     {k:"A", text:"When the convention applies to a file type that appears across many different directories."},
@@ -421,7 +421,7 @@
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d3-3.4-e", domain:3, ts:"3.4", scenario:0, type:"multi",
+{ id:"d3-3.4-e", domain:3, ts:"3.4", scenario:4, type:"multi",
   stem:"Which two characteristics indicate that a task warrants plan mode? (Select 2.)",
   options:[
     {k:"A", text:"Several valid approaches exist, with materially different trade-offs between them."},
@@ -553,7 +553,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d3-3.5-f", domain:3, ts:"3.5", scenario:0, type:"single",
+{ id:"d3-3.5-f", domain:3, ts:"3.5", scenario:4, type:"single",
   stem:"When is sequential iteration, fixing one issue at a time, the better choice?",
   options:[
     {k:"A", text:"When the issues are independent, so that each fix can be verified without disturbing the others."},

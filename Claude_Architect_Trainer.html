@@ -336,8 +336,12 @@ const GATE = 0.85;          /* mastery threshold, per task statement */
 const WINDOW_TS = 12;       /* recency window, task statement */
 const WINDOW_D  = 25;       /* recency window, domain */
 const DECAY = 0.85;         /* recency weight base */
-const MIN_ATTEMPTS = 6;     /* attempts needed before mastery can be awarded */
-const MIN_DISTINCT = 4;     /* distinct questions needed before mastery */
+const MIN_ATTEMPTS = 10;    /* attempts needed before mastery can be awarded */
+const MIN_DISTINCT = 8;     /* distinct questions needed before mastery */
+/* Raised from 6/4 when the bank grew to 20 questions per task statement.
+   Against a 6-item pool, 4 distinct was two thirds of the material; against
+   20 it would have been a fifth, so "mastered" could have been awarded on a
+   narrow slice. 8 of 20 keeps the guarantee proportionate. */
 
 /* ==========================================================================
    Learn notes: one per task statement.
@@ -916,7 +920,7 @@ const BANK_ALL = [
   },
   refs:[{label:"API: Tool use overview", url:"https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview"}] },
 
-{ id:"d1-1.1-d", domain:1, ts:"1.1", scenario:0, type:"single",
+{ id:"d1-1.1-d", domain:1, ts:"1.1", scenario:4, type:"single",
   stem:"An assistant turn comes back with `stop_reason: \"tool_use\"` and contains three separate `tool_use` blocks. How should the loop handle this iteration?",
   options:[
     {k:"A", text:"Execute all three tools and return all three `tool_result` blocks in one user message."},
@@ -975,7 +979,7 @@ const BANK_ALL = [
 { id:"d1-1.1-g", domain:1, ts:"1.1", scenario:4, type:"single",
   stem:"Your codebase-exploration agent runs a long loop and occasionally hits a genuine infinite cycle: it Greps, Reads, then Greps the same pattern again indefinitely. You need to stop runaway cost without breaking legitimate long tasks. What is the appropriate role for an iteration cap here?",
   options:[
-    {k:"A", text:"Keep `stop_reason` as the termination condition and add the cap as a runaway safety net."},
+    {k:"A", text:"Keep `stop_reason` as the termination condition, and add the cap purely as a runaway safety net that surfaces the incomplete state."},
     {k:"B", text:"Replace `stop_reason` checking with the cap, since the cap is the only mechanism that reliably bounds cost."},
     {k:"C", text:"Remove the cap and instead instruct the model in the system prompt never to repeat an identical tool call."},
     {k:"D", text:"Set the cap to exactly the number of tools the agent has available, since a well-behaved agent should need to call each of them only once."}
@@ -1261,7 +1265,7 @@ const BANK_ALL = [
 { id:"d1-1.4-a", domain:1, ts:"1.4", scenario:1, type:"single",
   stem:"Production data shows that in 12% of cases your agent skips `get_customer` entirely and calls `lookup_order` using only the customer's stated name, occasionally leading to misidentified accounts and incorrect refunds. What change most effectively addresses this?",
   options:[
-    {k:"A", text:"Add a programmatic prerequisite that blocks both tools until `get_customer` returns a verified ID."},
+    {k:"A", text:"Add a programmatic prerequisite that blocks `lookup_order` and `process_refund` until `get_customer` returns a verified customer ID."},
     {k:"B", text:"Enhance the system prompt to state that customer verification via `get_customer` is mandatory before any order operations."},
     {k:"C", text:"Add few-shot examples showing the agent always calling `get_customer` first, even when customers volunteer order details."},
     {k:"D", text:"Implement a routing classifier that analyses each request and enables only the subset of tools appropriate for that request type."}
@@ -1315,7 +1319,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Agent SDK: Hooks", url:"https://code.claude.com/docs/en/agent-sdk/hooks"}] },
 
-{ id:"d1-1.4-d", domain:1, ts:"1.4", scenario:0, type:"single",
+{ id:"d1-1.4-d", domain:1, ts:"1.4", scenario:1, type:"single",
   stem:"Which statement best captures when to choose programmatic enforcement over prompt-based guidance for workflow ordering?",
   options:[
     {k:"A", text:"When deterministic compliance is required, since prompt instructions have a non-zero failure rate."},
@@ -1410,7 +1414,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Agent SDK: Hooks", url:"https://code.claude.com/docs/en/agent-sdk/hooks"}] },
 
-{ id:"d1-1.5-b", domain:1, ts:"1.5", scenario:0, type:"single",
+{ id:"d1-1.5-b", domain:1, ts:"1.5", scenario:1, type:"single",
   stem:"Which hook event intercepts an outgoing tool call so it can be blocked before it executes?",
   options:[
     {k:"A", text:"`PreToolUse`, which returns a `permissionDecision` of `allow`, `deny`, `ask` or `defer` before execution."},
@@ -1467,7 +1471,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Agent SDK: Hooks", url:"https://code.claude.com/docs/en/agent-sdk/hooks"}] },
 
-{ id:"d1-1.5-e", domain:1, ts:"1.5", scenario:0, type:"multi",
+{ id:"d1-1.5-e", domain:1, ts:"1.5", scenario:1, type:"multi",
   stem:"Which two tasks are appropriate uses of a `PostToolUse` hook? (Select 2.)",
   options:[
     {k:"A", text:"Converting heterogeneous status codes from several different backends into one consistent vocabulary."},
@@ -1637,7 +1641,7 @@ const BANK_ALL = [
   },
   refs:[{label:"API: Context windows", url:"https://platform.claude.com/docs/en/build-with-claude/context-windows"}] },
 
-{ id:"d1-1.6-g", domain:1, ts:"1.6", scenario:0, type:"single",
+{ id:"d1-1.6-g", domain:1, ts:"1.6", scenario:6, type:"single",
   stem:"Which pairing of task type to decomposition strategy is correct?",
   options:[
     {k:"A", text:"Predictable multi-aspect review to prompt chaining; open-ended investigation to dynamic decomposition."},
@@ -1659,7 +1663,7 @@ const BANK_ALL = [
 { id:"d1-1.7-a", domain:1, ts:"1.7", scenario:4, type:"single",
   stem:"You spent yesterday's session having Claude analyse a payments module. Overnight, a colleague refactored three of those files substantially. You want to continue the investigation today. What is the best approach?",
   options:[
-    {k:"A", text:"Resume the session and tell it explicitly which three files changed."},
+    {k:"A", text:"Resume the session and tell it explicitly which three files changed, so it re-analyses only those."},
     {k:"B", text:"Resume the session and continue asking questions, since the agent will notice any discrepancies itself."},
     {k:"C", text:"Start a fresh session and re-explore the entire module from scratch to guarantee accuracy."},
     {k:"D", text:"Resume the session and immediately run `/compact` to clear the stale file contents from context."}
@@ -1678,7 +1682,7 @@ const BANK_ALL = [
 { id:"d1-1.7-b", domain:1, ts:"1.7", scenario:4, type:"single",
   stem:"A week-old investigation session analysed 40 files. Since then the team has completed a major refactor touching most of them. You need to continue the work. What is the better choice and why?",
   options:[
-    {k:"A", text:"Start a new session with a structured summary of the prior conclusions."},
+    {k:"A", text:"Start a new session with a structured summary of the prior conclusions, discarding the stale tool results."},
     {k:"B", text:"Resume the old session, because session resumption always preserves more useful context than starting fresh and re-injecting a written summary of it."},
     {k:"C", text:"Resume the old session and ask it to re-read all 40 files before answering anything further."},
     {k:"D", text:"Fork the old session, because forking discards stale tool results while keeping conclusions."}
@@ -1697,21 +1701,21 @@ const BANK_ALL = [
 { id:"d1-1.7-c", domain:1, ts:"1.7", scenario:2, type:"single",
   stem:"Which flag continues a specific, previously named conversation in Claude Code?",
   options:[
-    {k:"A", text:"`--resume <session-name>`"},
-    {k:"B", text:"`--continue <session-name>`"},
-    {k:"C", text:"`--session <session-name>`"},
-    {k:"D", text:"`--restore <session-name>`"}
+    {k:"A", text:"`--resume <session-name>`, which continues that specific named conversation."},
+    {k:"B", text:"`--continue`, which loads the most recent conversation in the directory."},
+    {k:"C", text:"`--session-id <uuid>`, which assigns an identifier when starting a conversation."},
+    {k:"D", text:"`--restore <session-name>`, which recovers an archived conversation."}
   ],
   correct:["A"],
   explain:{
-    why:"`--resume` with a session name continues that specific prior conversation, which is what makes named investigation sessions usable across days.",
+    why:"`--resume` accepts a session name or ID and continues that specific prior conversation, which is what makes named investigation sessions usable across days.",
     distractors:{
-      B:"Not the documented flag for resuming a named session.",
-      C:"Not the documented flag for this purpose.",
-      D:"Not a Claude Code flag."
+      B:"`--continue` is a real flag and a close call, but it loads whichever conversation was most recent in the directory. That is resumption without selection, so it cannot target a session by name.",
+      C:"`--session-id` is also real, but it assigns an identifier to a conversation you are starting rather than selecting one you have already had.",
+      D:"There is no `--restore` flag. Recovering an archived or deleted session is a different concern from continuing an existing one."
     }
   },
-  refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
+  refs:[{label:"Claude Code: CLI reference", url:"https://code.claude.com/docs/en/cli-reference"}] },
 
 { id:"d1-1.7-d", domain:1, ts:"1.7", scenario:4, type:"single",
   stem:"You want to compare two testing strategies for the same module, each explored in depth, without either exploration influencing the other, and without repeating the shared codebase analysis. What is the right mechanism?",
@@ -1732,7 +1736,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d1-1.7-e", domain:1, ts:"1.7", scenario:0, type:"single",
+{ id:"d1-1.7-e", domain:1, ts:"1.7", scenario:4, type:"single",
   stem:"What is the main risk of resuming a long session whose tool results no longer match the state of the code?",
   options:[
     {k:"A", text:"The agent reasons confidently from stale file contents, producing authoritative-looking errors."},
@@ -1770,7 +1774,7 @@ const BANK_ALL = [
   },
   refs:[{label:"API: Context windows", url:"https://platform.claude.com/docs/en/build-with-claude/context-windows"}] },
 
-{ id:"d1-1.7-g", domain:1, ts:"1.7", scenario:0, type:"multi",
+{ id:"d1-1.7-g", domain:1, ts:"1.7", scenario:4, type:"multi",
   stem:"Which two situations favour starting a fresh session with an injected summary over resuming the prior one? (Select 2.)",
   options:[
     {k:"A", text:"Most files analysed in the prior session have since been substantially rewritten."},
@@ -1866,7 +1870,7 @@ const BANK_ALL = [
   },
   refs:[{label:"API: Tool use overview", url:"https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview"}] },
 
-{ id:"d2-2.1-e", domain:2, ts:"2.1", scenario:0, type:"multi",
+{ id:"d2-2.1-e", domain:2, ts:"2.1", scenario:1, type:"multi",
   stem:"Which two elements most improve a tool description's ability to drive correct selection among similar tools? (Select 2.)",
   options:[
     {k:"A", text:"An explicit boundary statement saying when to use this tool rather than a named alternative."},
@@ -1925,7 +1929,7 @@ const BANK_ALL = [
 { id:"d2-2.2-b", domain:2, ts:"2.2", scenario:1, type:"single",
   stem:"A refund request violates a business rule: the item is outside the 30-day return window. What should the tool return?",
   options:[
-    {k:"A", text:"An error marked non-retryable, with a customer-friendly explanation."},
+    {k:"A", text:"An error marked non-retryable, carrying a customer-friendly explanation the agent can relay."},
     {k:"B", text:"A transient error, so the agent retries in case the policy engine was temporarily out of date."},
     {k:"C", text:"A successful response with a refund amount of zero, letting the agent infer the refusal."},
     {k:"D", text:"A generic failure, so the agent escalates to a human who can explain the policy properly."}
@@ -1960,7 +1964,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d2-2.2-d", domain:2, ts:"2.2", scenario:0, type:"single",
+{ id:"d2-2.2-d", domain:2, ts:"2.2", scenario:1, type:"single",
   stem:"Which MCP mechanism communicates to the agent that a tool call failed, as distinct from returning a normal result?",
   options:[
     {k:"A", text:"The `isError` flag on the tool result."},
@@ -1979,7 +1983,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Claude Code: MCP", url:"https://code.claude.com/docs/en/mcp"}] },
 
-{ id:"d2-2.2-e", domain:2, ts:"2.2", scenario:0, type:"single",
+{ id:"d2-2.2-e", domain:2, ts:"2.2", scenario:1, type:"single",
   stem:"Match the error to its category: a call fails because the caller's token lacks the required scope. How should it be classified and handled?",
   options:[
     {k:"A", text:"A permission error, non-retryable, with a description stating which access is missing."},
@@ -2077,7 +2081,7 @@ const BANK_ALL = [
 { id:"d2-2.3-d", domain:2, ts:"2.3", scenario:6, type:"single",
   stem:"Your pipeline must always run `extract_metadata` before any enrichment tool. Which `tool_choice` configuration guarantees the first call is that tool?",
   options:[
-    {k:"A", text:"`{\"type\":\"tool\",\"name\":\"extract_metadata\"}` on the first request."},
+    {k:"A", text:"`{\"type\":\"tool\",\"name\":\"extract_metadata\"}` on the first request, then a looser setting on follow-up turns."},
     {k:"B", text:"`\"any\"` on the first request, since it forces a tool call and metadata extraction is the obvious first step."},
     {k:"C", text:"`\"auto\"` with a system prompt instruction that metadata extraction must always come first."},
     {k:"D", text:"Listing `extract_metadata` first in the tools array, since the model calls tools in declaration order."}
@@ -2112,7 +2116,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d2-2.3-f", domain:2, ts:"2.3", scenario:0, type:"single",
+{ id:"d2-2.3-f", domain:2, ts:"2.3", scenario:6, type:"single",
   stem:"Which `tool_choice` value allows the model to respond with plain text instead of calling a tool?",
   options:[
     {k:"A", text:"`\"auto\"`"},
@@ -2208,7 +2212,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Claude Code: MCP", url:"https://code.claude.com/docs/en/mcp"}] },
 
-{ id:"d2-2.4-e", domain:2, ts:"2.4", scenario:0, type:"single",
+{ id:"d2-2.4-e", domain:2, ts:"2.4", scenario:2, type:"single",
   stem:"You have three MCP servers configured across different scopes. When are their tools available to the agent?",
   options:[
     {k:"A", text:"Tools from all of the configured servers are discovered at connection time and are available at once."},
@@ -2268,7 +2272,7 @@ const BANK_ALL = [
 { id:"d2-2.5-b", domain:2, ts:"2.5", scenario:4, type:"single",
   stem:"You want to locate every React test file in a codebase where tests sit beside the components they cover. Which tool and pattern?",
   options:[
-    {k:"A", text:"Glob with `**/*.test.tsx`."},
+    {k:"A", text:"Glob with the pattern `**/*.test.tsx`, which matches at any directory depth."},
     {k:"B", text:"Grep for the string `describe(` across the repository."},
     {k:"C", text:"Glob with `tests/**/*`, since test files live in a tests directory."},
     {k:"D", text:"Read on the project configuration to find the configured test directory."}
@@ -2341,7 +2345,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d2-2.5-f", domain:2, ts:"2.5", scenario:0, type:"multi",
+{ id:"d2-2.5-f", domain:2, ts:"2.5", scenario:4, type:"multi",
   stem:"Which two statements about the built-in file tools are correct? (Select 2.)",
   options:[
     {k:"A", text:"Grep searches file contents; Glob matches file paths."},
@@ -2438,7 +2442,7 @@ const BANK_ALL = [
   note:"Answer `/memory` on the exam. In current Claude Code the two have separated: **`/memory`** lists and opens memory file *locations* and toggles auto memory, while **`/context`** shows which files actually **loaded** into the current session. For live debugging today, `/context` is the one that answers 'did it load?'.",
   refs:[{label:"Claude Code: Memory", url:"https://code.claude.com/docs/en/memory"}] },
 
-{ id:"d3-3.1-e", domain:3, ts:"3.1", scenario:0, type:"single",
+{ id:"d3-3.1-e", domain:3, ts:"3.1", scenario:4, type:"single",
   stem:"How does Claude Code combine CLAUDE.md files found at several levels of the directory hierarchy?",
   options:[
     {k:"A", text:"All discovered files are concatenated into context, ordered from the root downwards."},
@@ -2623,13 +2627,13 @@ const BANK_ALL = [
     why:"`.claude/rules/` files take a `paths` frontmatter field holding a list of glob patterns. The rule loads only when Claude reads a file matching one of them.",
     distractors:{
       B:"There is no `scope` field for rule files.",
-      C:"The field is `paths` and it takes a list; `applies-to` is not a recognised key.",
+      C:"Path scoping takes a list of glob patterns rather than a single string value, and the key that carries it is `paths`.",
       D:"Rule scoping is by glob pattern, not by a natural language condition."
     }
   },
   refs:[{label:"Claude Code: Memory", url:"https://code.claude.com/docs/en/memory"}] },
 
-{ id:"d3-3.3-c", domain:3, ts:"3.3", scenario:0, type:"single",
+{ id:"d3-3.3-c", domain:3, ts:"3.3", scenario:4, type:"single",
   stem:"What is the context-cost advantage of path-scoped rules over unconditional instructions?",
   options:[
     {k:"A", text:"They load only when Claude works with matching files, so irrelevant context is avoided."},
@@ -2686,7 +2690,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Claude Code: Memory", url:"https://code.claude.com/docs/en/memory"}] },
 
-{ id:"d3-3.3-f", domain:3, ts:"3.3", scenario:0, type:"single",
+{ id:"d3-3.3-f", domain:3, ts:"3.3", scenario:4, type:"single",
   stem:"When should you prefer a path-scoped rule over a subdirectory CLAUDE.md?",
   options:[
     {k:"A", text:"When the convention applies to a file type that appears across many different directories."},
@@ -2781,7 +2785,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d3-3.4-e", domain:3, ts:"3.4", scenario:0, type:"multi",
+{ id:"d3-3.4-e", domain:3, ts:"3.4", scenario:4, type:"multi",
   stem:"Which two characteristics indicate that a task warrants plan mode? (Select 2.)",
   options:[
     {k:"A", text:"Several valid approaches exist, with materially different trade-offs between them."},
@@ -2913,7 +2917,7 @@ const BANK_ALL = [
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d3-3.5-f", domain:3, ts:"3.5", scenario:0, type:"single",
+{ id:"d3-3.5-f", domain:3, ts:"3.5", scenario:4, type:"single",
   stem:"When is sequential iteration, fixing one issue at a time, the better choice?",
   options:[
     {k:"A", text:"When the issues are independent, so that each fix can be verified without disturbing the others."},
@@ -3143,7 +3147,7 @@ const BANK_ALL = [
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.1-f", domain:4, ts:"4.1", scenario:0, type:"single",
+{ id:"d4-4.1-f", domain:4, ts:"4.1", scenario:2, type:"single",
   stem:"A colleague argues that if false positives are high, the fix is always a more capable model. When is that reasoning wrong?",
   options:[
     {k:"A", text:"When the criteria themselves are ambiguous, since capability cannot resolve an unclear rule."},
@@ -3200,7 +3204,7 @@ const BANK_ALL = [
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.2-c", domain:4, ts:"4.2", scenario:0, type:"single",
+{ id:"d4-4.2-c", domain:4, ts:"4.2", scenario:3, type:"single",
   stem:"How many few-shot examples does the guidance suggest for clarifying an ambiguous scenario, and what should they demonstrate?",
   options:[
     {k:"A", text:"Two to four examples, showing the reasoning for why one action was chosen over a plausible alternative."},
@@ -3298,7 +3302,7 @@ const BANK_ALL = [
 { id:"d4-4.3-b", domain:4, ts:"4.3", scenario:6, type:"single",
   stem:"After moving to tool use with a strict JSON schema, you still see invoices where the line items do not sum to the stated total. What does this indicate?",
   options:[
-    {k:"A", text:"Strict schemas eliminate syntax errors but not semantic ones."},
+    {k:"A", text:"Strict schemas eliminate syntax errors but not semantic ones, so arithmetic needs separate validation."},
     {k:"B", text:"The schema is not marked strict, so numeric constraints are not being enforced."},
     {k:"C", text:"The `total` field should be typed as a string so the model does not attempt arithmetic."},
     {k:"D", text:"Tool use is unsuitable for numeric extraction, and free-text output with downstream parsing should be used instead."}
@@ -3485,7 +3489,7 @@ const BANK_ALL = [
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.4-f", domain:4, ts:"4.4", scenario:0, type:"multi",
+{ id:"d4-4.4-f", domain:4, ts:"4.4", scenario:6, type:"multi",
   stem:"Which two validation failures are likely to be resolved by a retry with error feedback? (Select 2.)",
   options:[
     {k:"A", text:"A numeric field returned as a formatted string such as `\"1,240.00\"` instead of a number."},
@@ -3598,7 +3602,7 @@ const BANK_ALL = [
   },
   refs:[{label:"API: Batch processing", url:"https://platform.claude.com/docs/en/build-with-claude/batch-processing"}] },
 
-{ id:"d4-4.5-f", domain:4, ts:"4.5", scenario:0, type:"single",
+{ id:"d4-4.5-f", domain:4, ts:"4.5", scenario:6, type:"single",
   stem:"What is the role of `custom_id` in the Message Batches API?",
   options:[
     {k:"A", text:"It correlates each request with its corresponding response, and must be unique within the batch."},
@@ -3712,7 +3716,7 @@ const BANK_ALL = [
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.6-f", domain:4, ts:"4.6", scenario:0, type:"single",
+{ id:"d4-4.6-f", domain:4, ts:"4.6", scenario:5, type:"single",
   stem:"Per-file review passes handle local issues well. What is the correct complement for a complete multi-pass architecture?",
   options:[
     {k:"A", text:"A separate integration pass examining cross-file data flow and interface consistency."},
@@ -3869,7 +3873,7 @@ const BANK_ALL = [
 { id:"d5-5.2-b", domain:5, ts:"5.2", scenario:1, type:"single",
   stem:"A customer's first message reads: 'I don't want to talk to a bot. Put me through to a person.' The issue appears to be a simple address change. What should the agent do?",
   options:[
-    {k:"A", text:"Escalate to a human immediately, honouring the explicit request."},
+    {k:"A", text:"Escalate to a human immediately, honouring the explicit request without first attempting to investigate."},
     {k:"B", text:"Resolve the address change first, since it is simple, then offer escalation if the customer is still dissatisfied."},
     {k:"C", text:"Explain that it can handle address changes quickly and proceed unless the customer objects again."},
     {k:"D", text:"Ask the customer why they prefer a human, to determine whether escalation is warranted."}
@@ -3942,7 +3946,7 @@ const BANK_ALL = [
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d5-5.2-f", domain:5, ts:"5.2", scenario:0, type:"multi",
+{ id:"d5-5.2-f", domain:5, ts:"5.2", scenario:1, type:"multi",
   stem:"Which two are legitimate escalation triggers? (Select 2.)",
   options:[
     {k:"A", text:"The customer explicitly asks to speak with a human."},
@@ -4283,7 +4287,7 @@ const BANK_ALL = [
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d5-5.5-f", domain:5, ts:"5.5", scenario:0, type:"single",
+{ id:"d5-5.5-f", domain:5, ts:"5.5", scenario:6, type:"single",
   stem:"Why is stratified sampling preferred over reviewing only flagged or failed extractions?",
   options:[
     {k:"A", text:"It detects novel error patterns that no existing check would flag."},
@@ -4697,22 +4701,40 @@ function weighted(hist, windowSize){
   return num / den;
 }
 
+/* Mastery thresholds scale with the pool actually available for a task
+   statement, rather than being fixed. A flat "8 distinct questions" would be
+   two thirds of a 6-item pool but only a fifth of a 20-item one, and it would
+   make mastery unreachable for any statement not yet expanded. Scaling keeps
+   the guarantee proportionate at any bank size, with MIN_* as the ceilings. */
+function gateFor(ts){
+  const pool = (Q_BY_TS[ts] || []).length;
+  const clamp = function(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); };
+  return {
+    attempts: pool ? clamp(Math.ceil(pool * 0.5), 6, MIN_ATTEMPTS) : MIN_ATTEMPTS,
+    distinct: pool ? clamp(Math.ceil(pool * 0.4), 4, MIN_DISTINCT) : MIN_DISTINCT,
+    pool: pool
+  };
+}
+
 function tsStat(ts){
   const all = S.tsHistory[ts] || [];
   const distinct = new Set(all.map(function(x){ return x.q; })).size;
   const score = weighted(all, WINDOW_TS);
+  const gate = gateFor(ts);
   return {
     ts: ts,
     score: score,
     attempts: all.length,
     distinct: distinct,
     untested: all.length === 0,
-    mastered: score >= GATE && all.length >= MIN_ATTEMPTS && distinct >= MIN_DISTINCT,
+    needAttempts: gate.attempts,
+    needDistinct: gate.distinct,
+    mastered: score >= GATE && all.length >= gate.attempts && distinct >= gate.distinct,
     /* why mastery is being withheld, for honest UI copy */
     blocker: all.length === 0 ? "untested"
            : score < GATE ? "score"
-           : all.length < MIN_ATTEMPTS ? "attempts"
-           : distinct < MIN_DISTINCT ? "distinct" : null
+           : all.length < gate.attempts ? "attempts"
+           : distinct < gate.distinct ? "distinct" : null
   };
 }
 
@@ -5439,7 +5461,8 @@ function renderDashboard(){
     '<h2>Mastery by task statement</h2>' +
     '<p>The 85% gate is applied here, per task statement &mdash; not at domain level &mdash; so a weak ' +
     'topic cannot hide inside a strong domain. Mastery needs a recency-weighted score of 85%, at least ' +
-    MIN_ATTEMPTS + ' attempts, and at least ' + MIN_DISTINCT + ' distinct questions. Click a row for the notes.</p></div>' +
+    'a proportion of its attempts and distinct questions, scaled to how many questions that ' +
+    'statement has (up to ' + MIN_ATTEMPTS + ' attempts across ' + MIN_DISTINCT + ' distinct). Click a row for the notes.</p></div>' +
     '<div class="tscroll"><table class="tstable"><thead><tr><th>ID</th><th>Task statement</th>' +
     '<th class="barcell">Score</th><th class="num">Seen</th><th class="num">Score</th><th>Status</th></tr></thead><tbody>';
 
@@ -5455,7 +5478,7 @@ function renderDashboard(){
     let statusText, statusCls = band(s.score, s.untested);
     if(s.untested) statusText = "untested";
     else if(s.mastered) statusText = "mastered";
-    else if(s.blocker === "attempts") statusText = "need " + (MIN_ATTEMPTS - s.attempts) + " more";
+    else if(s.blocker === "attempts") statusText = "need " + (s.needAttempts - s.attempts) + " more";
     else if(s.blocker === "distinct") statusText = "need variety";
     else statusText = statusCls === "near" ? "close" : "weak";
 
@@ -5997,15 +6020,57 @@ function validateBank(){
   BANK.forEach(function(q){ if(perTs[q.ts] !== undefined) perTs[q.ts]++; if(perDom[q.domain] !== undefined) perDom[q.domain]++; });
   TASKS.forEach(function(t){
     if(perTs[t.ts] === 0) errs.push("task statement " + t.ts + " has NO questions");
-    else if(perTs[t.ts] < MIN_DISTINCT + 2)
+    else if(perTs[t.ts] < 6)
       warns.push("task statement " + t.ts + " has only " + perTs[t.ts] +
-                 " questions (mastery needs " + MIN_DISTINCT + " distinct)");
+                 " questions, too few to sample without heavy repetition");
     if(!NOTE_BY_TS[t.ts]) warns.push("task statement " + t.ts + " has no Learn note");
   });
   for(let d = 1; d <= 5; d++){
     if(perDom[d] < BLUEPRINT[d])
       errs.push("domain " + d + " has " + perDom[d] + " questions but a mock exam needs " + BLUEPRINT[d]);
   }
+
+  /* --- target depth: 20 questions per task statement -----------------------
+     Under target is expected while the bank is being built out, so it is
+     reported as progress rather than an error. Over target is an authoring
+     mistake and does fail. */
+  const TARGET_PER_TS = 20;
+  const atTarget = TASKS.filter(function(t){ return perTs[t.ts] >= TARGET_PER_TS; }).length;
+  TASKS.forEach(function(t){
+    if(perTs[t.ts] > TARGET_PER_TS)
+      errs.push("task statement " + t.ts + " has " + perTs[t.ts] + " questions, over the target of " + TARGET_PER_TS);
+  });
+  console.log("  depth: " + atTarget + "/" + TASKS.length + " task statements at " +
+              TARGET_PER_TS + " questions (bank " + BANK.length + "/" + (TASKS.length * TARGET_PER_TS) + ")");
+
+  /* --- every item must be scenario-framed, as the real exam is ------------- */
+  const unframed = BANK.filter(function(q){ return !q.scenario; });
+  if(unframed.length)
+    errs.push(unframed.length + " item(s) carry no scenario framing: " +
+              unframed.slice(0, 8).map(function(q){ return q.id; }).join(", ") +
+              (unframed.length > 8 ? " …" : ""));
+
+  /* --- can every four-scenario draw fill the blueprint without backfill? ----
+     The real sitting draws 4 of the 6 scenarios. If a draw cannot supply a
+     domain's share from scenario-matched items, the sampler silently pulls in
+     questions from scenarios the student is not being shown. */
+  const scenarioShort = [];
+  for(let a = 1; a <= 6; a++) for(let b = a+1; b <= 6; b++)
+  for(let c = b+1; c <= 6; c++) for(let e = c+1; e <= 6; e++){
+    const draw = [a,b,c,e];
+    for(let d = 1; d <= 5; d++){
+      const avail = BANK.filter(function(q){
+        return q.domain === d && draw.indexOf(q.scenario) !== -1; }).length;
+      if(avail < BLUEPRINT[d]) scenarioShort.push(draw.join("+") + " short on D" + d +
+        " (" + avail + "/" + BLUEPRINT[d] + ")");
+    }
+  }
+  if(scenarioShort.length){
+    warns.push(scenarioShort.length + " of 75 domain/draw combinations backfill from " +
+      "unshown scenarios, e.g. " + scenarioShort.slice(0, 3).join("; "));
+  }
+  console.log("  scenario coverage: " + (75 - scenarioShort.length) + "/75 domain-draw " +
+              "combinations fill from scenario-matched items alone");
 
   /* can the mock sampler always fill a blueprint-weighted 60? */
   let worstBackfill = 0, fails = 0;

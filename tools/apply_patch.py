@@ -7,9 +7,9 @@ rather than silently editing the wrong question.
 """
 import io, json, os, re, sys
 
-BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "parts")
-FILES = ["21-bank-d1a.js", "21-bank-d1b.js", "22-bank-d2.js",
-         "23-bank-d3.js", "24-bank-d4.js", "25-bank-d5.js"]
+BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")
+FILES = [f for f in sorted(os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")))
+         if f.startswith("2") and "bank" in f and f.endswith(".js")]
 
 
 def js_escape(s):

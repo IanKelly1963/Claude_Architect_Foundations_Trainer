@@ -96,7 +96,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.1-f", domain:4, ts:"4.1", scenario:0, type:"single",
+{ id:"d4-4.1-f", domain:4, ts:"4.1", scenario:2, type:"single",
   stem:"A colleague argues that if false positives are high, the fix is always a more capable model. When is that reasoning wrong?",
   options:[
     {k:"A", text:"When the criteria themselves are ambiguous, since capability cannot resolve an unclear rule."},
@@ -153,7 +153,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.2-c", domain:4, ts:"4.2", scenario:0, type:"single",
+{ id:"d4-4.2-c", domain:4, ts:"4.2", scenario:3, type:"single",
   stem:"How many few-shot examples does the guidance suggest for clarifying an ambiguous scenario, and what should they demonstrate?",
   options:[
     {k:"A", text:"Two to four examples, showing the reasoning for why one action was chosen over a plausible alternative."},
@@ -251,7 +251,7 @@
 { id:"d4-4.3-b", domain:4, ts:"4.3", scenario:6, type:"single",
   stem:"After moving to tool use with a strict JSON schema, you still see invoices where the line items do not sum to the stated total. What does this indicate?",
   options:[
-    {k:"A", text:"Strict schemas eliminate syntax errors but not semantic ones."},
+    {k:"A", text:"Strict schemas eliminate syntax errors but not semantic ones, so arithmetic needs separate validation."},
     {k:"B", text:"The schema is not marked strict, so numeric constraints are not being enforced."},
     {k:"C", text:"The `total` field should be typed as a string so the model does not attempt arithmetic."},
     {k:"D", text:"Tool use is unsuitable for numeric extraction, and free-text output with downstream parsing should be used instead."}
@@ -438,7 +438,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.4-f", domain:4, ts:"4.4", scenario:0, type:"multi",
+{ id:"d4-4.4-f", domain:4, ts:"4.4", scenario:6, type:"multi",
   stem:"Which two validation failures are likely to be resolved by a retry with error feedback? (Select 2.)",
   options:[
     {k:"A", text:"A numeric field returned as a formatted string such as `\"1,240.00\"` instead of a number."},
@@ -551,7 +551,7 @@
   },
   refs:[{label:"API: Batch processing", url:"https://platform.claude.com/docs/en/build-with-claude/batch-processing"}] },
 
-{ id:"d4-4.5-f", domain:4, ts:"4.5", scenario:0, type:"single",
+{ id:"d4-4.5-f", domain:4, ts:"4.5", scenario:6, type:"single",
   stem:"What is the role of `custom_id` in the Message Batches API?",
   options:[
     {k:"A", text:"It correlates each request with its corresponding response, and must be unique within the batch."},
@@ -665,7 +665,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.6-f", domain:4, ts:"4.6", scenario:0, type:"single",
+{ id:"d4-4.6-f", domain:4, ts:"4.6", scenario:5, type:"single",
   stem:"Per-file review passes handle local issues well. What is the correct complement for a complete multi-pass architecture?",
   options:[
     {k:"A", text:"A separate integration pass examining cross-file data flow and interface consistency."},

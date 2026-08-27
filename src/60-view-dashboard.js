@@ -55,7 +55,8 @@ function renderDashboard(){
     '<h2>Mastery by task statement</h2>' +
     '<p>The 85% gate is applied here, per task statement &mdash; not at domain level &mdash; so a weak ' +
     'topic cannot hide inside a strong domain. Mastery needs a recency-weighted score of 85%, at least ' +
-    MIN_ATTEMPTS + ' attempts, and at least ' + MIN_DISTINCT + ' distinct questions. Click a row for the notes.</p></div>' +
+    'a proportion of its attempts and distinct questions, scaled to how many questions that ' +
+    'statement has (up to ' + MIN_ATTEMPTS + ' attempts across ' + MIN_DISTINCT + ' distinct). Click a row for the notes.</p></div>' +
     '<div class="tscroll"><table class="tstable"><thead><tr><th>ID</th><th>Task statement</th>' +
     '<th class="barcell">Score</th><th class="num">Seen</th><th class="num">Score</th><th>Status</th></tr></thead><tbody>';
 
@@ -71,7 +72,7 @@ function renderDashboard(){
     let statusText, statusCls = band(s.score, s.untested);
     if(s.untested) statusText = "untested";
     else if(s.mastered) statusText = "mastered";
-    else if(s.blocker === "attempts") statusText = "need " + (MIN_ATTEMPTS - s.attempts) + " more";
+    else if(s.blocker === "attempts") statusText = "need " + (s.needAttempts - s.attempts) + " more";
     else if(s.blocker === "distinct") statusText = "need variety";
     else statusText = statusCls === "near" ? "close" : "weak";
 

@@ -79,22 +79,40 @@ function weighted(hist, windowSize){
   return num / den;
 }
 
+/* Mastery thresholds scale with the pool actually available for a task
+   statement, rather than being fixed. A flat "8 distinct questions" would be
+   two thirds of a 6-item pool but only a fifth of a 20-item one, and it would
+   make mastery unreachable for any statement not yet expanded. Scaling keeps
+   the guarantee proportionate at any bank size, with MIN_* as the ceilings. */
+function gateFor(ts){
+  const pool = (Q_BY_TS[ts] || []).length;
+  const clamp = function(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); };
+  return {
+    attempts: pool ? clamp(Math.ceil(pool * 0.5), 6, MIN_ATTEMPTS) : MIN_ATTEMPTS,
+    distinct: pool ? clamp(Math.ceil(pool * 0.4), 4, MIN_DISTINCT) : MIN_DISTINCT,
+    pool: pool
+  };
+}
+
 function tsStat(ts){
   const all = S.tsHistory[ts] || [];
   const distinct = new Set(all.map(function(x){ return x.q; })).size;
   const score = weighted(all, WINDOW_TS);
+  const gate = gateFor(ts);
   return {
     ts: ts,
     score: score,
     attempts: all.length,
     distinct: distinct,
     untested: all.length === 0,
-    mastered: score >= GATE && all.length >= MIN_ATTEMPTS && distinct >= MIN_DISTINCT,
+    needAttempts: gate.attempts,
+    needDistinct: gate.distinct,
+    mastered: score >= GATE && all.length >= gate.attempts && distinct >= gate.distinct,
     /* why mastery is being withheld, for honest UI copy */
     blocker: all.length === 0 ? "untested"
            : score < GATE ? "score"
-           : all.length < MIN_ATTEMPTS ? "attempts"
-           : distinct < MIN_DISTINCT ? "distinct" : null
+           : all.length < gate.attempts ? "attempts"
+           : distinct < gate.distinct ? "distinct" : null
   };
 }
 

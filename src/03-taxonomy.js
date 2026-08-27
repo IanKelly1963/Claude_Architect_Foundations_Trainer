@@ -70,5 +70,9 @@ const GATE = 0.85;          /* mastery threshold, per task statement */
 const WINDOW_TS = 12;       /* recency window, task statement */
 const WINDOW_D  = 25;       /* recency window, domain */
 const DECAY = 0.85;         /* recency weight base */
-const MIN_ATTEMPTS = 6;     /* attempts needed before mastery can be awarded */
-const MIN_DISTINCT = 4;     /* distinct questions needed before mastery */
+const MIN_ATTEMPTS = 10;    /* attempts needed before mastery can be awarded */
+const MIN_DISTINCT = 8;     /* distinct questions needed before mastery */
+/* Raised from 6/4 when the bank grew to 20 questions per task statement.
+   Against a 6-item pool, 4 distinct was two thirds of the material; against
+   20 it would have been a fifth, so "mastered" could have been awarded on a
+   narrow slice. 8 of 20 keeps the guarantee proportionate. */

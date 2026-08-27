@@ -1,0 +1,11 @@
+{
+  "d2-2.5-b|A": "Glob with the pattern `**/*.test.tsx`, which matches at any directory depth.",
+  "d2-2.3-d|A": "`{\"type\":\"tool\",\"name\":\"extract_metadata\"}` on the first request, then a looser setting on follow-up turns.",
+  "d1-1.4-a|A": "Add a programmatic prerequisite that blocks `lookup_order` and `process_refund` until `get_customer` returns a verified customer ID.",
+  "d5-5.2-b|A": "Escalate to a human immediately, honouring the explicit request without first attempting to investigate.",
+  "d1-1.7-a|A": "Resume the session and tell it explicitly which three files changed, so it re-analyses only those.",
+  "d1-1.7-b|A": "Start a new session with a structured summary of the prior conclusions, discarding the stale tool results.",
+  "d2-2.2-b|A": "An error marked non-retryable, carrying a customer-friendly explanation the agent can relay.",
+  "d1-1.1-g|A": "Keep `stop_reason` as the termination condition, and add the cap purely as a runaway safety net that surfaces the incomplete state.",
+  "d4-4.3-b|A": "Strict schemas eliminate syntax errors but not semantic ones, so arithmetic needs separate validation."
+}

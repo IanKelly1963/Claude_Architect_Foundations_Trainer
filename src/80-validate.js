@@ -52,15 +52,57 @@ function validateBank(){
   BANK.forEach(function(q){ if(perTs[q.ts] !== undefined) perTs[q.ts]++; if(perDom[q.domain] !== undefined) perDom[q.domain]++; });
   TASKS.forEach(function(t){
     if(perTs[t.ts] === 0) errs.push("task statement " + t.ts + " has NO questions");
-    else if(perTs[t.ts] < MIN_DISTINCT + 2)
+    else if(perTs[t.ts] < 6)
       warns.push("task statement " + t.ts + " has only " + perTs[t.ts] +
-                 " questions (mastery needs " + MIN_DISTINCT + " distinct)");
+                 " questions, too few to sample without heavy repetition");
     if(!NOTE_BY_TS[t.ts]) warns.push("task statement " + t.ts + " has no Learn note");
   });
   for(let d = 1; d <= 5; d++){
     if(perDom[d] < BLUEPRINT[d])
       errs.push("domain " + d + " has " + perDom[d] + " questions but a mock exam needs " + BLUEPRINT[d]);
   }
+
+  /* --- target depth: 20 questions per task statement -----------------------
+     Under target is expected while the bank is being built out, so it is
+     reported as progress rather than an error. Over target is an authoring
+     mistake and does fail. */
+  const TARGET_PER_TS = 20;
+  const atTarget = TASKS.filter(function(t){ return perTs[t.ts] >= TARGET_PER_TS; }).length;
+  TASKS.forEach(function(t){
+    if(perTs[t.ts] > TARGET_PER_TS)
+      errs.push("task statement " + t.ts + " has " + perTs[t.ts] + " questions, over the target of " + TARGET_PER_TS);
+  });
+  console.log("  depth: " + atTarget + "/" + TASKS.length + " task statements at " +
+              TARGET_PER_TS + " questions (bank " + BANK.length + "/" + (TASKS.length * TARGET_PER_TS) + ")");
+
+  /* --- every item must be scenario-framed, as the real exam is ------------- */
+  const unframed = BANK.filter(function(q){ return !q.scenario; });
+  if(unframed.length)
+    errs.push(unframed.length + " item(s) carry no scenario framing: " +
+              unframed.slice(0, 8).map(function(q){ return q.id; }).join(", ") +
+              (unframed.length > 8 ? " …" : ""));
+
+  /* --- can every four-scenario draw fill the blueprint without backfill? ----
+     The real sitting draws 4 of the 6 scenarios. If a draw cannot supply a
+     domain's share from scenario-matched items, the sampler silently pulls in
+     questions from scenarios the student is not being shown. */
+  const scenarioShort = [];
+  for(let a = 1; a <= 6; a++) for(let b = a+1; b <= 6; b++)
+  for(let c = b+1; c <= 6; c++) for(let e = c+1; e <= 6; e++){
+    const draw = [a,b,c,e];
+    for(let d = 1; d <= 5; d++){
+      const avail = BANK.filter(function(q){
+        return q.domain === d && draw.indexOf(q.scenario) !== -1; }).length;
+      if(avail < BLUEPRINT[d]) scenarioShort.push(draw.join("+") + " short on D" + d +
+        " (" + avail + "/" + BLUEPRINT[d] + ")");
+    }
+  }
+  if(scenarioShort.length){
+    warns.push(scenarioShort.length + " of 75 domain/draw combinations backfill from " +
+      "unshown scenarios, e.g. " + scenarioShort.slice(0, 3).join("; "));
+  }
+  console.log("  scenario coverage: " + (75 - scenarioShort.length) + "/75 domain-draw " +
+              "combinations fill from scenario-matched items alone");
 
   /* can the mock sampler always fill a blueprint-weighted 60? */
   let worstBackfill = 0, fails = 0;

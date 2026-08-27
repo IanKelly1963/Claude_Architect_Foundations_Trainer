@@ -58,7 +58,7 @@
   },
   refs:[{label:"API: Tool use overview", url:"https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview"}] },
 
-{ id:"d1-1.1-d", domain:1, ts:"1.1", scenario:0, type:"single",
+{ id:"d1-1.1-d", domain:1, ts:"1.1", scenario:4, type:"single",
   stem:"An assistant turn comes back with `stop_reason: \"tool_use\"` and contains three separate `tool_use` blocks. How should the loop handle this iteration?",
   options:[
     {k:"A", text:"Execute all three tools and return all three `tool_result` blocks in one user message."},
@@ -117,7 +117,7 @@
 { id:"d1-1.1-g", domain:1, ts:"1.1", scenario:4, type:"single",
   stem:"Your codebase-exploration agent runs a long loop and occasionally hits a genuine infinite cycle: it Greps, Reads, then Greps the same pattern again indefinitely. You need to stop runaway cost without breaking legitimate long tasks. What is the appropriate role for an iteration cap here?",
   options:[
-    {k:"A", text:"Keep `stop_reason` as the termination condition and add the cap as a runaway safety net."},
+    {k:"A", text:"Keep `stop_reason` as the termination condition, and add the cap purely as a runaway safety net that surfaces the incomplete state."},
     {k:"B", text:"Replace `stop_reason` checking with the cap, since the cap is the only mechanism that reliably bounds cost."},
     {k:"C", text:"Remove the cap and instead instruct the model in the system prompt never to repeat an identical tool call."},
     {k:"D", text:"Set the cap to exactly the number of tools the agent has available, since a well-behaved agent should need to call each of them only once."}
@@ -403,7 +403,7 @@
 { id:"d1-1.4-a", domain:1, ts:"1.4", scenario:1, type:"single",
   stem:"Production data shows that in 12% of cases your agent skips `get_customer` entirely and calls `lookup_order` using only the customer's stated name, occasionally leading to misidentified accounts and incorrect refunds. What change most effectively addresses this?",
   options:[
-    {k:"A", text:"Add a programmatic prerequisite that blocks both tools until `get_customer` returns a verified ID."},
+    {k:"A", text:"Add a programmatic prerequisite that blocks `lookup_order` and `process_refund` until `get_customer` returns a verified customer ID."},
     {k:"B", text:"Enhance the system prompt to state that customer verification via `get_customer` is mandatory before any order operations."},
     {k:"C", text:"Add few-shot examples showing the agent always calling `get_customer` first, even when customers volunteer order details."},
     {k:"D", text:"Implement a routing classifier that analyses each request and enables only the subset of tools appropriate for that request type."}
@@ -457,7 +457,7 @@
   },
   refs:[{label:"Agent SDK: Hooks", url:"https://code.claude.com/docs/en/agent-sdk/hooks"}] },
 
-{ id:"d1-1.4-d", domain:1, ts:"1.4", scenario:0, type:"single",
+{ id:"d1-1.4-d", domain:1, ts:"1.4", scenario:1, type:"single",
   stem:"Which statement best captures when to choose programmatic enforcement over prompt-based guidance for workflow ordering?",
   options:[
     {k:"A", text:"When deterministic compliance is required, since prompt instructions have a non-zero failure rate."},

@@ -77,7 +77,7 @@
   },
   refs:[{label:"API: Tool use overview", url:"https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview"}] },
 
-{ id:"d2-2.1-e", domain:2, ts:"2.1", scenario:0, type:"multi",
+{ id:"d2-2.1-e", domain:2, ts:"2.1", scenario:1, type:"multi",
   stem:"Which two elements most improve a tool description's ability to drive correct selection among similar tools? (Select 2.)",
   options:[
     {k:"A", text:"An explicit boundary statement saying when to use this tool rather than a named alternative."},
@@ -136,7 +136,7 @@
 { id:"d2-2.2-b", domain:2, ts:"2.2", scenario:1, type:"single",
   stem:"A refund request violates a business rule: the item is outside the 30-day return window. What should the tool return?",
   options:[
-    {k:"A", text:"An error marked non-retryable, with a customer-friendly explanation."},
+    {k:"A", text:"An error marked non-retryable, carrying a customer-friendly explanation the agent can relay."},
     {k:"B", text:"A transient error, so the agent retries in case the policy engine was temporarily out of date."},
     {k:"C", text:"A successful response with a refund amount of zero, letting the agent infer the refusal."},
     {k:"D", text:"A generic failure, so the agent escalates to a human who can explain the policy properly."}
@@ -171,7 +171,7 @@
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d2-2.2-d", domain:2, ts:"2.2", scenario:0, type:"single",
+{ id:"d2-2.2-d", domain:2, ts:"2.2", scenario:1, type:"single",
   stem:"Which MCP mechanism communicates to the agent that a tool call failed, as distinct from returning a normal result?",
   options:[
     {k:"A", text:"The `isError` flag on the tool result."},
@@ -190,7 +190,7 @@
   },
   refs:[{label:"Claude Code: MCP", url:"https://code.claude.com/docs/en/mcp"}] },
 
-{ id:"d2-2.2-e", domain:2, ts:"2.2", scenario:0, type:"single",
+{ id:"d2-2.2-e", domain:2, ts:"2.2", scenario:1, type:"single",
   stem:"Match the error to its category: a call fails because the caller's token lacks the required scope. How should it be classified and handled?",
   options:[
     {k:"A", text:"A permission error, non-retryable, with a description stating which access is missing."},
@@ -288,7 +288,7 @@
 { id:"d2-2.3-d", domain:2, ts:"2.3", scenario:6, type:"single",
   stem:"Your pipeline must always run `extract_metadata` before any enrichment tool. Which `tool_choice` configuration guarantees the first call is that tool?",
   options:[
-    {k:"A", text:"`{\"type\":\"tool\",\"name\":\"extract_metadata\"}` on the first request."},
+    {k:"A", text:"`{\"type\":\"tool\",\"name\":\"extract_metadata\"}` on the first request, then a looser setting on follow-up turns."},
     {k:"B", text:"`\"any\"` on the first request, since it forces a tool call and metadata extraction is the obvious first step."},
     {k:"C", text:"`\"auto\"` with a system prompt instruction that metadata extraction must always come first."},
     {k:"D", text:"Listing `extract_metadata` first in the tools array, since the model calls tools in declaration order."}
@@ -323,7 +323,7 @@
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d2-2.3-f", domain:2, ts:"2.3", scenario:0, type:"single",
+{ id:"d2-2.3-f", domain:2, ts:"2.3", scenario:6, type:"single",
   stem:"Which `tool_choice` value allows the model to respond with plain text instead of calling a tool?",
   options:[
     {k:"A", text:"`\"auto\"`"},
@@ -419,7 +419,7 @@
   },
   refs:[{label:"Claude Code: MCP", url:"https://code.claude.com/docs/en/mcp"}] },
 
-{ id:"d2-2.4-e", domain:2, ts:"2.4", scenario:0, type:"single",
+{ id:"d2-2.4-e", domain:2, ts:"2.4", scenario:2, type:"single",
   stem:"You have three MCP servers configured across different scopes. When are their tools available to the agent?",
   options:[
     {k:"A", text:"Tools from all of the configured servers are discovered at connection time and are available at once."},
@@ -479,7 +479,7 @@
 { id:"d2-2.5-b", domain:2, ts:"2.5", scenario:4, type:"single",
   stem:"You want to locate every React test file in a codebase where tests sit beside the components they cover. Which tool and pattern?",
   options:[
-    {k:"A", text:"Glob with `**/*.test.tsx`."},
+    {k:"A", text:"Glob with the pattern `**/*.test.tsx`, which matches at any directory depth."},
     {k:"B", text:"Grep for the string `describe(` across the repository."},
     {k:"C", text:"Glob with `tests/**/*`, since test files live in a tests directory."},
     {k:"D", text:"Read on the project configuration to find the configured test directory."}
@@ -552,7 +552,7 @@
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d2-2.5-f", domain:2, ts:"2.5", scenario:0, type:"multi",
+{ id:"d2-2.5-f", domain:2, ts:"2.5", scenario:4, type:"multi",
   stem:"Which two statements about the built-in file tools are correct? (Select 2.)",
   options:[
     {k:"A", text:"Grep searches file contents; Glob matches file paths."},

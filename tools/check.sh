@@ -13,3 +13,6 @@ awk '/^const BANK_ALL = \[$/,/^\];$/' "$OUT" > "$TMP/bank.js"
 echo "module.exports = BANK_ALL;" >> "$TMP/bank.js"
 cp "$ROOT/tools/analyse.js" "$ROOT/tools/analyse-presented.js" "$TMP/"
 ( cd "$TMP" && node analyse.js && node analyse-presented.js )
+
+# distractor quality guard - exits non-zero on any exploitable defect
+node "$ROOT/tools/distractors.js" "$OUT"

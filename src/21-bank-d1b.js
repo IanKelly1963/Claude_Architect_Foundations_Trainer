@@ -18,7 +18,7 @@
   },
   refs:[{label:"Agent SDK: Hooks", url:"https://code.claude.com/docs/en/agent-sdk/hooks"}] },
 
-{ id:"d1-1.5-b", domain:1, ts:"1.5", scenario:0, type:"single",
+{ id:"d1-1.5-b", domain:1, ts:"1.5", scenario:1, type:"single",
   stem:"Which hook event intercepts an outgoing tool call so it can be blocked before it executes?",
   options:[
     {k:"A", text:"`PreToolUse`, which returns a `permissionDecision` of `allow`, `deny`, `ask` or `defer` before execution."},
@@ -75,7 +75,7 @@
   },
   refs:[{label:"Agent SDK: Hooks", url:"https://code.claude.com/docs/en/agent-sdk/hooks"}] },
 
-{ id:"d1-1.5-e", domain:1, ts:"1.5", scenario:0, type:"multi",
+{ id:"d1-1.5-e", domain:1, ts:"1.5", scenario:1, type:"multi",
   stem:"Which two tasks are appropriate uses of a `PostToolUse` hook? (Select 2.)",
   options:[
     {k:"A", text:"Converting heterogeneous status codes from several different backends into one consistent vocabulary."},
@@ -245,7 +245,7 @@
   },
   refs:[{label:"API: Context windows", url:"https://platform.claude.com/docs/en/build-with-claude/context-windows"}] },
 
-{ id:"d1-1.6-g", domain:1, ts:"1.6", scenario:0, type:"single",
+{ id:"d1-1.6-g", domain:1, ts:"1.6", scenario:6, type:"single",
   stem:"Which pairing of task type to decomposition strategy is correct?",
   options:[
     {k:"A", text:"Predictable multi-aspect review to prompt chaining; open-ended investigation to dynamic decomposition."},
@@ -267,7 +267,7 @@
 { id:"d1-1.7-a", domain:1, ts:"1.7", scenario:4, type:"single",
   stem:"You spent yesterday's session having Claude analyse a payments module. Overnight, a colleague refactored three of those files substantially. You want to continue the investigation today. What is the best approach?",
   options:[
-    {k:"A", text:"Resume the session and tell it explicitly which three files changed."},
+    {k:"A", text:"Resume the session and tell it explicitly which three files changed, so it re-analyses only those."},
     {k:"B", text:"Resume the session and continue asking questions, since the agent will notice any discrepancies itself."},
     {k:"C", text:"Start a fresh session and re-explore the entire module from scratch to guarantee accuracy."},
     {k:"D", text:"Resume the session and immediately run `/compact` to clear the stale file contents from context."}
@@ -286,7 +286,7 @@
 { id:"d1-1.7-b", domain:1, ts:"1.7", scenario:4, type:"single",
   stem:"A week-old investigation session analysed 40 files. Since then the team has completed a major refactor touching most of them. You need to continue the work. What is the better choice and why?",
   options:[
-    {k:"A", text:"Start a new session with a structured summary of the prior conclusions."},
+    {k:"A", text:"Start a new session with a structured summary of the prior conclusions, discarding the stale tool results."},
     {k:"B", text:"Resume the old session, because session resumption always preserves more useful context than starting fresh and re-injecting a written summary of it."},
     {k:"C", text:"Resume the old session and ask it to re-read all 40 files before answering anything further."},
     {k:"D", text:"Fork the old session, because forking discards stale tool results while keeping conclusions."}
@@ -305,21 +305,21 @@
 { id:"d1-1.7-c", domain:1, ts:"1.7", scenario:2, type:"single",
   stem:"Which flag continues a specific, previously named conversation in Claude Code?",
   options:[
-    {k:"A", text:"`--resume <session-name>`"},
-    {k:"B", text:"`--continue <session-name>`"},
-    {k:"C", text:"`--session <session-name>`"},
-    {k:"D", text:"`--restore <session-name>`"}
+    {k:"A", text:"`--resume <session-name>`, which continues that specific named conversation."},
+    {k:"B", text:"`--continue`, which loads the most recent conversation in the directory."},
+    {k:"C", text:"`--session-id <uuid>`, which assigns an identifier when starting a conversation."},
+    {k:"D", text:"`--restore <session-name>`, which recovers an archived conversation."}
   ],
   correct:["A"],
   explain:{
-    why:"`--resume` with a session name continues that specific prior conversation, which is what makes named investigation sessions usable across days.",
+    why:"`--resume` accepts a session name or ID and continues that specific prior conversation, which is what makes named investigation sessions usable across days.",
     distractors:{
-      B:"Not the documented flag for resuming a named session.",
-      C:"Not the documented flag for this purpose.",
-      D:"Not a Claude Code flag."
+      B:"`--continue` is a real flag and a close call, but it loads whichever conversation was most recent in the directory. That is resumption without selection, so it cannot target a session by name.",
+      C:"`--session-id` is also real, but it assigns an identifier to a conversation you are starting rather than selecting one you have already had.",
+      D:"There is no `--restore` flag. Recovering an archived or deleted session is a different concern from continuing an existing one."
     }
   },
-  refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
+  refs:[{label:"Claude Code: CLI reference", url:"https://code.claude.com/docs/en/cli-reference"}] },
 
 { id:"d1-1.7-d", domain:1, ts:"1.7", scenario:4, type:"single",
   stem:"You want to compare two testing strategies for the same module, each explored in depth, without either exploration influencing the other, and without repeating the shared codebase analysis. What is the right mechanism?",
@@ -340,7 +340,7 @@
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d1-1.7-e", domain:1, ts:"1.7", scenario:0, type:"single",
+{ id:"d1-1.7-e", domain:1, ts:"1.7", scenario:4, type:"single",
   stem:"What is the main risk of resuming a long session whose tool results no longer match the state of the code?",
   options:[
     {k:"A", text:"The agent reasons confidently from stale file contents, producing authoritative-looking errors."},
@@ -378,7 +378,7 @@
   },
   refs:[{label:"API: Context windows", url:"https://platform.claude.com/docs/en/build-with-claude/context-windows"}] },
 
-{ id:"d1-1.7-g", domain:1, ts:"1.7", scenario:0, type:"multi",
+{ id:"d1-1.7-g", domain:1, ts:"1.7", scenario:4, type:"multi",
   stem:"Which two situations favour starting a fresh session with an injected summary over resuming the prior one? (Select 2.)",
   options:[
     {k:"A", text:"Most files analysed in the prior session have since been substantially rewritten."},

@@ -137,7 +137,7 @@
 { id:"d5-5.2-b", domain:5, ts:"5.2", scenario:1, type:"single",
   stem:"A customer's first message reads: 'I don't want to talk to a bot. Put me through to a person.' The issue appears to be a simple address change. What should the agent do?",
   options:[
-    {k:"A", text:"Escalate to a human immediately, honouring the explicit request."},
+    {k:"A", text:"Escalate to a human immediately, honouring the explicit request without first attempting to investigate."},
     {k:"B", text:"Resolve the address change first, since it is simple, then offer escalation if the customer is still dissatisfied."},
     {k:"C", text:"Explain that it can handle address changes quickly and proceed unless the customer objects again."},
     {k:"D", text:"Ask the customer why they prefer a human, to determine whether escalation is warranted."}
@@ -210,7 +210,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d5-5.2-f", domain:5, ts:"5.2", scenario:0, type:"multi",
+{ id:"d5-5.2-f", domain:5, ts:"5.2", scenario:1, type:"multi",
   stem:"Which two are legitimate escalation triggers? (Select 2.)",
   options:[
     {k:"A", text:"The customer explicitly asks to speak with a human."},
@@ -551,7 +551,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d5-5.5-f", domain:5, ts:"5.5", scenario:0, type:"single",
+{ id:"d5-5.5-f", domain:5, ts:"5.5", scenario:6, type:"single",
   stem:"Why is stratified sampling preferred over reviewing only flagged or failed extractions?",
   options:[
     {k:"A", text:"It detects novel error patterns that no existing check would flag."},
