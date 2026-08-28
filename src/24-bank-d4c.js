@@ -43,9 +43,9 @@
   stem:"What should a retry request contain for the model to self-correct effectively?",
   options:[
     {k:"A", text:"The document, the failed output and the errors."},
-    {k:"B", text:"The document and an instruction to try harder."},
+    {k:"B", text:"The document, plus an instruction to try harder this time."},
     {k:"C", text:"The failed output and the schema."},
-    {k:"D", text:"The document alone, so the model starts fresh."}
+    {k:"D", text:"The document alone, so that the model starts entirely fresh."}
   ],
   correct:["A"],
   explain:{
@@ -62,7 +62,7 @@
   stem:"A source document states a total in two places with different values. What extraction design surfaces this rather than hiding it?",
   options:[
     {k:"A", text:"A `conflict_detected` flag plus both values."},
-    {k:"B", text:"Take the value nearer the document's end."},
+    {k:"B", text:"Take whichever value sits nearer the document's end."},
     {k:"C", text:"Take the value that appears more often."},
     {k:"D", text:"Fail the document and route it to manual entry."}
   ],
@@ -195,8 +195,8 @@
   options:[
     {k:"A", text:"Relaxing accepts bad data; correcting fixes it."},
     {k:"B", text:"Relaxing costs more tokens than retrying."},
-    {k:"C", text:"Relaxed schemas cannot be used with tool use."},
-    {k:"D", text:"Correction always succeeds on the first retry."}
+    {k:"C", text:"Relaxed schemas cannot be used together with tool use."},
+    {k:"D", text:"Correction always succeeds on the first retry attempt."}
   ],
   correct:["A"],
   explain:{
@@ -232,7 +232,7 @@
   stem:"What is the practical benefit of distinguishing retryable from non-retryable validation failures?",
   options:[
     {k:"A", text:"Retry budget goes only where it can succeed."},
-    {k:"B", text:"Retryable failures can use a cheaper model."},
+    {k:"B", text:"Retryable failures can be handled with a cheaper model."},
     {k:"C", text:"Non-retryable failures can be ignored entirely."},
     {k:"D", text:"The schema can be simplified."}
   ],
@@ -347,7 +347,7 @@
   options:[
     {k:"A", text:"Refine the prompt on a small sample first."},
     {k:"B", text:"Split into 800 batches of 100."},
-    {k:"C", text:"Submit everything and resubmit failures."},
+    {k:"C", text:"Submit everything at once and resubmit whatever fails."},
     {k:"D", text:"Run the whole corpus synchronously to validate."}
   ],
   correct:["A"],
@@ -361,7 +361,7 @@
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-l", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-l", domain:4, ts:"4.5", scenario:5, type:"single",
   stem:"What is `custom_id` for?",
   options:[
     {k:"A", text:"Correlating each request with its response."},
@@ -399,7 +399,7 @@
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-n", domain:4, ts:"4.5", scenario:6, type:"multi",
+{ id:"d4-4.5-n", domain:4, ts:"4.5", scenario:5, type:"multi",
   stem:"Which two are accurate properties of the Message Batches API? (Select 2.)",
   options:[
     {k:"A", text:"Roughly 50% cost saving against standard rates."},
@@ -417,7 +417,7 @@
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-o", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-o", domain:4, ts:"4.5", scenario:5, type:"single",
   stem:"A team reports that batches usually finish in 20 minutes and proposes using batch for a user-facing feature. What is the flaw?",
   options:[
     {k:"A", text:"Usual is not guaranteed, and the tail is what users get."},
@@ -436,7 +436,7 @@
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-p", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-p", domain:4, ts:"4.5", scenario:5, type:"single",
   stem:"A batch of 100,000 requests is rejected. What is the most likely cause?",
   options:[
     {k:"A", text:"A scale limit on requests or total size was exceeded."},
@@ -474,13 +474,13 @@
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-r", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-r", domain:4, ts:"4.5", scenario:5, type:"single",
   stem:"After a batch completes, 40 requests have no corresponding response. What is the first thing to check?",
   options:[
     {k:"A", text:"Whether those requests expired past the window."},
     {k:"B", text:"Whether the model was overloaded at submission."},
     {k:"C", text:"Whether the responses were returned out of order."},
-    {k:"D", text:"Whether the batch exceeded its token budget."}
+    {k:"D", text:"Whether the batch exceeded its allotted token budget."}
   ],
   correct:["A"],
   explain:{
@@ -493,7 +493,7 @@
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-s", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-s", domain:4, ts:"4.5", scenario:5, type:"single",
   stem:"A pipeline submits one document per batch, several thousand times a day. What is wrong with this?",
   options:[
     {k:"A", text:"It takes the latency penalty without the batching benefit."},
@@ -512,7 +512,7 @@
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-t", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-t", domain:4, ts:"4.5", scenario:5, type:"single",
   stem:"How should a batch pipeline handle a mix of successes and failures?",
   options:[
     {k:"A", text:"Process the successes and resubmit only the failures."},
@@ -593,7 +593,7 @@
   options:[
     {k:"A", text:"Unchanged callers do not appear in a diff."},
     {k:"B", text:"Integration passes cannot detect signature changes."},
-    {k:"C", text:"The pass runs before the per-file passes."},
+    {k:"C", text:"The pass runs before any of the per-file passes."},
     {k:"D", text:"Diffs omit file paths needed for cross-referencing."}
   ],
   correct:["A"],
@@ -648,9 +648,9 @@
   stem:"A team runs three review passes and reports only findings appearing in two. Real bugs start slipping through. Why?",
   options:[
     {k:"A", text:"Subtle bugs are often caught in only one pass."},
-    {k:"B", text:"Three passes exceed the recommended maximum."},
+    {k:"B", text:"Three passes exceeds the recommended maximum for a review."},
     {k:"C", text:"Passes interfere when run against the same diff."},
-    {k:"D", text:"Consensus requires an even number of passes."}
+    {k:"D", text:"Consensus filtering requires an even number of passes."}
   ],
   correct:["A"],
   explain:{
@@ -705,7 +705,7 @@
   stem:"Which is the strongest reason to split a review by file rather than by concern?",
   options:[
     {k:"A", text:"Each file gets the same depth of attention."},
-    {k:"B", text:"Concern-based passes cannot be automated."},
+    {k:"B", text:"Concern-based passes cannot be automated reliably."},
     {k:"C", text:"Files are smaller than concerns."},
     {k:"D", text:"Concerns overlap and produce duplicate findings."}
   ],

@@ -99,7 +99,7 @@ guards now exist so they cannot silently return. When adding questions, all must
 | Content correctness | `validateBank()` in `src/80-validate.js`, on every page load | bad ids, correct key not among options, missing rationale, unframed item, over-target task statement, mock draw that cannot fill |
 | Answer position | `tools/analyse-presented.js` | non-uniform position **after shuffling** |
 | Answer length | `analyse.js` + `validateBank()` | correct answer longest in >40% of items (chance is 25%) |
-| Distractor plausibility | `tools/distractors.js` | any of six blind-elimination heuristics >35%, near-duplicate distractors in one question, >1 invented-capability distractor per question |
+| Distractor plausibility | `tools/distractors.js` | any of eight blind-elimination heuristics >35%, near-duplicate distractors in one question, >1 invented-capability distractor per question |
 | Reproducible build | manual | rebuilding from `src/` not byte-identical |
 
 `tools/distractors.js` deliberately **reports but does not gate** rationale length and
@@ -127,8 +127,12 @@ Four such divergences are already documented (`Task` vs `Agent`, MCP scope count
 
 ## Content status
 
-187 questions across 30 task statements, being expanded to 20 each (600 total) one domain
-per pass, committed only when all gates pass. `readme.txt` §12 tracks progress.
+600 questions across 30 task statements, 20 each. Every item is scenario-framed, and
+all 75 domain/draw combinations in the mock exam fill without backfill.
 
 Only the 12 questions derived from the guide's published samples have externally validated
 answers; the rest are authored judgement. Do not describe the app as authoritative.
+
+When adding questions, correcting a length bias by extending one distractor pushes items
+into the adjacent rank and creates a mirror tell there. `tools/distractors.js` tests all
+four length ranks for exactly this reason; check the whole distribution, not one metric.

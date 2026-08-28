@@ -24,7 +24,7 @@
   stem:"Two tools, `search_code` and `find_symbol`, both search a repository. The agent picks between them at roughly chance. Their descriptions are each one sentence and accurate. What is the most likely remaining problem?",
   options:[
     {k:"A", text:"Neither description says when to prefer it over the other."},
-    {k:"B", text:"The tool names are too similar and should be renamed."},
+    {k:"B", text:"The two tool names are too similar and should be renamed."},
     {k:"C", text:"Two search tools is inherently ambiguous and one should be removed."},
     {k:"D", text:"The descriptions are too short to be parsed reliably."}
   ],
@@ -62,7 +62,7 @@
   stem:"An extraction agent has `parse_invoice` and `parse_receipt`. Documents that are arguably either are routed inconsistently. What is the most useful addition to the descriptions?",
   options:[
     {k:"A", text:"A rule for the ambiguous case, stating which tool wins and why."},
-    {k:"B", text:"A statement that the two tools have overlapping applicability."},
+    {k:"B", text:"A statement noting that the two tools have overlapping applicability."},
     {k:"C", text:"An instruction to try one and fall back to the other on failure."},
     {k:"D", text:"A confidence threshold below which the agent should not call either."}
   ],
@@ -175,8 +175,8 @@
   stem:"An MCP tool `semantic_search` is well described and genuinely better than Grep for the task, but the agent still reaches for Grep. Descriptions have been checked. What else should you consider?",
   options:[
     {k:"A", text:"Whether the description says what it does that Grep cannot."},
-    {k:"B", text:"Whether MCP tools are given lower priority than built-ins."},
-    {k:"C", text:"Whether Grep should be removed from the agent's tool set."},
+    {k:"B", text:"Whether MCP tools are given a lower selection priority than the built-in tools."},
+    {k:"C", text:"Whether Grep should be removed from this agent's tool set."},
     {k:"D", text:"Whether the MCP server is connected at the time of selection."}
   ],
   correct:["A"],
@@ -328,7 +328,7 @@
   options:[
     {k:"A", text:"The agent retries an identical malformed call until it gives up."},
     {k:"B", text:"The agent corrects the request automatically on the second attempt."},
-    {k:"C", text:"The tool queues the request until the field becomes available."},
+    {k:"C", text:"The tool queues the request until the missing field becomes available."},
     {k:"D", text:"The retry succeeds, since transient classification triggers a different code path."}
   ],
   correct:["A"],
@@ -440,7 +440,7 @@
   stem:"A subagent cannot reach a source repository at all. It returns `{results: [], status: 'ok'}`. What is the consequence for the final report?",
   options:[
     {k:"A", text:"The topic appears researched and empty, when it was never actually searched."},
-    {k:"B", text:"The coordinator retries the subagent until it returns a non-empty result."},
+    {k:"B", text:"The coordinator retries the subagent repeatedly until it returns a non-empty result set."},
     {k:"C", text:"The synthesis step raises an error on receiving an empty result set."},
     {k:"D", text:"The report is annotated as having incomplete coverage for that topic."}
   ],
@@ -461,7 +461,7 @@
     {k:"A", text:"Findings are being signalled as tool failure rather than as results."},
     {k:"B", text:"The linter should not be exposed as a tool at all."},
     {k:"C", text:"The error message is not detailed enough about the violations."},
-    {k:"D", text:"The agent should be instructed that linter errors mean violations."}
+    {k:"D", text:"The agent should simply be instructed that linter errors always mean violations."}
   ],
   correct:["A"],
   explain:{
@@ -480,7 +480,7 @@
     {k:"A", text:"It simplifies the agent but hides latency and removes its options."},
     {k:"B", text:"It violates the MCP specification, which forbids server-side retries."},
     {k:"C", text:"It has no downside and should always be preferred."},
-    {k:"D", text:"It prevents the agent from ever receiving successful results."}
+    {k:"D", text:"It prevents the agent from ever receiving any successful results."}
   ],
   correct:["A"],
   explain:{
@@ -497,9 +497,9 @@
   stem:"Why does a uniform 'Operation failed' response prevent good agent behaviour, even when it is accurate?",
   options:[
     {k:"A", text:"Recovery depends on the failure kind, which the message omits."},
-    {k:"B", text:"The agent cannot parse messages that lack structured fields."},
+    {k:"B", text:"The agent cannot parse failure messages that lack structured fields."},
     {k:"C", text:"Uniform messages are rejected by the MCP transport layer."},
-    {k:"D", text:"The agent will interpret any unstructured message as success."}
+    {k:"D", text:"The agent will interpret any unstructured failure message as a success and continue."}
   ],
   correct:["A"],
   explain:{
@@ -517,7 +517,7 @@
   options:[
     {k:"A", text:"The 47 results plus an explicit record of the 3 failures and why."},
     {k:"B", text:"An error for the whole batch, since it did not fully succeed."},
-    {k:"C", text:"The 47 results, with the 3 retried silently until they succeed."},
+    {k:"C", text:"The 47 results, with the remaining 3 retried silently until they succeed."},
     {k:"D", text:"Placeholder records for the 3, so downstream counts stay consistent."}
   ],
   correct:["A"],

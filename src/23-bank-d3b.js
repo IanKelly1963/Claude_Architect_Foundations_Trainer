@@ -44,7 +44,7 @@
   options:[
     {k:"A", text:"`CLAUDE.local.md` at the project root, gitignored."},
     {k:"B", text:"`~/.claude/CLAUDE.md`, which is personal."},
-    {k:"C", text:"`.claude/CLAUDE.md`, which is project-scoped."},
+    {k:"C", text:"`.claude/CLAUDE.md`, which is project-scoped and committed."},
     {k:"D", text:"A `personal` section inside the committed CLAUDE.md."}
   ],
   correct:["A"],
@@ -82,7 +82,7 @@
   options:[
     {k:"A", text:"No: imports aid organisation, and all five still load at launch."},
     {k:"B", text:"Yes: imports should have reduced usage by roughly the split ratio."},
-    {k:"C", text:"Yes: imported files load only when referenced in conversation."},
+    {k:"C", text:"Yes: imported files load only when they are referenced in conversation."},
     {k:"D", text:"No: imports increase usage because each file adds a header."}
   ],
   correct:["A"],
@@ -330,7 +330,7 @@
     {k:"A", text:"When it must apply in every session."},
     {k:"B", text:"When the procedure has more than five steps."},
     {k:"C", text:"When the workflow needs restricted tool access."},
-    {k:"D", text:"When the output would be verbose."}
+    {k:"D", text:"When the output produced would be verbose."}
   ],
   correct:["A"],
   explain:{
@@ -405,7 +405,7 @@
   stem:"A team keeps a long deployment runbook in CLAUDE.md. It is used roughly once a fortnight. What is the better home for it?",
   options:[
     {k:"A", text:"A skill, invoked when a deployment is happening."},
-    {k:"B", text:"A `.claude/rules/` file with no path scoping."},
+    {k:"B", text:"A `.claude/rules/` file carrying no path scoping."},
     {k:"C", text:"A subdirectory CLAUDE.md under the deployment folder."},
     {k:"D", text:"Left where it is, since deployments are important."}
   ],
@@ -444,7 +444,7 @@
     {k:"A", text:"A project skill with `allowed-tools` set."},
     {k:"B", text:"A CLAUDE.md section describing the procedure."},
     {k:"C", text:"A shell script that pipes instructions into the prompt."},
-    {k:"D", text:"A user-level command on the CI runner."}
+    {k:"D", text:"A user-level command installed on the CI runner."}
   ],
   correct:["A"],
   explain:{
@@ -461,8 +461,8 @@
   stem:"What distinguishes a skill from a slash command in practice?",
   options:[
     {k:"A", text:"Frontmatter controlling tools, model and execution context."},
-    {k:"B", text:"A skill can be invoked by the model; a command cannot."},
-    {k:"C", text:"A command is project-scoped; a skill is always personal."},
+    {k:"B", text:"A skill can be invoked by the model, whereas a command cannot."},
+    {k:"C", text:"A command is project-scoped, whereas a skill is always personal."},
     {k:"D", text:"A command may take arguments; a skill may not."}
   ],
   correct:["A"],
@@ -480,7 +480,7 @@
   stem:"A skill's description reads 'Helps with database work.' It is invoked for migrations, query tuning and schema review, performing poorly at all three. What is the fix?",
   options:[
     {k:"A", text:"Split it into three skills with specific descriptions."},
-    {k:"B", text:"Expand the single skill to handle all three well."},
+    {k:"B", text:"Expand the single skill so it handles all three well."},
     {k:"C", text:"Add `disable-model-invocation` so it is only used deliberately."},
     {k:"D", text:"Restrict its tools to database operations."}
   ],
@@ -501,7 +501,7 @@
     {k:"A", text:"Overlapping descriptions make the model's choice ambiguous."},
     {k:"B", text:"Skills beyond ten are selected at random."},
     {k:"C", text:"Skills without `argument-hint` default to always-on."},
-    {k:"D", text:"Project skills override user skills, changing behaviour."}
+    {k:"D", text:"Project skills override user skills, which changes the observed behaviour."}
   ],
   correct:["A"],
   explain:{
@@ -577,7 +577,7 @@
     {k:"A", text:"A path-scoped rule on the migration filename."},
     {k:"B", text:"A CLAUDE.md in each service's migrations folder."},
     {k:"C", text:"A section in the root CLAUDE.md."},
-    {k:"D", text:"A skill invoked before writing a migration."}
+    {k:"D", text:"A skill invoked by the developer before writing a migration."}
   ],
   correct:["A"],
   explain:{
@@ -614,7 +614,7 @@
   options:[
     {k:"A", text:"Without `paths` it always loads; with it, only on matching reads."},
     {k:"B", text:"Without `paths` it never loads; the field is required."},
-    {k:"C", text:"Without `paths` it applies only to the rules directory itself."},
+    {k:"C", text:"Without `paths` it applies only to files in the rules directory itself."},
     {k:"D", text:"Without `paths` it is treated as documentation and ignored."}
   ],
   correct:["A"],
@@ -745,7 +745,7 @@
   stem:"A developer puts a rules file in `~/.claude/rules/` expecting the team to get it. What is wrong?",
   options:[
     {k:"A", text:"User-level rules are personal and are not shared."},
-    {k:"B", text:"User-level rules are unsupported and never load."},
+    {k:"B", text:"User-level rules are unsupported and so never load at all."},
     {k:"C", text:"User-level rules load only in projects without their own rules."},
     {k:"D", text:"User-level rules require a matching project rule to activate."}
   ],
@@ -784,7 +784,7 @@
   options:[
     {k:"A", text:"Whether it should apply automatically or on request."},
     {k:"B", text:"Whether the guidance exceeds 200 lines."},
-    {k:"C", text:"Whether the languages are compiled or interpreted."},
+    {k:"C", text:"Whether the languages involved are compiled or interpreted."},
     {k:"D", text:"Whether the team uses a monorepo."}
   ],
   correct:["A"],

@@ -195,7 +195,7 @@
   stem:"Your support agent handles clear requests well but is erratic on ambiguous ones, such as a customer who mentions both a return and a warranty question without specifying which they want resolved. What is the most effective intervention?",
   options:[
     {k:"A", text:"Few-shot examples of ambiguous requests showing which action was chosen, and why."},
-    {k:"B", text:"An instruction to always ask a clarifying question when a request is ambiguous."},
+    {k:"B", text:"An instruction to always ask a clarifying question whenever a request is ambiguous."},
     {k:"C", text:"A larger tool set, so that the agent has a distinct option available for every possible interpretation of the request."},
     {k:"D", text:"A rule to always handle the first-mentioned issue and ignore the rest."}
   ],
@@ -311,7 +311,7 @@
     {k:"A", text:"In the prompt, alongside the schema, stating how ambiguous formats should be read."},
     {k:"B", text:"In the JSON schema's `pattern` field, which will coerce non-conforming inputs into the required format."},
     {k:"C", text:"In a downstream service that reformats whatever string the model returns."},
-    {k:"D", text:"Nowhere; a strict schema type of `date` handles format conversion automatically."}
+    {k:"D", text:"Nowhere; a strict schema type of `date` handles the format conversion automatically."}
   ],
   correct:["A"],
   explain:{
@@ -347,7 +347,7 @@
   stem:"Pydantic validation rejects an extraction because a field arrived as a string where a number was expected. What is the most effective retry design?",
   options:[
     {k:"A", text:"Send a follow-up containing the original document, the failed extraction and the specific validation error."},
-    {k:"B", text:"Retry the original request unchanged, since ordinary sampling variation may well produce a valid result."},
+    {k:"B", text:"Retry the original request unchanged, since ordinary sampling variation may well produce a valid result on a second attempt."},
     {k:"C", text:"Retry with temperature raised, to explore a different output path."},
     {k:"D", text:"Discard the document and flag it for manual extraction."}
   ],
@@ -500,7 +500,7 @@
     {k:"A", text:"Resubmit only those 6, identified by `custom_id`, after chunking them to fit."},
     {k:"B", text:"Resubmit the entire batch of 100 with chunking applied to every document."},
     {k:"C", text:"Process the 6 through the real-time API instead, since batch cannot handle large documents."},
-    {k:"D", text:"Discard the 6 and report 94% coverage, since oversized documents are rare."}
+    {k:"D", text:"Discard the 6 and report 94% coverage, on the grounds that oversized documents are rare."}
   ],
   correct:["A"],
   explain:{
@@ -519,7 +519,7 @@
     {k:"A", text:"No, because the batch API does not support multi-turn tool calling within a single request."},
     {k:"B", text:"Yes, provided each tool is declared in the batch request's tools array."},
     {k:"C", text:"Yes, provided the tools respond within the 24-hour processing window."},
-    {k:"D", text:"No, because the batch API does not support tool definitions of any kind within a request."}
+    {k:"D", text:"No, because the batch API does not accept tool definitions of any kind within a single request."}
   ],
   correct:["A"],
   explain:{
@@ -556,7 +556,7 @@
   options:[
     {k:"A", text:"It correlates each request with its corresponding response, and must be unique within the batch."},
     {k:"B", text:"It sets the processing priority of a request within the batch queue."},
-    {k:"C", text:"It groups related requests together so that they are processed on the same worker in one pass."},
+    {k:"C", text:"It groups related requests so that they are processed together on the same worker within one pass."},
     {k:"D", text:"It identifies the billing account each request should be charged against."}
   ],
   correct:["A"],
@@ -612,7 +612,7 @@
   stem:"Which review structure best catches a bug where one file's function signature changed and callers in other files were not updated?",
   options:[
     {k:"A", text:"An integration pass dedicated to cross-file data flow, run in addition to per-file passes."},
-    {k:"B", text:"A per-file pass with instructions to consider how each function might be used elsewhere."},
+    {k:"B", text:"A per-file pass with instructions to consider how each function might be used elsewhere in the codebase."},
     {k:"C", text:"A single pass over all files together, so every relationship is visible at once."},
     {k:"D", text:"Three independent passes over the changed file, to maximise the chance of noticing the signature change."}
   ],

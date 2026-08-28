@@ -75,6 +75,18 @@ const HEURISTICS = {
     const m = Math.min(...q.options.map(o => o.text.length));
     return q.options.filter(o => o.text.length === m).map(o => o.k);
   },
+  /* Fixing a "longest answer" tell by extending exactly one distractor moves
+     items from rank 1 to rank 2 rather than spreading them, which creates a
+     second-longest tell instead. Testing only the extremes misses that
+     entirely, so every interior rank is checked too. */
+  "second-longest option": q => {
+    const sorted = q.options.slice().sort((a, b) => b.text.length - a.text.length);
+    return sorted.length > 1 ? [sorted[1].k] : [];
+  },
+  "second-shortest option": q => {
+    const sorted = q.options.slice().sort((a, b) => a.text.length - b.text.length);
+    return sorted.length > 1 ? [sorted[1].k] : [];
+  },
   "avoid absolutes": q => {
     const k = q.options.filter(o => !ABSOLUTE.test(o.text));
     return (k.length && k.length < q.options.length) ? k.map(o => o.k) : [];

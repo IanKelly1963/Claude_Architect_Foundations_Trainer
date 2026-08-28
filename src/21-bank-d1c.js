@@ -25,7 +25,7 @@
   options:[
     {k:"A", text:"The loop stops with the search unexecuted and presents the narration as the answer."},
     {k:"B", text:"The loop executes the search but discards the result, because the text block was seen first."},
-    {k:"C", text:"The API rejects the response, since text and `tool_use` cannot appear in one turn."},
+    {k:"C", text:"The API rejects the response outright, since text and `tool_use` blocks cannot appear together in one turn."},
     {k:"D", text:"The loop retries the same request until a turn arrives with no text block."}
   ],
   correct:["A"],
@@ -45,7 +45,7 @@
     {k:"A", text:"As a `tool_result` marked as an error, so the model can distinguish failure from an empty result."},
     {k:"B", text:"By omitting the `tool_result` block entirely, so the model retries the call."},
     {k:"C", text:"By raising the exception to the caller and terminating the loop for that request."},
-    {k:"D", text:"As a `tool_result` containing an empty string, letting the model infer that nothing was found."}
+    {k:"D", text:"As a `tool_result` containing an empty string, leaving the model to infer that nothing was found."}
   ],
   correct:["A"],
   explain:{
@@ -63,8 +63,8 @@
   options:[
     {k:"A", text:"It is a runaway guard, and using it to terminate normal work truncates legitimate cases."},
     {k:"B", text:"It should be raised to match the longest workflow, then left as the termination condition."},
-    {k:"C", text:"It is the only bound on cost, so `stop_reason` checking is redundant once it is set."},
-    {k:"D", text:"It should be applied per tool rather than per loop, so each tool gets five attempts."}
+    {k:"C", text:"It is the only bound on cost, so `stop_reason` checking becomes redundant once it is set."},
+    {k:"D", text:"It should be applied per tool rather than per loop, so that each tool gets five attempts."}
   ],
   correct:["A"],
   explain:{
@@ -82,7 +82,7 @@
   options:[
     {k:"A", text:"Each message leaves the remaining calls unanswered, breaking the pairing within that turn."},
     {k:"B", text:"The four results arrive out of order, so the model attributes them to the wrong calls."},
-    {k:"C", text:"Only the last message is retained, because each user message supersedes the previous one."},
+    {k:"C", text:"Only the last message is retained, because each new user message supersedes the one before it."},
     {k:"D", text:"The searches execute sequentially rather than in parallel, costing latency but nothing else."}
   ],
   correct:["A"],
@@ -100,7 +100,7 @@
   stem:"A developer proposes a loop that inspects the arguments of each `tool_use` block and, if the agent asks to read a file it has already read, substitutes a cached result rather than re-reading. What is the main risk?",
   options:[
     {k:"A", text:"The file may have changed since the first read, so the agent reasons from stale content."},
-    {k:"B", text:"Caching breaks the `tool_use_id` pairing, so the model cannot match result to call."},
+    {k:"B", text:"Caching breaks the `tool_use_id` pairing, so the model cannot match the result to its call."},
     {k:"C", text:"The model will detect the substitution and re-request the file with different arguments."},
     {k:"D", text:"Cached results cannot be placed in a `tool_result` block, so the turn cannot be completed."}
   ],
@@ -178,7 +178,7 @@
     {k:"A", text:"The results answer calls with no matching request, so the conversation is inconsistent."},
     {k:"B", text:"Nothing breaks; `tool_use` blocks are only needed at the moment of execution."},
     {k:"C", text:"The model loses its system prompt, since it is carried on the assistant turn."},
-    {k:"D", text:"Token usage rises, because the model regenerates the dropped blocks on the next turn."}
+    {k:"D", text:"Token usage rises, because the model regenerates the dropped blocks on the following turn."}
   ],
   correct:["A"],
   explain:{
@@ -290,7 +290,7 @@
   options:[
     {k:"A", text:"In the coordinator, which owns composing the customer-facing response from subagent output."},
     {k:"B", text:"In the billing subagent, which should write the full customer reply itself."},
-    {k:"C", text:"In the system prompt, by asking every subagent to write in a customer-friendly register."},
+    {k:"C", text:"In the system prompt, by asking every one of the subagents to write in a customer-friendly register."},
     {k:"D", text:"In the customer's original message, which should be rewritten before delegation."}
   ],
   correct:["A"],
@@ -329,7 +329,7 @@
     {k:"A", text:"Decomposition should follow the shape of the question, not the shape of the filesystem."},
     {k:"B", text:"Subagents should always be spawned sequentially rather than in parallel."},
     {k:"C", text:"Each subagent should have been given the full repository for context."},
-    {k:"D", text:"Directory-level work should be done by the coordinator and file-level work delegated."}
+    {k:"D", text:"Directory-level work should sit with the coordinator and file-level work be delegated out."}
   ],
   correct:["A"],
   explain:{
@@ -386,7 +386,7 @@
     {k:"A", text:"Latency roughly doubles for no benefit, since the two are genuinely independent."},
     {k:"B", text:"The policy check receives stale order data, because it runs after the lookup completes."},
     {k:"C", text:"The coordinator cannot aggregate results that arrived at different times."},
-    {k:"D", text:"Sequential delegation prevents the subagents from sharing customer context."},
+    {k:"D", text:"Sequential delegation prevents the two subagents from sharing customer context."},
   ],
   correct:["A"],
   explain:{
@@ -440,8 +440,8 @@
   stem:"An engineer proposes that the coordinator write its delegation decisions to a log the subagents can read, so they know what the others are doing. What is the strongest objection?",
   options:[
     {k:"A", text:"It rebuilds shared state, reintroducing the coupling isolation removes."},
-    {k:"B", text:"Subagents cannot perform file reads, so they could not access the log."},
-    {k:"C", text:"The log would exceed the context window of any subagent that read it."},
+    {k:"B", text:"Subagents cannot perform file reads at all, so they would have no way to access the log."},
+    {k:"C", text:"The log would exceed the context window of any subagent that tried to read it."},
     {k:"D", text:"Delegation decisions are not knowable until every subagent has returned."}
   ],
   correct:["A"],
@@ -461,7 +461,7 @@
     {k:"A", text:"The coordinator should recognise when no subagent fits and route the document for review."},
     {k:"B", text:"The closest subagent should be broadened until it covers every document type."},
     {k:"C", text:"A subagent should be created for every document type the business might ever receive."},
-    {k:"D", text:"The document should be reformatted to match the nearest supported type before routing."}
+    {k:"D", text:"The document should be reformatted to match the nearest supported type before it is routed."}
   ],
   correct:["A"],
   explain:{

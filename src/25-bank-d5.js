@@ -24,7 +24,7 @@
   stem:"Your synthesis agent reliably incorporates findings from the start and end of the aggregated input but frequently omits findings from the middle. What mitigations address this directly?",
   options:[
     {k:"A", text:"Place a key-findings summary first and organise details under explicit section headers."},
-    {k:"B", text:"Sort the findings by relevance so the most important are first, and truncate the tail."},
+    {k:"B", text:"Sort the findings by relevance so the most important come first, then truncate the tail."},
     {k:"C", text:"Reduce the total number of findings passed so everything fits comfortably."},
     {k:"D", text:"Repeat the middle findings again at the end of the input so that they also appear in a well-attended position."}
   ],
@@ -43,7 +43,7 @@
   stem:"Each `lookup_order` call returns more than 40 fields, of which about 5 matter for a return. Across a long conversation these accumulate and crowd out earlier context. What is the appropriate intervention?",
   options:[
     {k:"A", text:"Trim tool outputs to the relevant fields before they enter context."},
-    {k:"B", text:"Summarise the conversation more frequently to reclaim the space."},
+    {k:"B", text:"Summarise the conversation more frequently in order to reclaim the space."},
     {k:"C", text:"Call `lookup_order` less often by caching its results in the prompt."},
     {k:"D", text:"Accept the accumulation, since the extra fields might be needed later."}
   ],
@@ -462,7 +462,7 @@
     {k:"A", text:"Accuracy broken down by document type and by field, to confirm consistency."},
     {k:"B", text:"That the 97% was measured on a sample of at least 1,000 documents."},
     {k:"C", text:"That the confidence threshold has been set above the mean confidence observed across the corpus."},
-    {k:"D", text:"That the extraction latency stays within limits at full automation volume."}
+    {k:"D", text:"That the extraction latency stays within acceptable limits at full automation volume."}
   ],
   correct:["A"],
   explain:{
@@ -498,7 +498,7 @@
   stem:"You want confidence scores to be useful for routing rather than decorative. What makes them trustworthy?",
   options:[
     {k:"A", text:"Calibrating the review thresholds against a labelled validation set."},
-    {k:"B", text:"Instructing the model to be conservative when assigning confidence."},
+    {k:"B", text:"Instructing the model to be more conservative when it assigns confidence."},
     {k:"C", text:"Averaging confidence across three runs of the same document."},
     {k:"D", text:"Normalising the scores so that they are uniformly distributed across the available range."}
   ],
@@ -594,7 +594,7 @@
   options:[
     {k:"A", text:"Require subagents to output structured claim-source mappings that downstream agents must preserve and merge."},
     {k:"B", text:"Require the synthesis agent to add citations at the end based on the overall source list."},
-    {k:"C", text:"Require the coordinator to verify every citation in the final report against the consolidated source list."},
+    {k:"C", text:"Require the coordinator to verify every citation in the finished report against the consolidated source list."},
     {k:"D", text:"Require subagents to include full source text with every finding so nothing is lost."}
   ],
   correct:["A"],
@@ -614,7 +614,7 @@
     {k:"A", text:"Require publication or data-collection dates in subagent output."},
     {k:"B", text:"Require subagents to reject sources older than two years."},
     {k:"C", text:"Require the synthesis step to report only the higher of any two conflicting figures."},
-    {k:"D", text:"Require subagents to note whether a source is peer-reviewed."}
+    {k:"D", text:"Require subagents to note whether each source is peer-reviewed."}
   ],
   correct:["A"],
   explain:{
@@ -651,7 +651,7 @@
   options:[
     {k:"A", text:"Render each content type appropriately: financial data as tables, news as prose."},
     {k:"B", text:"Keep the uniform format for the sake of consistency, and add a preamble explaining to readers how to read it."},
-    {k:"C", text:"Convert everything to prose, which reads most naturally for all content types."},
+    {k:"C", text:"Convert everything to prose, which reads most naturally across all content types."},
     {k:"D", text:"Split the report into separate documents, one per content type."}
   ],
   correct:["A"],

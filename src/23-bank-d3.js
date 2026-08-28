@@ -120,7 +120,7 @@
   stem:"You want a custom `/review` slash command running your team's review checklist, available to every developer when they clone or pull the repository. Where should the command file live?",
   options:[
     {k:"A", text:"In the `.claude/commands/` directory in the project repository."},
-    {k:"B", text:"In `~/.claude/commands/` in each developer's home directory."},
+    {k:"B", text:"In `~/.claude/commands/` in each individual developer's home directory."},
     {k:"C", text:"In the CLAUDE.md file at the project root."},
     {k:"D", text:"In a `.claude/config.json` file with a `commands` array."}
   ],
@@ -294,7 +294,7 @@
     {k:"A", text:"Unconditionally at launch, at the same priority as `.claude/CLAUDE.md`."},
     {k:"B", text:"Never, since a rule without `paths` has no activation condition."},
     {k:"C", text:"Only when the user explicitly references it by filename."},
-    {k:"D", text:"Only when Claude reads a file in the same directory as the rule file."}
+    {k:"D", text:"Only when Claude reads a file sitting in the same directory as the rule file itself."}
   ],
   correct:["A"],
   explain:{
@@ -388,8 +388,8 @@
   options:[
     {k:"A", text:"The Explore subagent for the discovery phase, so only a summary returns."},
     {k:"B", text:"A larger context window model, so that the discovery output and the implementation work both fit comfortably."},
-    {k:"C", text:"Plan mode for the whole task, since plan mode does not consume context."},
-    {k:"D", text:"Splitting the work across two developers so each context stays smaller."}
+    {k:"C", text:"Plan mode for the whole task, on the grounds that plan mode does not consume context."},
+    {k:"D", text:"Splitting the work across two developers so that each context stays smaller."}
   ],
   correct:["A"],
   explain:{
@@ -444,7 +444,7 @@
   options:[
     {k:"A", text:"It enables safe exploration of the codebase before any change is committed."},
     {k:"B", text:"It runs the proposed changes in a sandbox so their effects can be measured before they are applied to the working tree."},
-    {k:"C", text:"It automatically generates a rollback commit so any change can be undone."},
+    {k:"C", text:"It automatically generates a rollback commit so that any change can be undone."},
     {k:"D", text:"It reduces token usage by preventing the agent from reading files during the design phase."}
   ],
   correct:["A"],
@@ -500,7 +500,7 @@
   stem:"A generated function has four defects. Fixing the pagination bug changes how the retry logic must work, and the error-handling fix depends on both. How should you report them?",
   options:[
     {k:"A", text:"In a single detailed message covering all four issues, because the fixes interact."},
-    {k:"B", text:"One at a time in dependency order, verifying each fix before reporting the next."},
+    {k:"B", text:"One at a time in dependency order, verifying each fix before the next is reported."},
     {k:"C", text:"One at a time in severity order, starting with the most serious."},
     {k:"D", text:"In two messages, splitting them into interacting and independent pairs."}
   ],
@@ -538,7 +538,7 @@
   stem:"A migration script mishandles null values in one column. What is the most effective way to communicate the fix?",
   options:[
     {k:"A", text:"Provide a specific test case with the null-containing input and the exact expected output."},
-    {k:"B", text:"State clearly that the script must handle null values correctly in every affected column."},
+    {k:"B", text:"State clearly that the script must handle null values correctly in every affected column of the table."},
     {k:"C", text:"Ask for defensive null checks to be added throughout the script."},
     {k:"D", text:"Share the database schema so the nullable columns are visible."}
   ],
@@ -558,7 +558,7 @@
   options:[
     {k:"A", text:"When the issues are independent, so that each fix can be verified without disturbing the others."},
     {k:"B", text:"Always, since smaller changes are easier to review."},
-    {k:"C", text:"When the issues interact, so that each fix can properly account for the one applied before it."},
+    {k:"C", text:"When the issues interact, so that each fix can properly account for the one applied just before it."},
     {k:"D", text:"When there are more than three issues, regardless of how they relate."}
   ],
   correct:["A"],
@@ -671,7 +671,7 @@
   stem:"Why is the same Claude session that generated a piece of code a weaker reviewer of it than a fresh instance?",
   options:[
     {k:"A", text:"It retains the reasoning context that produced the code, so it rarely questions it."},
-    {k:"B", text:"Its context window is already partly consumed, so it has less capacity for review."},
+    {k:"B", text:"Its context window is already partly consumed, so it has less capacity left for the review."},
     {k:"C", text:"Review requires a different model configuration that cannot be changed mid-session."},
     {k:"D", text:"Generated code is cached within the session and re-read from that cache rather than being analysed afresh."}
   ],

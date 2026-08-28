@@ -43,7 +43,7 @@
   stem:"A `PreToolUse` hook returns `ask` for refunds between $200 and $500. What behaviour does that produce?",
   options:[
     {k:"A", text:"The decision is escalated to the user rather than settled in the hook."},
-    {k:"B", text:"The call is blocked, and the model is told to try a smaller amount."},
+    {k:"B", text:"The call is blocked, and the model is told to try again with a smaller amount."},
     {k:"C", text:"The call proceeds, and a warning is attached to the result."},
     {k:"D", text:"The hook defers to the next hook in the chain for that tool."}
   ],
@@ -101,7 +101,7 @@
   options:[
     {k:"A", text:"In a `PostToolUse` hook, so the model only ever sees one format."},
     {k:"B", text:"In the extraction schema, using a `format` keyword to coerce incoming values."},
-    {k:"C", text:"In the prompt, by describing each source's format to the model."},
+    {k:"C", text:"In the prompt, by describing each source's date format to the model."},
     {k:"D", text:"In the downstream consumer, which can normalise whatever the pipeline emits."}
   ],
   correct:["A"],
@@ -177,7 +177,7 @@
   options:[
     {k:"A", text:"Yes, provided the rejection explains the rule so the retries converge."},
     {k:"B", text:"No, because hooks cannot inspect the arguments of a commit call."},
-    {k:"C", text:"No, because format is a style matter and never warrants enforcement."},
+    {k:"C", text:"No, because format is a style matter and so never warrants enforcement."},
     {k:"D", text:"Yes, and no explanation is needed since the agent will infer the rule from repeated rejection."}
   ],
   correct:["A"],
@@ -272,7 +272,7 @@
   options:[
     {k:"A", text:"Adaptive: follow the evidence, letting each finding determine the next step."},
     {k:"B", text:"Fixed: check the code, then the config, then the infrastructure, then the data."},
-    {k:"C", text:"Parallel: investigate all four layers simultaneously and merge conclusions."},
+    {k:"C", text:"Parallel: investigate all four layers simultaneously and then merge the conclusions."},
     {k:"D", text:"Exhaustive: review every change made in the last week in chronological order."}
   ],
   correct:["A"],
@@ -309,7 +309,7 @@
   stem:"Your integration pass reports 'no cross-file issues' on every pull request, including ones where a signature changed and callers were missed. What is the most likely defect?",
   options:[
     {k:"A", text:"It receives only the diff, so the unchanged callers are invisible to it."},
-    {k:"B", text:"It runs before the per-file passes and so has no findings to integrate."},
+    {k:"B", text:"It runs before the per-file passes complete, so it has no findings available to integrate."},
     {k:"C", text:"Integration passes cannot detect signature changes by design."},
     {k:"D", text:"The per-file passes already reported the issue, so it is suppressed as a duplicate."}
   ],
@@ -481,7 +481,7 @@
     {k:"A", text:"Chunking should adapt to document structure rather than to a fixed size."},
     {k:"B", text:"Long documents should be rejected and handled manually."},
     {k:"C", text:"The chunk size should be set to the average document length."},
-    {k:"D", text:"Every document should be split into exactly the same number of chunks."}
+    {k:"D", text:"Every document should be split into exactly the same number of chunks regardless of length."}
   ],
   correct:["A"],
   explain:{
@@ -498,7 +498,7 @@
   stem:"You resume a week-old exploration session and immediately ask a question about a file. The answer describes code that was deleted in Tuesday's refactor. What went wrong?",
   options:[
     {k:"A", text:"The session holds the old file contents and has no signal that they changed."},
-    {k:"B", text:"Resumption reloads files from disk, so the answer should have been current."},
+    {k:"B", text:"Resumption reloads files from disk on restore, so the answer given should already have been current."},
     {k:"C", text:"The session's context was compacted, losing the accurate version."},
     {k:"D", text:"The file was renamed, so the agent answered about a different file."}
   ],
@@ -517,7 +517,7 @@
   stem:"A developer keeps one long-running session for an entire feature, spanning several days and many unrelated sub-tasks. Answers become inconsistent. What practice would help most?",
   options:[
     {k:"A", text:"Start a fresh session per sub-task, carrying forward a short summary."},
-    {k:"B", text:"Keep the single session and run `/compact` whenever answers drift."},
+    {k:"B", text:"Keep the single long-running session and run `/compact` whenever the answers begin to drift."},
     {k:"C", text:"Keep the single session but raise the context window size."},
     {k:"D", text:"Fork the session at the start of each sub-task."}
   ],
@@ -631,9 +631,9 @@
   stem:"A research run is resumed the next day and the coordinator re-delegates work that already completed. What is the most likely cause?",
   options:[
     {k:"A", text:"Subagent results were never persisted, so the resumed run has no record."},
-    {k:"B", text:"Resumption always clears the coordinator's memory of prior delegations."},
+    {k:"B", text:"Resumption always clears the coordinator's memory of prior delegations as part of restoring the session."},
     {k:"C", text:"Subagents cannot be invoked twice with the same prompt."},
-    {k:"D", text:"The coordinator's context window was exceeded during the original run."}
+    {k:"D", text:"The coordinator's context window was exceeded at some point during the original run."}
   ],
   correct:["A"],
   explain:{
@@ -652,7 +652,7 @@
     {k:"A", text:"Compaction reclaims context by summarising, and summaries lose specifics."},
     {k:"B", text:"Compaction deletes the oldest turns entirely rather than summarising them."},
     {k:"C", text:"Compaction cannot be run in a resumed session and silently failed."},
-    {k:"D", text:"Compaction discards tool results but preserves all assistant reasoning."}
+    {k:"D", text:"Compaction discards tool results but preserves all of the assistant reasoning."}
   ],
   correct:["A"],
   explain:{
@@ -669,7 +669,7 @@
   stem:"Which practice best protects a multi-day investigation against context loss?",
   options:[
     {k:"A", text:"Writing key findings to a file the agent re-reads each session."},
-    {k:"B", text:"Resuming the same session every day without starting new ones."},
+    {k:"B", text:"Resuming the same named session every working day rather than starting new ones."},
     {k:"C", text:"Running `/compact` at the end of each working day."},
     {k:"D", text:"Keeping every session under one hour."}
   ],
@@ -703,7 +703,7 @@
   },
   refs:[{label:"Claude Code: CLI reference", url:"https://code.claude.com/docs/en/cli-reference"}] },
 
-{ id:"d1-1.7-s", domain:1, ts:"1.7", scenario:5, type:"single",
+{ id:"d1-1.7-s", domain:1, ts:"1.7", scenario:2, type:"single",
   stem:"A CI job resumes a named session for each run so the reviewer 'remembers' the project. Reviews slowly fill with stale findings about code that has since changed. What should change?",
   options:[
     {k:"A", text:"Start each run fresh, supplying project context from CLAUDE.md instead."},
@@ -728,7 +728,7 @@
     {k:"A", text:"You control exactly what carries forward, and nothing stale comes with it."},
     {k:"B", text:"Fresh sessions have larger context windows than resumed ones."},
     {k:"C", text:"Summaries are cheaper to produce than the original conversation."},
-    {k:"D", text:"Resumed sessions cannot call tools that the original session did not use."}
+    {k:"D", text:"Resumed sessions cannot call tools that the original session did not already use at least once."}
   ],
   correct:["A"],
   explain:{

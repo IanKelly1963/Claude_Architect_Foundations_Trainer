@@ -1,0 +1,20 @@
+{
+  "d1-1.3-k|B": "The refund tool requires an order ID that this particular subagent lacks permission to look up.",
+  "d1-1.3-m|D": "The coordinator failed to specify which tool each of the subagents ought to call first.",
+  "d4-4.5-f|C": "It groups related requests so that they are processed together on the same worker within one pass.",
+  "d5-5.4-s|B": "Investigation becomes slower to execute from end to end across the session.",
+  "d1-1.2-j|C": "In the system prompt, by asking every one of the subagents to write in a customer-friendly register.",
+  "d1-1.7-i|B": "Keep the single long-running session and run `/compact` whenever the answers begin to drift.",
+  "d2-2.3-c|D": "`\"none\"`, which returns plain text that you then parse into the appropriate schema yourself.",
+  "d2-2.2-p|B": "The coordinator retries the subagent repeatedly until it returns a non-empty result set.",
+  "d2-2.4-t|D": "Remove the approval requirement globally, for every project on the machine.",
+  "d3-3.2-a|B": "In `~/.claude/commands/` in each individual developer's home directory.",
+  "d3-3.2-q|C": "A command is project-scoped, whereas a skill is always personal.",
+  "d3-3.2-s|D": "Project skills override user skills, which changes the observed behaviour.",
+  "d3-3.3-k|C": "Without `paths` it applies only to files in the rules directory itself.",
+  "d3-3.4-l|D": "A stack trace already constitutes a plan in itself.",
+  "d3-3.4-n|B": "Continue exactly as planned and fix the consequences afterwards.",
+  "d4-4.4-a|B": "Retry the original request unchanged, since ordinary sampling variation may well produce a valid result on a second attempt.",
+  "d4-4.5-d|D": "No, because the batch API does not accept tool definitions of any kind within a single request.",
+  "d4-4.1-m|C": "Compare each reply against a model-written ideal answer for that case."
+}

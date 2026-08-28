@@ -25,8 +25,8 @@
   options:[
     {k:"A", text:"Force that tool on the first request, then switch to `auto`."},
     {k:"B", text:"Set `any` on every request so a tool is always called."},
-    {k:"C", text:"List `extract_metadata` first and use `auto` throughout."},
-    {k:"D", text:"Use `auto` with a system prompt instruction about ordering."}
+    {k:"C", text:"List `extract_metadata` first in the array and use `auto` throughout."},
+    {k:"D", text:"Use `auto` throughout, with a system prompt instruction describing the required ordering."}
   ],
   correct:["A"],
   explain:{
@@ -62,7 +62,7 @@
   stem:"A code agent has both `bash` and a set of narrow tools for reading, writing and searching. It uses `bash` for almost everything. What is the concern?",
   options:[
     {k:"A", text:"A general tool absorbs the work the specific ones were scoped for."},
-    {k:"B", text:"`bash` is slower than the narrow tools for equivalent operations."},
+    {k:"B", text:"`bash` is measurably slower than the narrow tools for equivalent file operations."},
     {k:"C", text:"Narrow tools stop being offered once `bash` is present."},
     {k:"D", text:"`bash` output cannot be returned in a `tool_result` block."}
   ],
@@ -176,7 +176,7 @@
   stem:"After scoping each subagent's tools tightly, one subagent begins failing on a legitimate task it can no longer perform. What is the right response?",
   options:[
     {k:"A", text:"Add back the one tool that task needs, not the whole original set."},
-    {k:"B", text:"Restore the original toolset, since scoping caused a regression."},
+    {k:"B", text:"Restore the original toolset, on the grounds that scoping caused a regression."},
     {k:"C", text:"Route that task to a different subagent that retains the tool."},
     {k:"D", text:"Accept the failure, since the task falls outside the agent's new scope."}
   ],
@@ -327,7 +327,7 @@
   stem:"In `.mcp.json` you write `\"command\": \"${TOOL_HOME}/server\"`. On a machine where `TOOL_HOME` is unset, what happens?",
   options:[
     {k:"A", text:"The literal text is used unexpanded and a warning is reported."},
-    {k:"B", text:"Claude Code refuses to start until the variable is defined."},
+    {k:"B", text:"Claude Code refuses to start until the variable has been defined."},
     {k:"C", text:"The variable expands to an empty string and the path becomes relative."},
     {k:"D", text:"The server entry is skipped silently and omitted from the list."}
   ],
@@ -386,7 +386,7 @@
     {k:"A", text:"Adopt it, and build custom servers only for team-specific workflows."},
     {k:"B", text:"Fork it immediately so you control the release cadence."},
     {k:"C", text:"Build your own, since third-party servers cannot be reviewed."},
-    {k:"D", text:"Adopt it but wrap every tool in a proxy with your own descriptions."}
+    {k:"D", text:"Adopt it, but wrap every one of its tools in a proxy carrying your own descriptions."}
   ],
   correct:["A"],
   explain:{
@@ -405,7 +405,7 @@
     {k:"A", text:"User scope, which applies to every project for that account."},
     {k:"B", text:"Local scope, which is bound to a single project."},
     {k:"C", text:"Project scope, which is committed to the repository."},
-    {k:"D", text:"Managed configuration, which is deployed organisation-wide."}
+    {k:"D", text:"Managed configuration, which an administrator deploys across the organisation."}
   ],
   correct:["A"],
   explain:{
@@ -422,7 +422,7 @@
   stem:"When are the tools from a configured MCP server made available to the agent?",
   options:[
     {k:"A", text:"At connection time, alongside every other configured server."},
-    {k:"B", text:"On first use, when the agent names a tool from that server."},
+    {k:"B", text:"On first use, when the agent names a tool belonging to that particular server."},
     {k:"C", text:"Only after the built-in tools have failed to satisfy the request."},
     {k:"D", text:"At the start of each turn, refreshed from the server."}
   ],
@@ -478,7 +478,7 @@
   stem:"An MCP tool returns a 60,000-token document and the agent's context is exhausted. Which response addresses the cause rather than the symptom?",
   options:[
     {k:"A", text:"Return an excerpt with a handle for fetching the rest."},
-    {k:"B", text:"Raise the maximum MCP output limit to accommodate it."},
+    {k:"B", text:"Raise the maximum MCP output limit so the whole document is accepted."},
     {k:"C", text:"Switch to a model with a larger context window."},
     {k:"D", text:"Call the tool less often."}
   ],
@@ -517,8 +517,8 @@
   options:[
     {k:"A", text:"Pre-approve the server in the CI environment's configuration."},
     {k:"B", text:"Move the server to user scope, which needs no approval."},
-    {k:"C", text:"Run the pipeline interactively once so approval persists."},
-    {k:"D", text:"Remove the approval requirement globally for all projects."}
+    {k:"C", text:"Run the pipeline interactively once so that the approval persists."},
+    {k:"D", text:"Remove the approval requirement globally, for every project on the machine."}
   ],
   correct:["A"],
   explain:{
@@ -555,7 +555,7 @@
   options:[
     {k:"A", text:"Read the file, then Write it back with the change applied."},
     {k:"B", text:"Retry the Edit, since matching is sometimes non-deterministic."},
-    {k:"C", text:"Edit each occurrence in turn until the right one changes."},
+    {k:"C", text:"Edit each of the occurrences in turn until the right one has changed."},
     {k:"D", text:"Delete the file and recreate it from the intended content."}
   ],
   correct:["A"],
@@ -612,8 +612,8 @@
   options:[
     {k:"A", text:"Find every name it is re-exported under, then search each."},
     {k:"B", text:"Search case-insensitively to catch renamed variants."},
-    {k:"C", text:"Search for the file path, since imports reference paths."},
-    {k:"D", text:"Read every file that imports from the wrapper directory."}
+    {k:"C", text:"Search for the file path of the definition, since imports reference paths."},
+    {k:"D", text:"Read every file that imports anything from the wrapper module's directory."}
   ],
   correct:["A"],
   explain:{
@@ -688,7 +688,7 @@
   options:[
     {k:"A", text:"Restrict the search to the relevant directories."},
     {k:"B", text:"Read the first 20 matches and generalise from them."},
-    {k:"C", text:"Search for a shorter substring to widen recall."},
+    {k:"C", text:"Search for a shorter substring in order to widen recall."},
     {k:"D", text:"Switch to Glob to find files named after the handler."}
   ],
   correct:["A"],
@@ -781,7 +781,7 @@
   stem:"A CI agent must review only the files a pull request changed. Which approach fits best?",
   options:[
     {k:"A", text:"Take the changed-file list from the pipeline and Read those."},
-    {k:"B", text:"Glob the whole repository and filter by modification time."},
+    {k:"B", text:"Glob the whole repository and then filter the results by modification time."},
     {k:"C", text:"Grep for recent dates in file headers."},
     {k:"D", text:"Read every file and compare against the previous run."}
   ],

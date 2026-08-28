@@ -1019,7 +1019,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Routing all communication through the coordinator preserves observability and error handling."},
     {k:"B", text:"Subagents are technically incapable of invoking other subagents under any configuration."},
-    {k:"C", text:"Direct calls would cause the two subagents to share a context window, exhausting it faster."},
+    {k:"C", text:"Direct calls would cause the two subagents to share one context window, exhausting it faster."},
     {k:"D", text:"The coordinator would no longer receive `stop_reason` values from the delegated calls, so it could not tell when the subagent had actually finished."}
   ],
   correct:["A"],
@@ -1037,7 +1037,7 @@ const BANK_ALL = [
   stem:"Your coordinator routes every query through all four subagents. For a simple factual query like 'What year was the transformer architecture published?', this costs four delegations and 90 seconds. What change best addresses this without weakening complex-query handling?",
   options:[
     {k:"A", text:"Have the coordinator analyse query requirements and dynamically select which subagents to invoke."},
-    {k:"B", text:"Add a caching layer keyed on query text so repeated simple questions skip the pipeline entirely."},
+    {k:"B", text:"Add a caching layer keyed on the query text so that repeated simple questions skip the pipeline entirely."},
     {k:"C", text:"Reduce the number of subagents from four to two by merging search with analysis and synthesis with reporting."},
     {k:"D", text:"Run all four subagents in parallel so total latency is bounded by the slowest rather than the sum."}
   ],
@@ -1268,7 +1268,7 @@ const BANK_ALL = [
     {k:"A", text:"Add a programmatic prerequisite that blocks `lookup_order` and `process_refund` until `get_customer` returns a verified customer ID."},
     {k:"B", text:"Enhance the system prompt to state that customer verification via `get_customer` is mandatory before any order operations."},
     {k:"C", text:"Add few-shot examples showing the agent always calling `get_customer` first, even when customers volunteer order details."},
-    {k:"D", text:"Implement a routing classifier that analyses each request and enables only the subset of tools appropriate for that request type."}
+    {k:"D", text:"Implement a routing classifier that analyses each incoming request and enables only the subset of tools appropriate to that request type."}
   ],
   correct:["A"],
   explain:{
@@ -1419,7 +1419,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"`PreToolUse`, which returns a `permissionDecision` of `allow`, `deny`, `ask` or `defer` before execution."},
     {k:"B", text:"`PostToolUse`, which inspects the call and can veto it retroactively."},
-    {k:"C", text:"`Stop`, which runs at the end of the turn and can roll back any tool effects that have already occurred."},
+    {k:"C", text:"`Stop`, which runs at the end of the turn and can roll back any tool effects that have already occurred during it."},
     {k:"D", text:"`SubagentStart`, which gates any tool call made inside a delegated task."}
   ],
   correct:["A"],
@@ -1590,7 +1590,7 @@ const BANK_ALL = [
     {k:"A", text:"A separate integration pass examining cross-file data flow and interface consistency across files."},
     {k:"B", text:"A larger per-file context window so each pass can also see the files that import it."},
     {k:"C", text:"A rule that per-file passes should flag any exported symbol as potentially breaking."},
-    {k:"D", text:"Reverting to single-pass review, since cross-file correctness matters more than per-file depth."}
+    {k:"D", text:"Reverting to a single-pass review, on the grounds that cross-file correctness matters more than per-file depth."}
   ],
   correct:["A"],
   explain:{
@@ -1666,7 +1666,7 @@ const BANK_ALL = [
     {k:"A", text:"Resume the session and tell it explicitly which three files changed, so it re-analyses only those."},
     {k:"B", text:"Resume the session and continue asking questions, since the agent will notice any discrepancies itself."},
     {k:"C", text:"Start a fresh session and re-explore the entire module from scratch to guarantee accuracy."},
-    {k:"D", text:"Resume the session and immediately run `/compact` to clear the stale file contents from context."}
+    {k:"D", text:"Resume the session and immediately run `/compact` to clear the stale file contents out of context."}
   ],
   correct:["A"],
   explain:{
@@ -1702,7 +1702,7 @@ const BANK_ALL = [
   stem:"Which flag continues a specific, previously named conversation in Claude Code?",
   options:[
     {k:"A", text:"`--resume <session-name>`, which continues that specific named conversation."},
-    {k:"B", text:"`--continue`, which loads the most recent conversation in the directory."},
+    {k:"B", text:"`--continue`, which loads the most recent conversation in the current directory."},
     {k:"C", text:"`--session-id <uuid>`, which assigns an identifier when starting a conversation."},
     {k:"D", text:"`--restore <session-name>`, which recovers an archived conversation."}
   ],
@@ -1742,7 +1742,7 @@ const BANK_ALL = [
     {k:"A", text:"The agent reasons confidently from stale file contents, producing authoritative-looking errors."},
     {k:"B", text:"The session fails to load, because Claude Code validates file checksums on resume."},
     {k:"C", text:"Tool results older than 24 hours are automatically discarded from the session, so the resumed context comes back silently empty."},
-    {k:"D", text:"Resumed sessions run at reduced context capacity, so the stale content crowds out new work."}
+    {k:"D", text:"Resumed sessions run at reduced context capacity, so the stale content crowds out anything new."}
   ],
   correct:["A"],
   explain:{
@@ -1760,7 +1760,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Have the agent maintain a scratchpad file of key findings on disk."},
     {k:"B", text:"Increase the session retention period so old sessions remain resumable for longer."},
-    {k:"C", text:"Always resume with `--resume` rather than starting new sessions."},
+    {k:"C", text:"Always resume with `--resume` rather than ever starting new sessions."},
     {k:"D", text:"Raise the context window size so that a single session can span the entire multi-day investigation without truncation."}
   ],
   correct:["A"],
@@ -1818,7 +1818,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"The loop stops with the search unexecuted and presents the narration as the answer."},
     {k:"B", text:"The loop executes the search but discards the result, because the text block was seen first."},
-    {k:"C", text:"The API rejects the response, since text and `tool_use` cannot appear in one turn."},
+    {k:"C", text:"The API rejects the response outright, since text and `tool_use` blocks cannot appear together in one turn."},
     {k:"D", text:"The loop retries the same request until a turn arrives with no text block."}
   ],
   correct:["A"],
@@ -1838,7 +1838,7 @@ const BANK_ALL = [
     {k:"A", text:"As a `tool_result` marked as an error, so the model can distinguish failure from an empty result."},
     {k:"B", text:"By omitting the `tool_result` block entirely, so the model retries the call."},
     {k:"C", text:"By raising the exception to the caller and terminating the loop for that request."},
-    {k:"D", text:"As a `tool_result` containing an empty string, letting the model infer that nothing was found."}
+    {k:"D", text:"As a `tool_result` containing an empty string, leaving the model to infer that nothing was found."}
   ],
   correct:["A"],
   explain:{
@@ -1856,8 +1856,8 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"It is a runaway guard, and using it to terminate normal work truncates legitimate cases."},
     {k:"B", text:"It should be raised to match the longest workflow, then left as the termination condition."},
-    {k:"C", text:"It is the only bound on cost, so `stop_reason` checking is redundant once it is set."},
-    {k:"D", text:"It should be applied per tool rather than per loop, so each tool gets five attempts."}
+    {k:"C", text:"It is the only bound on cost, so `stop_reason` checking becomes redundant once it is set."},
+    {k:"D", text:"It should be applied per tool rather than per loop, so that each tool gets five attempts."}
   ],
   correct:["A"],
   explain:{
@@ -1875,7 +1875,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Each message leaves the remaining calls unanswered, breaking the pairing within that turn."},
     {k:"B", text:"The four results arrive out of order, so the model attributes them to the wrong calls."},
-    {k:"C", text:"Only the last message is retained, because each user message supersedes the previous one."},
+    {k:"C", text:"Only the last message is retained, because each new user message supersedes the one before it."},
     {k:"D", text:"The searches execute sequentially rather than in parallel, costing latency but nothing else."}
   ],
   correct:["A"],
@@ -1893,7 +1893,7 @@ const BANK_ALL = [
   stem:"A developer proposes a loop that inspects the arguments of each `tool_use` block and, if the agent asks to read a file it has already read, substitutes a cached result rather than re-reading. What is the main risk?",
   options:[
     {k:"A", text:"The file may have changed since the first read, so the agent reasons from stale content."},
-    {k:"B", text:"Caching breaks the `tool_use_id` pairing, so the model cannot match result to call."},
+    {k:"B", text:"Caching breaks the `tool_use_id` pairing, so the model cannot match the result to its call."},
     {k:"C", text:"The model will detect the substitution and re-request the file with different arguments."},
     {k:"D", text:"Cached results cannot be placed in a `tool_result` block, so the turn cannot be completed."}
   ],
@@ -1971,7 +1971,7 @@ const BANK_ALL = [
     {k:"A", text:"The results answer calls with no matching request, so the conversation is inconsistent."},
     {k:"B", text:"Nothing breaks; `tool_use` blocks are only needed at the moment of execution."},
     {k:"C", text:"The model loses its system prompt, since it is carried on the assistant turn."},
-    {k:"D", text:"Token usage rises, because the model regenerates the dropped blocks on the next turn."}
+    {k:"D", text:"Token usage rises, because the model regenerates the dropped blocks on the following turn."}
   ],
   correct:["A"],
   explain:{
@@ -2083,7 +2083,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"In the coordinator, which owns composing the customer-facing response from subagent output."},
     {k:"B", text:"In the billing subagent, which should write the full customer reply itself."},
-    {k:"C", text:"In the system prompt, by asking every subagent to write in a customer-friendly register."},
+    {k:"C", text:"In the system prompt, by asking every one of the subagents to write in a customer-friendly register."},
     {k:"D", text:"In the customer's original message, which should be rewritten before delegation."}
   ],
   correct:["A"],
@@ -2122,7 +2122,7 @@ const BANK_ALL = [
     {k:"A", text:"Decomposition should follow the shape of the question, not the shape of the filesystem."},
     {k:"B", text:"Subagents should always be spawned sequentially rather than in parallel."},
     {k:"C", text:"Each subagent should have been given the full repository for context."},
-    {k:"D", text:"Directory-level work should be done by the coordinator and file-level work delegated."}
+    {k:"D", text:"Directory-level work should sit with the coordinator and file-level work be delegated out."}
   ],
   correct:["A"],
   explain:{
@@ -2179,7 +2179,7 @@ const BANK_ALL = [
     {k:"A", text:"Latency roughly doubles for no benefit, since the two are genuinely independent."},
     {k:"B", text:"The policy check receives stale order data, because it runs after the lookup completes."},
     {k:"C", text:"The coordinator cannot aggregate results that arrived at different times."},
-    {k:"D", text:"Sequential delegation prevents the subagents from sharing customer context."},
+    {k:"D", text:"Sequential delegation prevents the two subagents from sharing customer context."},
   ],
   correct:["A"],
   explain:{
@@ -2233,8 +2233,8 @@ const BANK_ALL = [
   stem:"An engineer proposes that the coordinator write its delegation decisions to a log the subagents can read, so they know what the others are doing. What is the strongest objection?",
   options:[
     {k:"A", text:"It rebuilds shared state, reintroducing the coupling isolation removes."},
-    {k:"B", text:"Subagents cannot perform file reads, so they could not access the log."},
-    {k:"C", text:"The log would exceed the context window of any subagent that read it."},
+    {k:"B", text:"Subagents cannot perform file reads at all, so they would have no way to access the log."},
+    {k:"C", text:"The log would exceed the context window of any subagent that tried to read it."},
     {k:"D", text:"Delegation decisions are not knowable until every subagent has returned."}
   ],
   correct:["A"],
@@ -2254,7 +2254,7 @@ const BANK_ALL = [
     {k:"A", text:"The coordinator should recognise when no subagent fits and route the document for review."},
     {k:"B", text:"The closest subagent should be broadened until it covers every document type."},
     {k:"C", text:"A subagent should be created for every document type the business might ever receive."},
-    {k:"D", text:"The document should be reformatted to match the nearest supported type before routing."}
+    {k:"D", text:"The document should be reformatted to match the nearest supported type before it is routed."}
   ],
   correct:["A"],
   explain:{
@@ -2293,8 +2293,8 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Structured findings pairing claim, excerpt and source, not raw retrieved text."},
     {k:"B", text:"The same dump, split across several sequential Task calls to the same subagent."},
-    {k:"C", text:"A summary the coordinator writes itself, discarding the underlying material."},
-    {k:"D", text:"The raw dump with an instruction to read it twice before drawing conclusions."}
+    {k:"C", text:"A summary the coordinator writes itself, discarding the underlying source material."},
+    {k:"D", text:"The raw dump unchanged, with an instruction to read through it twice before drawing any conclusions."}
   ],
   correct:["A"],
   explain:{
@@ -2313,7 +2313,7 @@ const BANK_ALL = [
     {k:"A", text:"The paths, entry points and specific questions that make the task concrete."},
     {k:"B", text:"A tool restriction limiting the subagent to read-only operations."},
     {k:"C", text:"A larger model, since the assigned model lacked the depth for code analysis."},
-    {k:"D", text:"An instruction to avoid drawing on background knowledge of authentication."}
+    {k:"D", text:"An instruction to avoid drawing on background knowledge of authentication patterns."}
   ],
   correct:["A"],
   explain:{
@@ -2349,9 +2349,9 @@ const BANK_ALL = [
   stem:"A support coordinator invokes a refund subagent with 'Process the refund we discussed.' The subagent asks which order it should refund. Why?",
   options:[
     {k:"A", text:"It has no access to the conversation, so 'we discussed' refers to nothing it can see."},
-    {k:"B", text:"The refund tool requires an order ID that the subagent lacks permission to look up."},
+    {k:"B", text:"The refund tool requires an order ID that this particular subagent lacks permission to look up."},
     {k:"C", text:"The coordinator's context exceeded the size that can be inherited on invocation."},
-    {k:"D", text:"Subagents receive conversation history only on their second and later invocations."}
+    {k:"D", text:"Subagents receive the conversation history only on their second and later invocations."}
   ],
   correct:["A"],
   explain:{
@@ -2368,8 +2368,8 @@ const BANK_ALL = [
   stem:"You want two subagents to explore the same repository concurrently, one tracing data flow and one cataloguing tests. Which coordinator behaviour achieves that?",
   options:[
     {k:"A", text:"Both Task calls emitted in one assistant turn, each with its own scoped prompt."},
-    {k:"B", text:"One Task call whose prompt asks the subagent to perform both investigations."},
-    {k:"C", text:"Two Task calls in consecutive turns, with the second referencing the first."},
+    {k:"B", text:"One Task call whose prompt asks a single subagent to perform both investigations."},
+    {k:"C", text:"Two Task calls in consecutive turns, with the second one referencing the first."},
     {k:"D", text:"One Task call repeated twice with the same prompt, relying on sampling variation."}
   ],
   correct:["A"],
@@ -2389,7 +2389,7 @@ const BANK_ALL = [
     {k:"A", text:"An agent given tools beyond its role will use them when its own path is blocked."},
     {k:"B", text:"Tool definitions leak between subagents when they share a coordinator."},
     {k:"C", text:"Document analysis cannot be performed without a web search capability."},
-    {k:"D", text:"The coordinator failed to specify which tool each subagent should call first."}
+    {k:"D", text:"The coordinator failed to specify which tool each of the subagents ought to call first."}
   ],
   correct:["A"],
   explain:{
@@ -2408,7 +2408,7 @@ const BANK_ALL = [
     {k:"A", text:"Naming the required fields, so every handoff carries the same structure."},
     {k:"B", text:"Asking the subagent to be thorough and to double-check before submitting."},
     {k:"C", text:"Giving the subagent access to the full transcript so it can decide what matters."},
-    {k:"D", text:"Increasing the subagent's output token limit so nothing is truncated."}
+    {k:"D", text:"Increasing the subagent's output token limit so that nothing is truncated."}
   ],
   correct:["A"],
   explain:{
@@ -2464,7 +2464,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"It bounds what the subagent may do, but not whether it is selected."},
     {k:"B", text:"It is the primary signal the coordinator uses when choosing between subagents."},
-    {k:"C", text:"It is merged with the coordinator's tool set at invocation time."},
+    {k:"C", text:"It is merged with the coordinator's own tool set at invocation time."},
     {k:"D", text:"It must list every tool the coordinator holds, or the invocation is rejected."}
   ],
   correct:["A"],
@@ -2520,7 +2520,7 @@ const BANK_ALL = [
   stem:"A coordinator emits three Task calls in one turn. Two subagents succeed and one fails. What should the coordinator receive?",
   options:[
     {k:"A", text:"All three results together, with the failure reported as such alongside the two successes."},
-    {k:"B", text:"Only the two successful results, with the failure retried transparently before returning."},
+    {k:"B", text:"Only the two successful results, with the failure retried transparently before anything is returned to the coordinator."},
     {k:"C", text:"An error for the whole turn, since one call in the batch did not complete."},
     {k:"D", text:"The two successes immediately and the failure in a later turn once it resolves."}
   ],
@@ -2598,7 +2598,7 @@ const BANK_ALL = [
     {k:"A", text:"What the agent already told the customer, so the human does not repeat it."},
     {k:"B", text:"The full conversation transcript appended to the structured fields."},
     {k:"C", text:"A confidence score indicating how certain the agent is about the root cause."},
-    {k:"D", text:"The timestamps of each tool call the agent made during the investigation."}
+    {k:"D", text:"The timestamps of each tool call the agent made over the course of the investigation."}
   ],
   correct:["A"],
   explain:{
@@ -2825,7 +2825,7 @@ const BANK_ALL = [
   stem:"A `PreToolUse` hook returns `ask` for refunds between $200 and $500. What behaviour does that produce?",
   options:[
     {k:"A", text:"The decision is escalated to the user rather than settled in the hook."},
-    {k:"B", text:"The call is blocked, and the model is told to try a smaller amount."},
+    {k:"B", text:"The call is blocked, and the model is told to try again with a smaller amount."},
     {k:"C", text:"The call proceeds, and a warning is attached to the result."},
     {k:"D", text:"The hook defers to the next hook in the chain for that tool."}
   ],
@@ -2883,7 +2883,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"In a `PostToolUse` hook, so the model only ever sees one format."},
     {k:"B", text:"In the extraction schema, using a `format` keyword to coerce incoming values."},
-    {k:"C", text:"In the prompt, by describing each source's format to the model."},
+    {k:"C", text:"In the prompt, by describing each source's date format to the model."},
     {k:"D", text:"In the downstream consumer, which can normalise whatever the pipeline emits."}
   ],
   correct:["A"],
@@ -2959,7 +2959,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Yes, provided the rejection explains the rule so the retries converge."},
     {k:"B", text:"No, because hooks cannot inspect the arguments of a commit call."},
-    {k:"C", text:"No, because format is a style matter and never warrants enforcement."},
+    {k:"C", text:"No, because format is a style matter and so never warrants enforcement."},
     {k:"D", text:"Yes, and no explanation is needed since the agent will infer the rule from repeated rejection."}
   ],
   correct:["A"],
@@ -3054,7 +3054,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Adaptive: follow the evidence, letting each finding determine the next step."},
     {k:"B", text:"Fixed: check the code, then the config, then the infrastructure, then the data."},
-    {k:"C", text:"Parallel: investigate all four layers simultaneously and merge conclusions."},
+    {k:"C", text:"Parallel: investigate all four layers simultaneously and then merge the conclusions."},
     {k:"D", text:"Exhaustive: review every change made in the last week in chronological order."}
   ],
   correct:["A"],
@@ -3091,7 +3091,7 @@ const BANK_ALL = [
   stem:"Your integration pass reports 'no cross-file issues' on every pull request, including ones where a signature changed and callers were missed. What is the most likely defect?",
   options:[
     {k:"A", text:"It receives only the diff, so the unchanged callers are invisible to it."},
-    {k:"B", text:"It runs before the per-file passes and so has no findings to integrate."},
+    {k:"B", text:"It runs before the per-file passes complete, so it has no findings available to integrate."},
     {k:"C", text:"Integration passes cannot detect signature changes by design."},
     {k:"D", text:"The per-file passes already reported the issue, so it is suppressed as a duplicate."}
   ],
@@ -3263,7 +3263,7 @@ const BANK_ALL = [
     {k:"A", text:"Chunking should adapt to document structure rather than to a fixed size."},
     {k:"B", text:"Long documents should be rejected and handled manually."},
     {k:"C", text:"The chunk size should be set to the average document length."},
-    {k:"D", text:"Every document should be split into exactly the same number of chunks."}
+    {k:"D", text:"Every document should be split into exactly the same number of chunks regardless of length."}
   ],
   correct:["A"],
   explain:{
@@ -3280,7 +3280,7 @@ const BANK_ALL = [
   stem:"You resume a week-old exploration session and immediately ask a question about a file. The answer describes code that was deleted in Tuesday's refactor. What went wrong?",
   options:[
     {k:"A", text:"The session holds the old file contents and has no signal that they changed."},
-    {k:"B", text:"Resumption reloads files from disk, so the answer should have been current."},
+    {k:"B", text:"Resumption reloads files from disk on restore, so the answer given should already have been current."},
     {k:"C", text:"The session's context was compacted, losing the accurate version."},
     {k:"D", text:"The file was renamed, so the agent answered about a different file."}
   ],
@@ -3299,7 +3299,7 @@ const BANK_ALL = [
   stem:"A developer keeps one long-running session for an entire feature, spanning several days and many unrelated sub-tasks. Answers become inconsistent. What practice would help most?",
   options:[
     {k:"A", text:"Start a fresh session per sub-task, carrying forward a short summary."},
-    {k:"B", text:"Keep the single session and run `/compact` whenever answers drift."},
+    {k:"B", text:"Keep the single long-running session and run `/compact` whenever the answers begin to drift."},
     {k:"C", text:"Keep the single session but raise the context window size."},
     {k:"D", text:"Fork the session at the start of each sub-task."}
   ],
@@ -3413,9 +3413,9 @@ const BANK_ALL = [
   stem:"A research run is resumed the next day and the coordinator re-delegates work that already completed. What is the most likely cause?",
   options:[
     {k:"A", text:"Subagent results were never persisted, so the resumed run has no record."},
-    {k:"B", text:"Resumption always clears the coordinator's memory of prior delegations."},
+    {k:"B", text:"Resumption always clears the coordinator's memory of prior delegations as part of restoring the session."},
     {k:"C", text:"Subagents cannot be invoked twice with the same prompt."},
-    {k:"D", text:"The coordinator's context window was exceeded during the original run."}
+    {k:"D", text:"The coordinator's context window was exceeded at some point during the original run."}
   ],
   correct:["A"],
   explain:{
@@ -3434,7 +3434,7 @@ const BANK_ALL = [
     {k:"A", text:"Compaction reclaims context by summarising, and summaries lose specifics."},
     {k:"B", text:"Compaction deletes the oldest turns entirely rather than summarising them."},
     {k:"C", text:"Compaction cannot be run in a resumed session and silently failed."},
-    {k:"D", text:"Compaction discards tool results but preserves all assistant reasoning."}
+    {k:"D", text:"Compaction discards tool results but preserves all of the assistant reasoning."}
   ],
   correct:["A"],
   explain:{
@@ -3451,7 +3451,7 @@ const BANK_ALL = [
   stem:"Which practice best protects a multi-day investigation against context loss?",
   options:[
     {k:"A", text:"Writing key findings to a file the agent re-reads each session."},
-    {k:"B", text:"Resuming the same session every day without starting new ones."},
+    {k:"B", text:"Resuming the same named session every working day rather than starting new ones."},
     {k:"C", text:"Running `/compact` at the end of each working day."},
     {k:"D", text:"Keeping every session under one hour."}
   ],
@@ -3485,7 +3485,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Claude Code: CLI reference", url:"https://code.claude.com/docs/en/cli-reference"}] },
 
-{ id:"d1-1.7-s", domain:1, ts:"1.7", scenario:5, type:"single",
+{ id:"d1-1.7-s", domain:1, ts:"1.7", scenario:2, type:"single",
   stem:"A CI job resumes a named session for each run so the reviewer 'remembers' the project. Reviews slowly fill with stale findings about code that has since changed. What should change?",
   options:[
     {k:"A", text:"Start each run fresh, supplying project context from CLAUDE.md instead."},
@@ -3510,7 +3510,7 @@ const BANK_ALL = [
     {k:"A", text:"You control exactly what carries forward, and nothing stale comes with it."},
     {k:"B", text:"Fresh sessions have larger context windows than resumed ones."},
     {k:"C", text:"Summaries are cheaper to produce than the original conversation."},
-    {k:"D", text:"Resumed sessions cannot call tools that the original session did not use."}
+    {k:"D", text:"Resumed sessions cannot call tools that the original session did not already use at least once."}
   ],
   correct:["A"],
   explain:{
@@ -3643,7 +3643,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Return structured error metadata: an `errorCategory`, an `isRetryable` boolean and a description."},
     {k:"B", text:"Cap retries at two attempts per tool call so indefinite retry loops cannot occur."},
-    {k:"C", text:"Instruct the agent in the system prompt to retry an operation at most once before escalating."},
+    {k:"C", text:"Instruct the agent in the system prompt to retry an operation at most once before escalating it."},
     {k:"D", text:"Return HTTP status codes as the error message so the agent can infer the failure category from the numeric code it receives."}
   ],
   correct:["A"],
@@ -3663,7 +3663,7 @@ const BANK_ALL = [
     {k:"A", text:"An error marked non-retryable, carrying a customer-friendly explanation the agent can relay."},
     {k:"B", text:"A transient error, so the agent retries in case the policy engine was temporarily out of date."},
     {k:"C", text:"A successful response with a refund amount of zero, letting the agent infer the refusal."},
-    {k:"D", text:"A generic failure, so the agent escalates to a human who can explain the policy properly."}
+    {k:"D", text:"A generic failure, so that the agent escalates to a human who can explain the policy properly."}
   ],
   correct:["A"],
   explain:{
@@ -3795,8 +3795,8 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"`\"any\"`, which requires a tool call but lets the model choose which schema fits."},
     {k:"B", text:"`\"auto\"`, which lets the model decide whether a tool call is warranted."},
-    {k:"C", text:"`{\"type\":\"tool\",\"name\":\"extract_invoice\"}`, forcing the most common schema."},
-    {k:"D", text:"`\"none\"`, which returns text that you then parse into the appropriate schema."}
+    {k:"C", text:"`{\"type\":\"tool\",\"name\":\"extract_invoice\"}`, forcing the most common schema on every document."},
+    {k:"D", text:"`\"none\"`, which returns plain text that you then parse into the appropriate schema yourself."}
   ],
   correct:["A"],
   explain:{
@@ -3948,7 +3948,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Tools from all of the configured servers are discovered at connection time and are available at once."},
     {k:"B", text:"Only the highest-precedence scope's servers connect; the others are ignored."},
-    {k:"C", text:"Servers connect lazily, one at a time, when the agent first requests a tool that matches their name."},
+    {k:"C", text:"Servers connect lazily, one at a time, when the agent first requests a tool whose name matches that server."},
     {k:"D", text:"Only servers explicitly enabled in the current session's settings connect."}
   ],
   correct:["A"],
@@ -3985,7 +3985,7 @@ const BANK_ALL = [
   stem:"You need to find every call site of a function named `calculateTax` across an unfamiliar TypeScript repository. Which built-in tool is the right starting point?",
   options:[
     {k:"A", text:"Grep, which searches file contents for the pattern."},
-    {k:"B", text:"Glob, which matches file paths against a pattern."},
+    {k:"B", text:"Glob, which matches file paths against a supplied pattern."},
     {k:"C", text:"Read, applied to each file in the repository in turn."},
     {k:"D", text:"Bash, running a recursive directory listing to locate candidate files."}
   ],
@@ -4042,7 +4042,7 @@ const BANK_ALL = [
   stem:"An agent asked to understand how authentication works in a 4,000-file repository begins by reading every file under `src/`. It exhausts its context before reaching any conclusion. What is the correct strategy?",
   options:[
     {k:"A", text:"Grep for entry points, then Read selectively to follow imports and trace the flow."},
-    {k:"B", text:"Read all files but summarise each one to a single line before moving to the next."},
+    {k:"B", text:"Read all of the files but summarise each one to a single line before moving on to the next."},
     {k:"C", text:"Read the files in alphabetical order and stop as soon as the context window reaches 80% of capacity."},
     {k:"D", text:"Request a larger context window model and repeat the same exhaustive read."}
   ],
@@ -4119,7 +4119,7 @@ const BANK_ALL = [
   stem:"Two tools, `search_code` and `find_symbol`, both search a repository. The agent picks between them at roughly chance. Their descriptions are each one sentence and accurate. What is the most likely remaining problem?",
   options:[
     {k:"A", text:"Neither description says when to prefer it over the other."},
-    {k:"B", text:"The tool names are too similar and should be renamed."},
+    {k:"B", text:"The two tool names are too similar and should be renamed."},
     {k:"C", text:"Two search tools is inherently ambiguous and one should be removed."},
     {k:"D", text:"The descriptions are too short to be parsed reliably."}
   ],
@@ -4157,7 +4157,7 @@ const BANK_ALL = [
   stem:"An extraction agent has `parse_invoice` and `parse_receipt`. Documents that are arguably either are routed inconsistently. What is the most useful addition to the descriptions?",
   options:[
     {k:"A", text:"A rule for the ambiguous case, stating which tool wins and why."},
-    {k:"B", text:"A statement that the two tools have overlapping applicability."},
+    {k:"B", text:"A statement noting that the two tools have overlapping applicability."},
     {k:"C", text:"An instruction to try one and fall back to the other on failure."},
     {k:"D", text:"A confidence threshold below which the agent should not call either."}
   ],
@@ -4270,8 +4270,8 @@ const BANK_ALL = [
   stem:"An MCP tool `semantic_search` is well described and genuinely better than Grep for the task, but the agent still reaches for Grep. Descriptions have been checked. What else should you consider?",
   options:[
     {k:"A", text:"Whether the description says what it does that Grep cannot."},
-    {k:"B", text:"Whether MCP tools are given lower priority than built-ins."},
-    {k:"C", text:"Whether Grep should be removed from the agent's tool set."},
+    {k:"B", text:"Whether MCP tools are given a lower selection priority than the built-in tools."},
+    {k:"C", text:"Whether Grep should be removed from this agent's tool set."},
     {k:"D", text:"Whether the MCP server is connected at the time of selection."}
   ],
   correct:["A"],
@@ -4423,7 +4423,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"The agent retries an identical malformed call until it gives up."},
     {k:"B", text:"The agent corrects the request automatically on the second attempt."},
-    {k:"C", text:"The tool queues the request until the field becomes available."},
+    {k:"C", text:"The tool queues the request until the missing field becomes available."},
     {k:"D", text:"The retry succeeds, since transient classification triggers a different code path."}
   ],
   correct:["A"],
@@ -4535,7 +4535,7 @@ const BANK_ALL = [
   stem:"A subagent cannot reach a source repository at all. It returns `{results: [], status: 'ok'}`. What is the consequence for the final report?",
   options:[
     {k:"A", text:"The topic appears researched and empty, when it was never actually searched."},
-    {k:"B", text:"The coordinator retries the subagent until it returns a non-empty result."},
+    {k:"B", text:"The coordinator retries the subagent repeatedly until it returns a non-empty result set."},
     {k:"C", text:"The synthesis step raises an error on receiving an empty result set."},
     {k:"D", text:"The report is annotated as having incomplete coverage for that topic."}
   ],
@@ -4556,7 +4556,7 @@ const BANK_ALL = [
     {k:"A", text:"Findings are being signalled as tool failure rather than as results."},
     {k:"B", text:"The linter should not be exposed as a tool at all."},
     {k:"C", text:"The error message is not detailed enough about the violations."},
-    {k:"D", text:"The agent should be instructed that linter errors mean violations."}
+    {k:"D", text:"The agent should simply be instructed that linter errors always mean violations."}
   ],
   correct:["A"],
   explain:{
@@ -4575,7 +4575,7 @@ const BANK_ALL = [
     {k:"A", text:"It simplifies the agent but hides latency and removes its options."},
     {k:"B", text:"It violates the MCP specification, which forbids server-side retries."},
     {k:"C", text:"It has no downside and should always be preferred."},
-    {k:"D", text:"It prevents the agent from ever receiving successful results."}
+    {k:"D", text:"It prevents the agent from ever receiving any successful results."}
   ],
   correct:["A"],
   explain:{
@@ -4592,9 +4592,9 @@ const BANK_ALL = [
   stem:"Why does a uniform 'Operation failed' response prevent good agent behaviour, even when it is accurate?",
   options:[
     {k:"A", text:"Recovery depends on the failure kind, which the message omits."},
-    {k:"B", text:"The agent cannot parse messages that lack structured fields."},
+    {k:"B", text:"The agent cannot parse failure messages that lack structured fields."},
     {k:"C", text:"Uniform messages are rejected by the MCP transport layer."},
-    {k:"D", text:"The agent will interpret any unstructured message as success."}
+    {k:"D", text:"The agent will interpret any unstructured failure message as a success and continue."}
   ],
   correct:["A"],
   explain:{
@@ -4612,7 +4612,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"The 47 results plus an explicit record of the 3 failures and why."},
     {k:"B", text:"An error for the whole batch, since it did not fully succeed."},
-    {k:"C", text:"The 47 results, with the 3 retried silently until they succeed."},
+    {k:"C", text:"The 47 results, with the remaining 3 retried silently until they succeed."},
     {k:"D", text:"Placeholder records for the 3, so downstream counts stay consistent."}
   ],
   correct:["A"],
@@ -4652,8 +4652,8 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Force that tool on the first request, then switch to `auto`."},
     {k:"B", text:"Set `any` on every request so a tool is always called."},
-    {k:"C", text:"List `extract_metadata` first and use `auto` throughout."},
-    {k:"D", text:"Use `auto` with a system prompt instruction about ordering."}
+    {k:"C", text:"List `extract_metadata` first in the array and use `auto` throughout."},
+    {k:"D", text:"Use `auto` throughout, with a system prompt instruction describing the required ordering."}
   ],
   correct:["A"],
   explain:{
@@ -4689,7 +4689,7 @@ const BANK_ALL = [
   stem:"A code agent has both `bash` and a set of narrow tools for reading, writing and searching. It uses `bash` for almost everything. What is the concern?",
   options:[
     {k:"A", text:"A general tool absorbs the work the specific ones were scoped for."},
-    {k:"B", text:"`bash` is slower than the narrow tools for equivalent operations."},
+    {k:"B", text:"`bash` is measurably slower than the narrow tools for equivalent file operations."},
     {k:"C", text:"Narrow tools stop being offered once `bash` is present."},
     {k:"D", text:"`bash` output cannot be returned in a `tool_result` block."}
   ],
@@ -4803,7 +4803,7 @@ const BANK_ALL = [
   stem:"After scoping each subagent's tools tightly, one subagent begins failing on a legitimate task it can no longer perform. What is the right response?",
   options:[
     {k:"A", text:"Add back the one tool that task needs, not the whole original set."},
-    {k:"B", text:"Restore the original toolset, since scoping caused a regression."},
+    {k:"B", text:"Restore the original toolset, on the grounds that scoping caused a regression."},
     {k:"C", text:"Route that task to a different subagent that retains the tool."},
     {k:"D", text:"Accept the failure, since the task falls outside the agent's new scope."}
   ],
@@ -4954,7 +4954,7 @@ const BANK_ALL = [
   stem:"In `.mcp.json` you write `\"command\": \"${TOOL_HOME}/server\"`. On a machine where `TOOL_HOME` is unset, what happens?",
   options:[
     {k:"A", text:"The literal text is used unexpanded and a warning is reported."},
-    {k:"B", text:"Claude Code refuses to start until the variable is defined."},
+    {k:"B", text:"Claude Code refuses to start until the variable has been defined."},
     {k:"C", text:"The variable expands to an empty string and the path becomes relative."},
     {k:"D", text:"The server entry is skipped silently and omitted from the list."}
   ],
@@ -5013,7 +5013,7 @@ const BANK_ALL = [
     {k:"A", text:"Adopt it, and build custom servers only for team-specific workflows."},
     {k:"B", text:"Fork it immediately so you control the release cadence."},
     {k:"C", text:"Build your own, since third-party servers cannot be reviewed."},
-    {k:"D", text:"Adopt it but wrap every tool in a proxy with your own descriptions."}
+    {k:"D", text:"Adopt it, but wrap every one of its tools in a proxy carrying your own descriptions."}
   ],
   correct:["A"],
   explain:{
@@ -5032,7 +5032,7 @@ const BANK_ALL = [
     {k:"A", text:"User scope, which applies to every project for that account."},
     {k:"B", text:"Local scope, which is bound to a single project."},
     {k:"C", text:"Project scope, which is committed to the repository."},
-    {k:"D", text:"Managed configuration, which is deployed organisation-wide."}
+    {k:"D", text:"Managed configuration, which an administrator deploys across the organisation."}
   ],
   correct:["A"],
   explain:{
@@ -5049,7 +5049,7 @@ const BANK_ALL = [
   stem:"When are the tools from a configured MCP server made available to the agent?",
   options:[
     {k:"A", text:"At connection time, alongside every other configured server."},
-    {k:"B", text:"On first use, when the agent names a tool from that server."},
+    {k:"B", text:"On first use, when the agent names a tool belonging to that particular server."},
     {k:"C", text:"Only after the built-in tools have failed to satisfy the request."},
     {k:"D", text:"At the start of each turn, refreshed from the server."}
   ],
@@ -5105,7 +5105,7 @@ const BANK_ALL = [
   stem:"An MCP tool returns a 60,000-token document and the agent's context is exhausted. Which response addresses the cause rather than the symptom?",
   options:[
     {k:"A", text:"Return an excerpt with a handle for fetching the rest."},
-    {k:"B", text:"Raise the maximum MCP output limit to accommodate it."},
+    {k:"B", text:"Raise the maximum MCP output limit so the whole document is accepted."},
     {k:"C", text:"Switch to a model with a larger context window."},
     {k:"D", text:"Call the tool less often."}
   ],
@@ -5144,8 +5144,8 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Pre-approve the server in the CI environment's configuration."},
     {k:"B", text:"Move the server to user scope, which needs no approval."},
-    {k:"C", text:"Run the pipeline interactively once so approval persists."},
-    {k:"D", text:"Remove the approval requirement globally for all projects."}
+    {k:"C", text:"Run the pipeline interactively once so that the approval persists."},
+    {k:"D", text:"Remove the approval requirement globally, for every project on the machine."}
   ],
   correct:["A"],
   explain:{
@@ -5182,7 +5182,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Read the file, then Write it back with the change applied."},
     {k:"B", text:"Retry the Edit, since matching is sometimes non-deterministic."},
-    {k:"C", text:"Edit each occurrence in turn until the right one changes."},
+    {k:"C", text:"Edit each of the occurrences in turn until the right one has changed."},
     {k:"D", text:"Delete the file and recreate it from the intended content."}
   ],
   correct:["A"],
@@ -5239,8 +5239,8 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Find every name it is re-exported under, then search each."},
     {k:"B", text:"Search case-insensitively to catch renamed variants."},
-    {k:"C", text:"Search for the file path, since imports reference paths."},
-    {k:"D", text:"Read every file that imports from the wrapper directory."}
+    {k:"C", text:"Search for the file path of the definition, since imports reference paths."},
+    {k:"D", text:"Read every file that imports anything from the wrapper module's directory."}
   ],
   correct:["A"],
   explain:{
@@ -5315,7 +5315,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Restrict the search to the relevant directories."},
     {k:"B", text:"Read the first 20 matches and generalise from them."},
-    {k:"C", text:"Search for a shorter substring to widen recall."},
+    {k:"C", text:"Search for a shorter substring in order to widen recall."},
     {k:"D", text:"Switch to Glob to find files named after the handler."}
   ],
   correct:["A"],
@@ -5408,7 +5408,7 @@ const BANK_ALL = [
   stem:"A CI agent must review only the files a pull request changed. Which approach fits best?",
   options:[
     {k:"A", text:"Take the changed-file list from the pipeline and Read those."},
-    {k:"B", text:"Glob the whole repository and filter by modification time."},
+    {k:"B", text:"Glob the whole repository and then filter the results by modification time."},
     {k:"C", text:"Grep for recent dates in file headers."},
     {k:"D", text:"Read every file and compare against the previous run."}
   ],
@@ -5544,7 +5544,7 @@ const BANK_ALL = [
   stem:"You want a custom `/review` slash command running your team's review checklist, available to every developer when they clone or pull the repository. Where should the command file live?",
   options:[
     {k:"A", text:"In the `.claude/commands/` directory in the project repository."},
-    {k:"B", text:"In `~/.claude/commands/` in each developer's home directory."},
+    {k:"B", text:"In `~/.claude/commands/` in each individual developer's home directory."},
     {k:"C", text:"In the CLAUDE.md file at the project root."},
     {k:"D", text:"In a `.claude/config.json` file with a `commands` array."}
   ],
@@ -5718,7 +5718,7 @@ const BANK_ALL = [
     {k:"A", text:"Unconditionally at launch, at the same priority as `.claude/CLAUDE.md`."},
     {k:"B", text:"Never, since a rule without `paths` has no activation condition."},
     {k:"C", text:"Only when the user explicitly references it by filename."},
-    {k:"D", text:"Only when Claude reads a file in the same directory as the rule file."}
+    {k:"D", text:"Only when Claude reads a file sitting in the same directory as the rule file itself."}
   ],
   correct:["A"],
   explain:{
@@ -5812,8 +5812,8 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"The Explore subagent for the discovery phase, so only a summary returns."},
     {k:"B", text:"A larger context window model, so that the discovery output and the implementation work both fit comfortably."},
-    {k:"C", text:"Plan mode for the whole task, since plan mode does not consume context."},
-    {k:"D", text:"Splitting the work across two developers so each context stays smaller."}
+    {k:"C", text:"Plan mode for the whole task, on the grounds that plan mode does not consume context."},
+    {k:"D", text:"Splitting the work across two developers so that each context stays smaller."}
   ],
   correct:["A"],
   explain:{
@@ -5868,7 +5868,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"It enables safe exploration of the codebase before any change is committed."},
     {k:"B", text:"It runs the proposed changes in a sandbox so their effects can be measured before they are applied to the working tree."},
-    {k:"C", text:"It automatically generates a rollback commit so any change can be undone."},
+    {k:"C", text:"It automatically generates a rollback commit so that any change can be undone."},
     {k:"D", text:"It reduces token usage by preventing the agent from reading files during the design phase."}
   ],
   correct:["A"],
@@ -5924,7 +5924,7 @@ const BANK_ALL = [
   stem:"A generated function has four defects. Fixing the pagination bug changes how the retry logic must work, and the error-handling fix depends on both. How should you report them?",
   options:[
     {k:"A", text:"In a single detailed message covering all four issues, because the fixes interact."},
-    {k:"B", text:"One at a time in dependency order, verifying each fix before reporting the next."},
+    {k:"B", text:"One at a time in dependency order, verifying each fix before the next is reported."},
     {k:"C", text:"One at a time in severity order, starting with the most serious."},
     {k:"D", text:"In two messages, splitting them into interacting and independent pairs."}
   ],
@@ -5962,7 +5962,7 @@ const BANK_ALL = [
   stem:"A migration script mishandles null values in one column. What is the most effective way to communicate the fix?",
   options:[
     {k:"A", text:"Provide a specific test case with the null-containing input and the exact expected output."},
-    {k:"B", text:"State clearly that the script must handle null values correctly in every affected column."},
+    {k:"B", text:"State clearly that the script must handle null values correctly in every affected column of the table."},
     {k:"C", text:"Ask for defensive null checks to be added throughout the script."},
     {k:"D", text:"Share the database schema so the nullable columns are visible."}
   ],
@@ -5982,7 +5982,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"When the issues are independent, so that each fix can be verified without disturbing the others."},
     {k:"B", text:"Always, since smaller changes are easier to review."},
-    {k:"C", text:"When the issues interact, so that each fix can properly account for the one applied before it."},
+    {k:"C", text:"When the issues interact, so that each fix can properly account for the one applied just before it."},
     {k:"D", text:"When there are more than three issues, regardless of how they relate."}
   ],
   correct:["A"],
@@ -6095,7 +6095,7 @@ const BANK_ALL = [
   stem:"Why is the same Claude session that generated a piece of code a weaker reviewer of it than a fresh instance?",
   options:[
     {k:"A", text:"It retains the reasoning context that produced the code, so it rarely questions it."},
-    {k:"B", text:"Its context window is already partly consumed, so it has less capacity for review."},
+    {k:"B", text:"Its context window is already partly consumed, so it has less capacity left for the review."},
     {k:"C", text:"Review requires a different model configuration that cannot be changed mid-session."},
     {k:"D", text:"Generated code is cached within the session and re-read from that cache rather than being analysed afresh."}
   ],
@@ -6155,7 +6155,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"`CLAUDE.local.md` at the project root, gitignored."},
     {k:"B", text:"`~/.claude/CLAUDE.md`, which is personal."},
-    {k:"C", text:"`.claude/CLAUDE.md`, which is project-scoped."},
+    {k:"C", text:"`.claude/CLAUDE.md`, which is project-scoped and committed."},
     {k:"D", text:"A `personal` section inside the committed CLAUDE.md."}
   ],
   correct:["A"],
@@ -6193,7 +6193,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"No: imports aid organisation, and all five still load at launch."},
     {k:"B", text:"Yes: imports should have reduced usage by roughly the split ratio."},
-    {k:"C", text:"Yes: imported files load only when referenced in conversation."},
+    {k:"C", text:"Yes: imported files load only when they are referenced in conversation."},
     {k:"D", text:"No: imports increase usage because each file adds a header."}
   ],
   correct:["A"],
@@ -6441,7 +6441,7 @@ const BANK_ALL = [
     {k:"A", text:"When it must apply in every session."},
     {k:"B", text:"When the procedure has more than five steps."},
     {k:"C", text:"When the workflow needs restricted tool access."},
-    {k:"D", text:"When the output would be verbose."}
+    {k:"D", text:"When the output produced would be verbose."}
   ],
   correct:["A"],
   explain:{
@@ -6516,7 +6516,7 @@ const BANK_ALL = [
   stem:"A team keeps a long deployment runbook in CLAUDE.md. It is used roughly once a fortnight. What is the better home for it?",
   options:[
     {k:"A", text:"A skill, invoked when a deployment is happening."},
-    {k:"B", text:"A `.claude/rules/` file with no path scoping."},
+    {k:"B", text:"A `.claude/rules/` file carrying no path scoping."},
     {k:"C", text:"A subdirectory CLAUDE.md under the deployment folder."},
     {k:"D", text:"Left where it is, since deployments are important."}
   ],
@@ -6555,7 +6555,7 @@ const BANK_ALL = [
     {k:"A", text:"A project skill with `allowed-tools` set."},
     {k:"B", text:"A CLAUDE.md section describing the procedure."},
     {k:"C", text:"A shell script that pipes instructions into the prompt."},
-    {k:"D", text:"A user-level command on the CI runner."}
+    {k:"D", text:"A user-level command installed on the CI runner."}
   ],
   correct:["A"],
   explain:{
@@ -6572,8 +6572,8 @@ const BANK_ALL = [
   stem:"What distinguishes a skill from a slash command in practice?",
   options:[
     {k:"A", text:"Frontmatter controlling tools, model and execution context."},
-    {k:"B", text:"A skill can be invoked by the model; a command cannot."},
-    {k:"C", text:"A command is project-scoped; a skill is always personal."},
+    {k:"B", text:"A skill can be invoked by the model, whereas a command cannot."},
+    {k:"C", text:"A command is project-scoped, whereas a skill is always personal."},
     {k:"D", text:"A command may take arguments; a skill may not."}
   ],
   correct:["A"],
@@ -6591,7 +6591,7 @@ const BANK_ALL = [
   stem:"A skill's description reads 'Helps with database work.' It is invoked for migrations, query tuning and schema review, performing poorly at all three. What is the fix?",
   options:[
     {k:"A", text:"Split it into three skills with specific descriptions."},
-    {k:"B", text:"Expand the single skill to handle all three well."},
+    {k:"B", text:"Expand the single skill so it handles all three well."},
     {k:"C", text:"Add `disable-model-invocation` so it is only used deliberately."},
     {k:"D", text:"Restrict its tools to database operations."}
   ],
@@ -6612,7 +6612,7 @@ const BANK_ALL = [
     {k:"A", text:"Overlapping descriptions make the model's choice ambiguous."},
     {k:"B", text:"Skills beyond ten are selected at random."},
     {k:"C", text:"Skills without `argument-hint` default to always-on."},
-    {k:"D", text:"Project skills override user skills, changing behaviour."}
+    {k:"D", text:"Project skills override user skills, which changes the observed behaviour."}
   ],
   correct:["A"],
   explain:{
@@ -6688,7 +6688,7 @@ const BANK_ALL = [
     {k:"A", text:"A path-scoped rule on the migration filename."},
     {k:"B", text:"A CLAUDE.md in each service's migrations folder."},
     {k:"C", text:"A section in the root CLAUDE.md."},
-    {k:"D", text:"A skill invoked before writing a migration."}
+    {k:"D", text:"A skill invoked by the developer before writing a migration."}
   ],
   correct:["A"],
   explain:{
@@ -6725,7 +6725,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Without `paths` it always loads; with it, only on matching reads."},
     {k:"B", text:"Without `paths` it never loads; the field is required."},
-    {k:"C", text:"Without `paths` it applies only to the rules directory itself."},
+    {k:"C", text:"Without `paths` it applies only to files in the rules directory itself."},
     {k:"D", text:"Without `paths` it is treated as documentation and ignored."}
   ],
   correct:["A"],
@@ -6856,7 +6856,7 @@ const BANK_ALL = [
   stem:"A developer puts a rules file in `~/.claude/rules/` expecting the team to get it. What is wrong?",
   options:[
     {k:"A", text:"User-level rules are personal and are not shared."},
-    {k:"B", text:"User-level rules are unsupported and never load."},
+    {k:"B", text:"User-level rules are unsupported and so never load at all."},
     {k:"C", text:"User-level rules load only in projects without their own rules."},
     {k:"D", text:"User-level rules require a matching project rule to activate."}
   ],
@@ -6895,7 +6895,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Whether it should apply automatically or on request."},
     {k:"B", text:"Whether the guidance exceeds 200 lines."},
-    {k:"C", text:"Whether the languages are compiled or interpreted."},
+    {k:"C", text:"Whether the languages involved are compiled or interpreted."},
     {k:"D", text:"Whether the team uses a monorepo."}
   ],
   correct:["A"],
@@ -6911,7 +6911,7 @@ const BANK_ALL = [
 
 /* ---- Domain 3 expansion: task statements 3.4, 3.5 and 3.6 ---- */
 
-{ id:"d3-3.4-g", domain:3, ts:"3.4", scenario:2, type:"single",
+{ id:"d3-3.4-g", domain:3, ts:"3.4", scenario:4, type:"single",
   stem:"A ticket reads: 'Add a null check to `formatDate` so it returns an empty string for null input.' Which mode fits?",
   options:[
     {k:"A", text:"Direct execution."},
@@ -6972,7 +6972,7 @@ const BANK_ALL = [
   stem:"What does plan mode chiefly protect against?",
   options:[
     {k:"A", text:"Committing to a structure too early."},
-    {k:"B", text:"Writing code that fails to compile."},
+    {k:"B", text:"Writing code that fails to compile at build time."},
     {k:"C", text:"Exceeding the session's token budget."},
     {k:"D", text:"Editing files outside the repository."}
   ],
@@ -6991,7 +6991,7 @@ const BANK_ALL = [
   stem:"A developer stays in plan mode for a mechanical rename across 45 files after the approach is settled. What is the cost?",
   options:[
     {k:"A", text:"Ceremony on work whose shape is already known."},
-    {k:"B", text:"Plan mode cannot express multi-file changes."},
+    {k:"B", text:"Plan mode cannot express changes spanning multiple files."},
     {k:"C", text:"The plan expires before the edits can be applied."},
     {k:"D", text:"Plan mode forbids more than ten files per plan."}
   ],
@@ -7006,13 +7006,13 @@ const BANK_ALL = [
   },
   refs:[R_SUB] },
 
-{ id:"d3-3.4-l", domain:3, ts:"3.4", scenario:2, type:"single",
+{ id:"d3-3.4-l", domain:3, ts:"3.4", scenario:4, type:"single",
   stem:"A bug report includes a stack trace pointing at one line, and the fix is evident from it. A colleague insists on plan mode for all production fixes. What is the strongest counter-argument?",
   options:[
     {k:"A", text:"The criterion is ambiguity, not environment."},
     {k:"B", text:"Plan mode is unavailable for hotfixes."},
-    {k:"C", text:"Production fixes are too urgent to plan."},
-    {k:"D", text:"A stack trace already constitutes a plan."}
+    {k:"C", text:"Production fixes are too urgent to spend time planning."},
+    {k:"D", text:"A stack trace already constitutes a plan in itself."}
   ],
   correct:["A"],
   explain:{
@@ -7048,9 +7048,9 @@ const BANK_ALL = [
   stem:"A plan is approved and implementation begins, but a dependency emerges that invalidates part of it. What is the appropriate response?",
   options:[
     {k:"A", text:"Return to planning for the affected part, keeping the rest."},
-    {k:"B", text:"Continue as planned and fix the consequences afterwards."},
+    {k:"B", text:"Continue exactly as planned and fix the consequences afterwards."},
     {k:"C", text:"Abandon the plan entirely and restart."},
-    {k:"D", text:"Implement a workaround so the original plan still holds."}
+    {k:"D", text:"Implement a workaround so that the original plan still holds."}
   ],
   correct:["A"],
   explain:{
@@ -7104,8 +7104,8 @@ const BANK_ALL = [
   stem:"A CI job runs Claude Code non-interactively to apply a scripted refactor. Is plan mode relevant?",
   options:[
     {k:"A", text:"No; the approach is decided and nobody reads the plan."},
-    {k:"B", text:"Yes; every automated change should be planned first."},
-    {k:"C", text:"Yes; plan mode is required for non-interactive runs."},
+    {k:"B", text:"Yes; every automated change should be planned before it runs."},
+    {k:"C", text:"Yes; plan mode is required for all non-interactive runs."},
     {k:"D", text:"No; plan mode is unavailable outside interactive sessions."}
   ],
   correct:["A"],
@@ -7161,7 +7161,7 @@ const BANK_ALL = [
   stem:"How do plan mode and direct execution combine on a large migration?",
   options:[
     {k:"A", text:"Plan the approach, then execute it directly."},
-    {k:"B", text:"Plan and execute each file in alternation."},
+    {k:"B", text:"Plan and then execute each file in alternation."},
     {k:"C", text:"Execute first, then plan the remaining files."},
     {k:"D", text:"They are alternatives and should not be combined."}
   ],
@@ -7409,7 +7409,7 @@ const BANK_ALL = [
     {k:"A", text:"They pin down edge behaviour that prose leaves implicit."},
     {k:"B", text:"They consume fewer tokens than prose."},
     {k:"C", text:"They are processed before the rest of the prompt."},
-    {k:"D", text:"They cannot be misinterpreted under any circumstances."}
+    {k:"D", text:"They cannot be misinterpreted by the model under any circumstances."}
   ],
   correct:["A"],
   explain:{
@@ -7598,7 +7598,7 @@ const BANK_ALL = [
     {k:"A", text:"Ensuring the run does not inherit ambient local settings."},
     {k:"B", text:"Pinning the temperature to 0."},
     {k:"C", text:"Running the job on the same machine each time."},
-    {k:"D", text:"Using the same prompt wording as developers use locally."}
+    {k:"D", text:"Using exactly the same prompt wording that developers use when running it locally."}
   ],
   correct:["A"],
   explain:{
@@ -7654,7 +7654,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Define which categories to report and which to skip."},
     {k:"B", text:"Ask the model to be more conservative."},
-    {k:"C", text:"Report only findings above a confidence threshold."},
+    {k:"C", text:"Report only those findings that sit above a confidence threshold."},
     {k:"D", text:"Limit the reviewer to five findings per pull request."}
   ],
   correct:["A"],
@@ -7674,7 +7674,7 @@ const BANK_ALL = [
     {k:"A", text:"Without it the job blocks waiting for input."},
     {k:"B", text:"Without it the output is not written to stdout."},
     {k:"C", text:"Without it tool use is disabled."},
-    {k:"D", text:"Without it the exit code is always zero."}
+    {k:"D", text:"Without it the exit code is always reported as zero."}
   ],
   correct:["A"],
   explain:{
@@ -7902,7 +7902,7 @@ const BANK_ALL = [
   stem:"Your support agent handles clear requests well but is erratic on ambiguous ones, such as a customer who mentions both a return and a warranty question without specifying which they want resolved. What is the most effective intervention?",
   options:[
     {k:"A", text:"Few-shot examples of ambiguous requests showing which action was chosen, and why."},
-    {k:"B", text:"An instruction to always ask a clarifying question when a request is ambiguous."},
+    {k:"B", text:"An instruction to always ask a clarifying question whenever a request is ambiguous."},
     {k:"C", text:"A larger tool set, so that the agent has a distinct option available for every possible interpretation of the request."},
     {k:"D", text:"A rule to always handle the first-mentioned issue and ignore the rest."}
   ],
@@ -8018,7 +8018,7 @@ const BANK_ALL = [
     {k:"A", text:"In the prompt, alongside the schema, stating how ambiguous formats should be read."},
     {k:"B", text:"In the JSON schema's `pattern` field, which will coerce non-conforming inputs into the required format."},
     {k:"C", text:"In a downstream service that reformats whatever string the model returns."},
-    {k:"D", text:"Nowhere; a strict schema type of `date` handles format conversion automatically."}
+    {k:"D", text:"Nowhere; a strict schema type of `date` handles the format conversion automatically."}
   ],
   correct:["A"],
   explain:{
@@ -8054,7 +8054,7 @@ const BANK_ALL = [
   stem:"Pydantic validation rejects an extraction because a field arrived as a string where a number was expected. What is the most effective retry design?",
   options:[
     {k:"A", text:"Send a follow-up containing the original document, the failed extraction and the specific validation error."},
-    {k:"B", text:"Retry the original request unchanged, since ordinary sampling variation may well produce a valid result."},
+    {k:"B", text:"Retry the original request unchanged, since ordinary sampling variation may well produce a valid result on a second attempt."},
     {k:"C", text:"Retry with temperature raised, to explore a different output path."},
     {k:"D", text:"Discard the document and flag it for manual extraction."}
   ],
@@ -8207,7 +8207,7 @@ const BANK_ALL = [
     {k:"A", text:"Resubmit only those 6, identified by `custom_id`, after chunking them to fit."},
     {k:"B", text:"Resubmit the entire batch of 100 with chunking applied to every document."},
     {k:"C", text:"Process the 6 through the real-time API instead, since batch cannot handle large documents."},
-    {k:"D", text:"Discard the 6 and report 94% coverage, since oversized documents are rare."}
+    {k:"D", text:"Discard the 6 and report 94% coverage, on the grounds that oversized documents are rare."}
   ],
   correct:["A"],
   explain:{
@@ -8226,7 +8226,7 @@ const BANK_ALL = [
     {k:"A", text:"No, because the batch API does not support multi-turn tool calling within a single request."},
     {k:"B", text:"Yes, provided each tool is declared in the batch request's tools array."},
     {k:"C", text:"Yes, provided the tools respond within the 24-hour processing window."},
-    {k:"D", text:"No, because the batch API does not support tool definitions of any kind within a request."}
+    {k:"D", text:"No, because the batch API does not accept tool definitions of any kind within a single request."}
   ],
   correct:["A"],
   explain:{
@@ -8263,7 +8263,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"It correlates each request with its corresponding response, and must be unique within the batch."},
     {k:"B", text:"It sets the processing priority of a request within the batch queue."},
-    {k:"C", text:"It groups related requests together so that they are processed on the same worker in one pass."},
+    {k:"C", text:"It groups related requests so that they are processed together on the same worker within one pass."},
     {k:"D", text:"It identifies the billing account each request should be charged against."}
   ],
   correct:["A"],
@@ -8319,7 +8319,7 @@ const BANK_ALL = [
   stem:"Which review structure best catches a bug where one file's function signature changed and callers in other files were not updated?",
   options:[
     {k:"A", text:"An integration pass dedicated to cross-file data flow, run in addition to per-file passes."},
-    {k:"B", text:"A per-file pass with instructions to consider how each function might be used elsewhere."},
+    {k:"B", text:"A per-file pass with instructions to consider how each function might be used elsewhere in the codebase."},
     {k:"C", text:"A single pass over all files together, so every relationship is visible at once."},
     {k:"D", text:"Three independent passes over the changed file, to maximise the chance of noticing the signature change."}
   ],
@@ -8436,7 +8436,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"The criterion rests on an imagined reader, not the code."},
     {k:"B", text:"The instruction is too short to be actionable."},
-    {k:"C", text:"New developers are not a defined role in the codebase."},
+    {k:"C", text:"New developers are not a clearly defined role in this codebase."},
     {k:"D", text:"Confusion is subjective and so cannot be reviewed at all."}
   ],
   correct:["A"],
@@ -8494,7 +8494,7 @@ const BANK_ALL = [
     {k:"A", text:"Model confidence is poorly calibrated to correctness."},
     {k:"B", text:"The model cannot compute confidence at all."},
     {k:"C", text:"The instruction is ignored unless placed first."},
-    {k:"D", text:"Confidence applies to whole responses, not findings."}
+    {k:"D", text:"Confidence applies to whole responses rather than to individual findings."}
   ],
   correct:["A"],
   explain:{
@@ -8512,7 +8512,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Define the observable failures that make a reply unhelpful."},
     {k:"B", text:"Have it rate helpfulness on a ten-point scale."},
-    {k:"C", text:"Compare each reply against a model-written ideal answer."},
+    {k:"C", text:"Compare each reply against a model-written ideal answer for that case."},
     {k:"D", text:"Have it flag only replies shorter than a threshold."}
   ],
   correct:["A"],
@@ -8548,7 +8548,7 @@ const BANK_ALL = [
   stem:"After disabling a noisy category, developers begin engaging with the remaining findings again. What does this demonstrate?",
   options:[
     {k:"A", text:"Trust is shared across categories."},
-    {k:"B", text:"Fewer findings are always better."},
+    {k:"B", text:"Fewer findings are always better for developers."},
     {k:"C", text:"Developers prefer security findings to style findings."},
     {k:"D", text:"The remaining categories improved when the noisy one was removed."}
   ],
@@ -8587,7 +8587,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"When criteria are clear and judgements hard."},
     {k:"B", text:"Always, since capability dominates finding quality."},
-    {k:"C", text:"Never, since criteria are the only factor."},
+    {k:"C", text:"Never, since the criteria are the only factor that matters."},
     {k:"D", text:"When the codebase is unusually large."}
   ],
   correct:["A"],
@@ -8606,7 +8606,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"No; it is actionability, not precision."},
     {k:"B", text:"Yes; vague findings count as false positives."},
-    {k:"C", text:"No; it is a model capability problem."},
+    {k:"C", text:"No; it is a model capability problem instead."},
     {k:"D", text:"Yes; unclear findings are dismissed and so are false by outcome."}
   ],
   correct:["A"],
@@ -8681,7 +8681,7 @@ const BANK_ALL = [
   stem:"How many few-shot examples does the guidance suggest for an ambiguous scenario, and what should they show?",
   options:[
     {k:"A", text:"Two to four, showing why one action beat another."},
-    {k:"B", text:"One clear example, to avoid conflicting signals."},
+    {k:"B", text:"One clear example, so that conflicting signals cannot arise."},
     {k:"C", text:"Ten or more, covering the full space."},
     {k:"D", text:"As many as context allows."}
   ],
@@ -8719,7 +8719,7 @@ const BANK_ALL = [
   stem:"A support agent handles clear requests well but is erratic when a customer raises two issues with conflicting urgency. What helps most?",
   options:[
     {k:"A", text:"Examples showing which issue was taken first, and why."},
-    {k:"B", text:"An instruction to always ask which to address first."},
+    {k:"B", text:"An instruction to always ask the customer which issue to address first."},
     {k:"C", text:"A rule to handle the first-mentioned issue."},
     {k:"D", text:"More tools so every interpretation is available."}
   ],
@@ -8776,7 +8776,7 @@ const BANK_ALL = [
   stem:"An extraction prompt includes eight examples, all invoices from one supplier. Accuracy on that supplier is excellent and poor elsewhere. What went wrong?",
   options:[
     {k:"A", text:"They taught one layout rather than the task."},
-    {k:"B", text:"Eight examples exceeds the useful number."},
+    {k:"B", text:"Eight examples exceeds the useful number for one prompt."},
     {k:"C", text:"The examples should have appeared after the document."},
     {k:"D", text:"Invoices are unsuitable for few-shot prompting."}
   ],
@@ -8796,7 +8796,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"They convey the distinction, not just instances."},
     {k:"B", text:"They are processed with higher weight than instructions."},
-    {k:"C", text:"They bypass the model's instruction following."},
+    {k:"C", text:"They bypass the model's ordinary instruction following."},
     {k:"D", text:"They are cached and reused across requests."}
   ],
   correct:["A"],
@@ -8853,7 +8853,7 @@ const BANK_ALL = [
     {k:"A", text:"A tested function with one untested branch."},
     {k:"B", text:"A wholly untested function, marked as a gap."},
     {k:"C", text:"A fully tested function, marked as acceptable."},
-    {k:"D", text:"A coverage report showing the percentage."}
+    {k:"D", text:"A coverage report showing the branch percentage."}
   ],
   correct:["A"],
   explain:{
@@ -8948,7 +8948,7 @@ const BANK_ALL = [
     {k:"A", text:"Schemas constrain structure, not relationships."},
     {k:"B", text:"The schema is not marked strict."},
     {k:"C", text:"Numeric fields should be strings."},
-    {k:"D", text:"Tool use is unsuitable for numeric extraction."}
+    {k:"D", text:"Tool use is unsuitable for numeric extraction of any kind."}
   ],
   correct:["A"],
   explain:{
@@ -8967,7 +8967,7 @@ const BANK_ALL = [
     {k:"A", text:"Make the field nullable so absence is expressible."},
     {k:"B", text:"Instruct the model never to guess dates."},
     {k:"C", text:"Add a confidence score for the field."},
-    {k:"D", text:"Verify each date against the document afterwards."}
+    {k:"D", text:"Verify each extracted date against the document text afterwards."}
   ],
   correct:["A"],
   explain:{
@@ -9097,9 +9097,9 @@ const BANK_ALL = [
   stem:"A CI job needs findings as structured objects rather than prose. Which approach is most reliable?",
   options:[
     {k:"A", text:"A tool whose schema defines the finding shape."},
-    {k:"B", text:"A prompt describing the desired JSON shape."},
+    {k:"B", text:"A prompt describing the desired JSON shape in detail."},
     {k:"C", text:"A markdown template parsed afterwards."},
-    {k:"D", text:"A regular expression over the prose response."}
+    {k:"D", text:"A regular expression applied over the model's prose response."}
   ],
   correct:["A"],
   explain:{
@@ -9135,7 +9135,7 @@ const BANK_ALL = [
   stem:"Why extract `calculated_total` alongside `stated_total`?",
   options:[
     {k:"A", text:"A discrepancy between them becomes checkable."},
-    {k:"B", text:"It doubles the chance one value is correct."},
+    {k:"B", text:"It doubles the chance that one of the values is correct."},
     {k:"C", text:"Schemas require a derived field for each stated one."},
     {k:"D", text:"It lets the model choose the more plausible value."}
   ],
@@ -9232,9 +9232,9 @@ const BANK_ALL = [
   stem:"What should a retry request contain for the model to self-correct effectively?",
   options:[
     {k:"A", text:"The document, the failed output and the errors."},
-    {k:"B", text:"The document and an instruction to try harder."},
+    {k:"B", text:"The document, plus an instruction to try harder this time."},
     {k:"C", text:"The failed output and the schema."},
-    {k:"D", text:"The document alone, so the model starts fresh."}
+    {k:"D", text:"The document alone, so that the model starts entirely fresh."}
   ],
   correct:["A"],
   explain:{
@@ -9251,7 +9251,7 @@ const BANK_ALL = [
   stem:"A source document states a total in two places with different values. What extraction design surfaces this rather than hiding it?",
   options:[
     {k:"A", text:"A `conflict_detected` flag plus both values."},
-    {k:"B", text:"Take the value nearer the document's end."},
+    {k:"B", text:"Take whichever value sits nearer the document's end."},
     {k:"C", text:"Take the value that appears more often."},
     {k:"D", text:"Fail the document and route it to manual entry."}
   ],
@@ -9384,8 +9384,8 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Relaxing accepts bad data; correcting fixes it."},
     {k:"B", text:"Relaxing costs more tokens than retrying."},
-    {k:"C", text:"Relaxed schemas cannot be used with tool use."},
-    {k:"D", text:"Correction always succeeds on the first retry."}
+    {k:"C", text:"Relaxed schemas cannot be used together with tool use."},
+    {k:"D", text:"Correction always succeeds on the first retry attempt."}
   ],
   correct:["A"],
   explain:{
@@ -9421,7 +9421,7 @@ const BANK_ALL = [
   stem:"What is the practical benefit of distinguishing retryable from non-retryable validation failures?",
   options:[
     {k:"A", text:"Retry budget goes only where it can succeed."},
-    {k:"B", text:"Retryable failures can use a cheaper model."},
+    {k:"B", text:"Retryable failures can be handled with a cheaper model."},
     {k:"C", text:"Non-retryable failures can be ignored entirely."},
     {k:"D", text:"The schema can be simplified."}
   ],
@@ -9536,7 +9536,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Refine the prompt on a small sample first."},
     {k:"B", text:"Split into 800 batches of 100."},
-    {k:"C", text:"Submit everything and resubmit failures."},
+    {k:"C", text:"Submit everything at once and resubmit whatever fails."},
     {k:"D", text:"Run the whole corpus synchronously to validate."}
   ],
   correct:["A"],
@@ -9550,7 +9550,7 @@ const BANK_ALL = [
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-l", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-l", domain:4, ts:"4.5", scenario:5, type:"single",
   stem:"What is `custom_id` for?",
   options:[
     {k:"A", text:"Correlating each request with its response."},
@@ -9588,7 +9588,7 @@ const BANK_ALL = [
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-n", domain:4, ts:"4.5", scenario:6, type:"multi",
+{ id:"d4-4.5-n", domain:4, ts:"4.5", scenario:5, type:"multi",
   stem:"Which two are accurate properties of the Message Batches API? (Select 2.)",
   options:[
     {k:"A", text:"Roughly 50% cost saving against standard rates."},
@@ -9606,7 +9606,7 @@ const BANK_ALL = [
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-o", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-o", domain:4, ts:"4.5", scenario:5, type:"single",
   stem:"A team reports that batches usually finish in 20 minutes and proposes using batch for a user-facing feature. What is the flaw?",
   options:[
     {k:"A", text:"Usual is not guaranteed, and the tail is what users get."},
@@ -9625,7 +9625,7 @@ const BANK_ALL = [
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-p", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-p", domain:4, ts:"4.5", scenario:5, type:"single",
   stem:"A batch of 100,000 requests is rejected. What is the most likely cause?",
   options:[
     {k:"A", text:"A scale limit on requests or total size was exceeded."},
@@ -9663,13 +9663,13 @@ const BANK_ALL = [
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-r", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-r", domain:4, ts:"4.5", scenario:5, type:"single",
   stem:"After a batch completes, 40 requests have no corresponding response. What is the first thing to check?",
   options:[
     {k:"A", text:"Whether those requests expired past the window."},
     {k:"B", text:"Whether the model was overloaded at submission."},
     {k:"C", text:"Whether the responses were returned out of order."},
-    {k:"D", text:"Whether the batch exceeded its token budget."}
+    {k:"D", text:"Whether the batch exceeded its allotted token budget."}
   ],
   correct:["A"],
   explain:{
@@ -9682,7 +9682,7 @@ const BANK_ALL = [
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-s", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-s", domain:4, ts:"4.5", scenario:5, type:"single",
   stem:"A pipeline submits one document per batch, several thousand times a day. What is wrong with this?",
   options:[
     {k:"A", text:"It takes the latency penalty without the batching benefit."},
@@ -9701,7 +9701,7 @@ const BANK_ALL = [
   },
   refs:[R_BATCH] },
 
-{ id:"d4-4.5-t", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-t", domain:4, ts:"4.5", scenario:5, type:"single",
   stem:"How should a batch pipeline handle a mix of successes and failures?",
   options:[
     {k:"A", text:"Process the successes and resubmit only the failures."},
@@ -9782,7 +9782,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Unchanged callers do not appear in a diff."},
     {k:"B", text:"Integration passes cannot detect signature changes."},
-    {k:"C", text:"The pass runs before the per-file passes."},
+    {k:"C", text:"The pass runs before any of the per-file passes."},
     {k:"D", text:"Diffs omit file paths needed for cross-referencing."}
   ],
   correct:["A"],
@@ -9837,9 +9837,9 @@ const BANK_ALL = [
   stem:"A team runs three review passes and reports only findings appearing in two. Real bugs start slipping through. Why?",
   options:[
     {k:"A", text:"Subtle bugs are often caught in only one pass."},
-    {k:"B", text:"Three passes exceed the recommended maximum."},
+    {k:"B", text:"Three passes exceeds the recommended maximum for a review."},
     {k:"C", text:"Passes interfere when run against the same diff."},
-    {k:"D", text:"Consensus requires an even number of passes."}
+    {k:"D", text:"Consensus filtering requires an even number of passes."}
   ],
   correct:["A"],
   explain:{
@@ -9894,7 +9894,7 @@ const BANK_ALL = [
   stem:"Which is the strongest reason to split a review by file rather than by concern?",
   options:[
     {k:"A", text:"Each file gets the same depth of attention."},
-    {k:"B", text:"Concern-based passes cannot be automated."},
+    {k:"B", text:"Concern-based passes cannot be automated reliably."},
     {k:"C", text:"Files are smaller than concerns."},
     {k:"D", text:"Concerns overlap and produce duplicate findings."}
   ],
@@ -10010,7 +10010,7 @@ const BANK_ALL = [
   stem:"Your synthesis agent reliably incorporates findings from the start and end of the aggregated input but frequently omits findings from the middle. What mitigations address this directly?",
   options:[
     {k:"A", text:"Place a key-findings summary first and organise details under explicit section headers."},
-    {k:"B", text:"Sort the findings by relevance so the most important are first, and truncate the tail."},
+    {k:"B", text:"Sort the findings by relevance so the most important come first, then truncate the tail."},
     {k:"C", text:"Reduce the total number of findings passed so everything fits comfortably."},
     {k:"D", text:"Repeat the middle findings again at the end of the input so that they also appear in a well-attended position."}
   ],
@@ -10029,7 +10029,7 @@ const BANK_ALL = [
   stem:"Each `lookup_order` call returns more than 40 fields, of which about 5 matter for a return. Across a long conversation these accumulate and crowd out earlier context. What is the appropriate intervention?",
   options:[
     {k:"A", text:"Trim tool outputs to the relevant fields before they enter context."},
-    {k:"B", text:"Summarise the conversation more frequently to reclaim the space."},
+    {k:"B", text:"Summarise the conversation more frequently in order to reclaim the space."},
     {k:"C", text:"Call `lookup_order` less often by caching its results in the prompt."},
     {k:"D", text:"Accept the accumulation, since the extra fields might be needed later."}
   ],
@@ -10448,7 +10448,7 @@ const BANK_ALL = [
     {k:"A", text:"Accuracy broken down by document type and by field, to confirm consistency."},
     {k:"B", text:"That the 97% was measured on a sample of at least 1,000 documents."},
     {k:"C", text:"That the confidence threshold has been set above the mean confidence observed across the corpus."},
-    {k:"D", text:"That the extraction latency stays within limits at full automation volume."}
+    {k:"D", text:"That the extraction latency stays within acceptable limits at full automation volume."}
   ],
   correct:["A"],
   explain:{
@@ -10484,7 +10484,7 @@ const BANK_ALL = [
   stem:"You want confidence scores to be useful for routing rather than decorative. What makes them trustworthy?",
   options:[
     {k:"A", text:"Calibrating the review thresholds against a labelled validation set."},
-    {k:"B", text:"Instructing the model to be conservative when assigning confidence."},
+    {k:"B", text:"Instructing the model to be more conservative when it assigns confidence."},
     {k:"C", text:"Averaging confidence across three runs of the same document."},
     {k:"D", text:"Normalising the scores so that they are uniformly distributed across the available range."}
   ],
@@ -10580,7 +10580,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Require subagents to output structured claim-source mappings that downstream agents must preserve and merge."},
     {k:"B", text:"Require the synthesis agent to add citations at the end based on the overall source list."},
-    {k:"C", text:"Require the coordinator to verify every citation in the final report against the consolidated source list."},
+    {k:"C", text:"Require the coordinator to verify every citation in the finished report against the consolidated source list."},
     {k:"D", text:"Require subagents to include full source text with every finding so nothing is lost."}
   ],
   correct:["A"],
@@ -10600,7 +10600,7 @@ const BANK_ALL = [
     {k:"A", text:"Require publication or data-collection dates in subagent output."},
     {k:"B", text:"Require subagents to reject sources older than two years."},
     {k:"C", text:"Require the synthesis step to report only the higher of any two conflicting figures."},
-    {k:"D", text:"Require subagents to note whether a source is peer-reviewed."}
+    {k:"D", text:"Require subagents to note whether each source is peer-reviewed."}
   ],
   correct:["A"],
   explain:{
@@ -10637,7 +10637,7 @@ const BANK_ALL = [
   options:[
     {k:"A", text:"Render each content type appropriately: financial data as tables, news as prose."},
     {k:"B", text:"Keep the uniform format for the sake of consistency, and add a preamble explaining to readers how to read it."},
-    {k:"C", text:"Convert everything to prose, which reads most naturally for all content types."},
+    {k:"C", text:"Convert everything to prose, which reads most naturally across all content types."},
     {k:"D", text:"Split the report into separate documents, one per content type."}
   ],
   correct:["A"],
@@ -10669,6 +10669,1600 @@ const BANK_ALL = [
     }
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
+
+/* ---- Domain 5 expansion: task statements 5.1, 5.2 and 5.3 ---- */
+
+{ id:"d5-5.1-g", domain:5, ts:"5.1", scenario:1, type:"single",
+  stem:"By turn 30 a support agent has forgotten the customer said they were travelling until the 14th, and offers a delivery date they cannot receive. What design prevents this?",
+  options:[
+    {k:"A", text:"Keep customer-stated constraints in an unsummarised facts block."},
+    {k:"B", text:"Summarise less often so more of the conversation survives."},
+    {k:"C", text:"Ask the customer to restate constraints periodically."},
+    {k:"D", text:"Increase the context window so summarisation is unnecessary."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Stated constraints are exactly what summarisation loses first, and they are load-bearing for the resolution. Holding them outside the compressed history makes them immune to it.",
+    distractors:{
+      B:"Less frequent summarisation delays the loss and gives up the savings that motivated it.",
+      C:"Asking the customer to repeat themselves is poor service and signals the agent was not listening.",
+      D:"A larger window postpones the problem to a longer conversation."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.1-h", domain:5, ts:"5.1", scenario:3, type:"single",
+  stem:"A synthesis agent receives 60 findings and consistently omits those in positions 20 to 40. What mitigation applies?",
+  options:[
+    {k:"A", text:"Lead with a key-findings summary and use section headers."},
+    {k:"B", text:"Sort by relevance and truncate the tail."},
+    {k:"C", text:"Pass 20 findings at a time in three calls."},
+    {k:"D", text:"Repeat the middle findings at the end."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Beginnings and ends are attended most reliably. A summary at the front puts every key point in a strong position, and headers give structural anchors for locating detail in the body.",
+    distractors:{
+      C:"Batching is a reasonable fallback, but synthesis needs to see findings together to combine them.",
+      B:"Truncation discards real findings, which is worse than under-weighting them.",
+      D:"Duplication inflates the input and blurs whether repeated items are distinct."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.1-i", domain:5, ts:"5.1", scenario:1, type:"single",
+  stem:"An order lookup returns 43 fields of which 5 matter. Across 20 turns this crowds out the conversation. Where should trimming happen?",
+  options:[
+    {k:"A", text:"Before the result enters context."},
+    {k:"B", text:"During summarisation, once context is under pressure."},
+    {k:"C", text:"In the prompt, by asking the model to ignore extra fields."},
+    {k:"D", text:"Not at all; the extra fields may prove useful."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Trimming at entry means the 38 irrelevant fields never occupy the window at all, so nothing has to be compressed later to make room for them.",
+    distractors:{
+      B:"By then the space is already spent, and summarisation compresses the valuable history to accommodate noise.",
+      C:"Ignoring is not the same as absent; the tokens are still consumed.",
+      D:"Speculative retention is what created the problem, and a later need can be met with another call."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.1-j", domain:5, ts:"5.1", scenario:3, type:"single",
+  stem:"Upstream agents return long prose with full reasoning. The synthesis agent's budget is tight. What change helps most?",
+  options:[
+    {k:"A", text:"Have upstream agents return structured facts and citations."},
+    {k:"B", text:"Have synthesis summarise each input as it arrives."},
+    {k:"C", text:"Truncate each input to a fixed length."},
+    {k:"D", text:"Pass inputs one at a time."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Fixing this at the producer is far cheaper than at the consumer: structured facts carry what synthesis needs at a fraction of the tokens and keep attribution attached.",
+    distractors:{
+      B:"The verbose content must enter context before it can be summarised, so the budget is spent regardless.",
+      C:"Fixed truncation cuts arbitrarily and removes conclusions as readily as filler.",
+      D:"Synthesis needs findings together to combine them."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.1-k", domain:5, ts:"5.1", scenario:1, type:"single",
+  stem:"A session covers three issues and the agent conflates their amounts. What structural change helps?",
+  options:[
+    {k:"A", text:"A separate record per issue, keyed by issue."},
+    {k:"B", text:"Ask the customer which issue each message concerns."},
+    {k:"C", text:"Handle one issue per conversation."},
+    {k:"D", text:"Summarise the older issues more aggressively."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Per-issue records remove the inference step that produces conflation, because each amount is attached to the issue it belongs to rather than floating in narrative.",
+    distractors:{
+      B:"Pushing disambiguation onto the customer degrades service for a problem the system created.",
+      C:"Splitting into separate conversations directly harms first-contact resolution.",
+      D:"Compressing older issues loses their facts entirely."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.1-l", domain:5, ts:"5.1", scenario:4, type:"single",
+  stem:"An exploration session's answers become generic after two hours, referring to typical patterns rather than the classes it found. What is happening?",
+  options:[
+    {k:"A", text:"The specific findings have fallen out of context."},
+    {k:"B", text:"The model has degraded through repeated sampling."},
+    {k:"C", text:"The repository changed during the session."},
+    {k:"D", text:"Temperature has drifted upward."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Falling back on general patterns is the signature of the specifics no longer being available. The remedy is to persist findings outside the conversation.",
+    distractors:{
+      B:"Models do not degrade over a session; the context does.",
+      C:"Nothing suggests the code changed, and that would produce contradictions rather than vagueness.",
+      D:"Temperature is whatever each request specifies and does not drift."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.1-m", domain:5, ts:"5.1", scenario:3, type:"single",
+  stem:"Why require subagents to include collection dates in their structured output?",
+  options:[
+    {k:"A", text:"So temporal change is not misread as contradiction."},
+    {k:"B", text:"So findings can be sorted chronologically."},
+    {k:"C", text:"So stale findings can be deleted automatically."},
+    {k:"D", text:"So the report can cite retrieval times."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Two figures differing across three years is growth, not disagreement. Without dates, synthesis has no way to tell those apart.",
+    distractors:{
+      B:"Sorting is a minor convenience that does not affect interpretation.",
+      C:"Automatic deletion would discard the historical baseline that makes a trend visible.",
+      D:"Retrieval time is an operational detail rather than an interpretive one."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.1-n", domain:5, ts:"5.1", scenario:1, type:"multi",
+  stem:"Which two facts belong in a persistent case-facts block rather than the summarised history? (Select 2.)",
+  options:[
+    {k:"A", text:"The disputed amount and the order number."},
+    {k:"B", text:"The customer's stated expectation of a full refund."},
+    {k:"C", text:"The agent's greeting at the start of the conversation."},
+    {k:"D", text:"A restatement of the returns policy."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"Both are precise, load-bearing and exactly what summarisation blurs. The resolution depends on getting them exactly right.",
+    distractors:{
+      C:"Pleasantries carry no information the resolution depends on.",
+      D:"Policy is stable reference material better supplied from its source than carried per conversation."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.1-o", domain:5, ts:"5.1", scenario:6, type:"single",
+  stem:"An extraction agent processes a 300-page document page by page and loses detail from early pages. What is the appropriate design?",
+  options:[
+    {k:"A", text:"Extract structured facts per page and carry only those forward."},
+    {k:"B", text:"Increase the context window and keep every page."},
+    {k:"C", text:"Process pages in reverse so early pages are freshest."},
+    {k:"D", text:"Summarise the whole document before extracting."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Carrying compact structured facts instead of raw pages keeps what matters while the window stays manageable, however long the document is.",
+    distractors:{
+      D:"Summarising first loses the detail extraction is meant to capture.",
+      B:"A larger window delays the same failure on a longer document.",
+      C:"Reversing shifts which pages are weakly attended rather than fixing it."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.1-p", domain:5, ts:"5.1", scenario:3, type:"single",
+  stem:"A coordinator passes a subagent 40,000 tokens of raw retrieval. The subagent's output is shallow. What is the most likely cause?",
+  options:[
+    {k:"A", text:"Signal is diluted across a large volume of low-relevance text."},
+    {k:"B", text:"The subagent's context limit was exceeded and input truncated."},
+    {k:"C", text:"Raw text cannot be passed in a Task prompt."},
+    {k:"D", text:"The subagent lacked tools to process the input."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Most retrieval is noise. Buried in it, the findings that matter are attended no more strongly than the surrounding filler, so the output reflects the average rather than the best material.",
+    distractors:{
+      B:"Truncation is worth checking, but 40,000 tokens is within modern limits and the symptom is shallowness rather than a hard cut.",
+      C:"Text passes fine in a prompt.",
+      D:"No tools are needed to read text that is already in context."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.1-q", domain:5, ts:"5.1", scenario:2, type:"single",
+  stem:"A long coding session starts giving inconsistent answers about a class it analysed earlier. What is the most reliable remedy?",
+  options:[
+    {k:"A", text:"Write the findings to a file and consult it."},
+    {k:"B", text:"Run `/compact` and continue."},
+    {k:"C", text:"Ask the model to recall its earlier analysis."},
+    {k:"D", text:"Re-read every file analysed so far."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A file outlives the context window, compaction and the session itself, so the findings can be reconstituted whenever they are needed.",
+    distractors:{
+      B:"Compaction frees space by summarising, which blurs exactly the specifics being lost.",
+      C:"Asking it to recall what has fallen out of context invites reconstruction rather than recall.",
+      D:"Re-reading everything is expensive and refills the window with the same volume."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.1-r", domain:5, ts:"5.1", scenario:1, type:"single",
+  stem:"Why is the API being stateless relevant to context management?",
+  options:[
+    {k:"A", text:"Full history must be resent, so its size is a per-request cost."},
+    {k:"B", text:"History is stored server-side and cannot be edited."},
+    {k:"C", text:"Only the last ten turns are retained."},
+    {k:"D", text:"Statelessness prevents summarisation."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Because nothing is remembered between calls, everything the model should know travels with each request. That makes what you choose to carry a recurring cost rather than a one-off.",
+    distractors:{
+      B:"There is no server-side history, which is precisely what statelessness means.",
+      C:"Retention of that kind would be a server-side behaviour, and the conversation you send is exactly the conversation the model sees.",
+      D:"Statelessness is what makes summarisation your responsibility, not something it prevents."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.1-s", domain:5, ts:"5.1", scenario:6, type:"single",
+  stem:"Which practice best preserves numeric precision across a long extraction session?",
+  options:[
+    {k:"A", text:"Record values in a structured store as they are found."},
+    {k:"B", text:"Instruct the summariser to keep all numbers."},
+    {k:"C", text:"Repeat key figures in every prompt."},
+    {k:"D", text:"Use a model with stronger arithmetic."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Values written to a structured store are exact and permanent, and can be read back without depending on what survived compression.",
+    distractors:{
+      B:"An instruction applied on every summarisation pass degrades gradually over many turns.",
+      C:"Repetition inflates every prompt and does not scale past a handful of figures.",
+      D:"Arithmetic capability is not the issue; retention is."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.1-t", domain:5, ts:"5.1", scenario:3, type:"single",
+  stem:"What is the 'lost in the middle' effect?",
+  options:[
+    {k:"A", text:"Content between the start and end of a long input is attended least reliably."},
+    {k:"B", text:"Tokens in the middle of a response are more likely to be wrong."},
+    {k:"C", text:"Middle turns of a conversation are dropped first under compaction."},
+    {k:"D", text:"Mid-sized inputs perform worse than short or long ones."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Models process the beginning and end of a long input reliably and may omit material from the middle, which is why key points belong at the front and structure matters.",
+    distractors:{
+      C:"Compaction is a separate mechanism operating on conversation history rather than a single input.",
+      B:"It is about position within the input, not within the generated response.",
+      D:"It concerns position inside one input, not the overall size of the input."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.2-g", domain:5, ts:"5.2", scenario:1, type:"single",
+  stem:"A customer writes 'this is the third time I've had to contact you about this'. The issue is a standard replacement the agent can process. What should it do?",
+  options:[
+    {k:"A", text:"Acknowledge the repetition and resolve it now."},
+    {k:"B", text:"Escalate, since repeated contact signals complexity."},
+    {k:"C", text:"Resolve it without commenting on the contact history."},
+    {k:"D", text:"Ask why the previous contacts did not resolve it."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Repeated contact is a service failure, not a complexity signal. Acknowledging it and resolving in this contact is what turns the pattern around.",
+    distractors:{
+      B:"Escalating a resolvable issue makes it a fourth contact without resolving anything.",
+      C:"Ignoring the history reads as not listening, which is what produced the frustration.",
+      D:"Investigating past failures delays the resolution the customer came for."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.2-h", domain:5, ts:"5.2", scenario:1, type:"single",
+  stem:"Policy covers refunds for defective goods but is silent on goods damaged by a courier. What should the agent do?",
+  options:[
+    {k:"A", text:"Escalate, since policy does not address this case."},
+    {k:"B", text:"Apply the defective-goods policy by analogy."},
+    {k:"C", text:"Refuse, since no policy permits it."},
+    {k:"D", text:"Approve, since the customer is not at fault."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A gap is a distinct escalation trigger. The case is easy to understand but nobody has decided whether it is covered, and that decision is not the agent's to make.",
+    distractors:{
+      B:"Reasoning by analogy from adjacent policy is the agent making policy.",
+      C:"Defaulting to refusal turns every unaddressed case into a rejection.",
+      D:"Fault is relevant to the decision but does not authorise the agent to make it."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.2-i", domain:5, ts:"5.2", scenario:1, type:"single",
+  stem:"An agent has attempted the same lookup four times with different spellings and cannot locate the account. What is the appropriate action?",
+  options:[
+    {k:"A", text:"Escalate, having made no meaningful progress."},
+    {k:"B", text:"Continue trying further spelling variants."},
+    {k:"C", text:"Create a new account for the customer."},
+    {k:"D", text:"Close the contact as unresolvable."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Inability to make progress is one of the legitimate escalation triggers. A human has tools and discretion the agent does not.",
+    distractors:{
+      B:"Four failures suggest the account is not findable this way, so more variants are unlikely to help.",
+      C:"Creating an account fabricates state and may duplicate an existing customer.",
+      D:"Closing without resolution abandons a customer whose problem a human could solve."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.2-j", domain:5, ts:"5.2", scenario:1, type:"single",
+  stem:"An agent escalates 40% of contacts, mostly straightforward. What is the most proportionate first intervention?",
+  options:[
+    {k:"A", text:"Explicit criteria with examples of resolve versus escalate."},
+    {k:"B", text:"A confidence threshold below which it escalates."},
+    {k:"C", text:"A classifier trained on historical tickets."},
+    {k:"D", text:"A cap on escalations per day."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Over-escalation on easy cases means the boundary is unclear. Stating it and demonstrating it on both sides is the direct and cheapest fix.",
+    distractors:{
+      B:"Self-reported confidence is poorly calibrated, and an agent unsure about easy cases will not score them accurately.",
+      C:"A trained classifier is substantial infrastructure before prompt work has been tried.",
+      D:"A cap forces the agent to handle cases it should escalate once the quota is used."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.2-k", domain:5, ts:"5.2", scenario:1, type:"single",
+  stem:"A lookup returns two customers with the same name and city. What should the agent do?",
+  options:[
+    {k:"A", text:"Ask for another identifier."},
+    {k:"B", text:"Choose the one with recent activity."},
+    {k:"C", text:"Choose the older account as the primary."},
+    {k:"D", text:"Escalate for manual identification."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"One clarifying question resolves the ambiguity definitively and cheaply, and avoids acting on the wrong person's account.",
+    distractors:{
+      D:"Escalation is disproportionate when a single question settles it, and it costs first-contact resolution.",
+      B:"Recency is a guess, and acting on the wrong account risks exposing another customer's data.",
+      C:"Account age is equally arbitrary."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.2-l", domain:5, ts:"5.2", scenario:1, type:"single",
+  stem:"Why is sentiment a poor escalation trigger?",
+  options:[
+    {k:"A", text:"Frustration does not track case complexity."},
+    {k:"B", text:"Sentiment analysis is too slow for live conversation."},
+    {k:"C", text:"Customers rarely express frustration in writing."},
+    {k:"D", text:"Sentiment scores cannot be thresholded reliably."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Frustrated customers frequently have simple problems, and calm ones sometimes have genuinely hard ones. Routing on sentiment sends the wrong cases to humans in both directions.",
+    distractors:{
+      D:"Thresholding is technically straightforward; the trouble is what is being thresholded.",
+      B:"Sentiment classification is fast enough for live use.",
+      C:"Frustration is expressed readily in writing."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.2-m", domain:5, ts:"5.2", scenario:1, type:"single",
+  stem:"A customer asks for a manager mid-conversation, after the agent has already diagnosed the issue. What should happen?",
+  options:[
+    {k:"A", text:"Escalate, passing the diagnosis in a structured handoff."},
+    {k:"B", text:"Complete the resolution first, and then offer escalation."},
+    {k:"C", text:"Explain that the agent can resolve it faster."},
+    {k:"D", text:"Escalate without context, letting the manager start fresh."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The request is honoured immediately, and the work already done travels with it so the manager does not restart the investigation.",
+    distractors:{
+      B:"Finishing first overrides an explicit request the customer has already made.",
+      C:"Arguing with a stated preference is exactly what escalates complaints.",
+      D:"Discarding the diagnosis wastes it and makes the customer repeat themselves."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.2-n", domain:5, ts:"5.2", scenario:1, type:"multi",
+  stem:"Which two are legitimate reasons to escalate? (Select 2.)",
+  options:[
+    {k:"A", text:"The customer has asked for a human."},
+    {k:"B", text:"The agent cannot make meaningful progress."},
+    {k:"C", text:"The conversation has exceeded ten turns."},
+    {k:"D", text:"The customer's message is written in capitals."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"An explicit request and genuine inability to progress are two of the three documented triggers, the third being a policy gap.",
+    distractors:{
+      C:"Turn count reflects conversational style as much as difficulty.",
+      D:"Capitalisation is a sentiment proxy, and sentiment does not track complexity."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.2-o", domain:5, ts:"5.2", scenario:6, type:"single",
+  stem:"An extraction pipeline routes documents to human review when the model reports low confidence. Reviewers find most of them fine. What should be re-examined?",
+  options:[
+    {k:"A", text:"Whether the confidence scores are calibrated."},
+    {k:"B", text:"Whether the reviewers themselves are being thorough enough."},
+    {k:"C", text:"Whether the threshold should be lowered further."},
+    {k:"D", text:"Whether the schema is too strict."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Raw scores are not inherently meaningful. Checking them against labelled data tells you what a given score implies for error rate, which is what a routing threshold should rest on.",
+    distractors:{
+      C:"Lowering the threshold sends even more correct extractions to review.",
+      B:"Reviewers finding documents fine is evidence about the routing, not about their diligence.",
+      D:"Schema strictness would surface as validation failures rather than low confidence."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.2-p", domain:5, ts:"5.2", scenario:1, type:"single",
+  stem:"What is the difference between a complex case and a policy gap, for escalation purposes?",
+  options:[
+    {k:"A", text:"A gap means nobody has decided; complexity means the answer is hard to work out."},
+    {k:"B", text:"A gap always involves money, whereas complexity does not necessarily involve any."},
+    {k:"C", text:"Complexity warrants escalation; a gap does not."},
+    {k:"D", text:"They are the same and both warrant escalation."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The distinction matters because a complex case may still be within the agent's authority, whereas a gap is outside it regardless of how simple the case looks.",
+    distractors:{
+      C:"This is inverted: a gap is the clearer trigger, since authority rather than difficulty is missing.",
+      B:"Gaps arise in non-financial policy areas too.",
+      D:"Conflating them leads to escalating hard-but-permitted cases and deciding unauthorised ones."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.2-q", domain:5, ts:"5.2", scenario:1, type:"single",
+  stem:"An agent reports 9 out of 10 confidence and gets the case wrong. What does this illustrate?",
+  options:[
+    {k:"A", text:"Self-reported confidence is poorly calibrated to correctness."},
+    {k:"B", text:"The confidence scale needs more granularity."},
+    {k:"C", text:"The agent should report confidence after acting."},
+    {k:"D", text:"Confidence should be reported per tool call."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A model can be entirely confident and wrong, which is why routing on self-assessment fails precisely on the cases where a human was most needed.",
+    distractors:{
+      B:"A finer scale on an uncalibrated signal adds precision without accuracy.",
+      C:"Timing does not repair the underlying calibration.",
+      D:"Per-call scores multiply an unreliable signal."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.2-r", domain:5, ts:"5.2", scenario:1, type:"single",
+  stem:"A frustrated customer describes a delayed order the agent can resolve with a reshipment, and has not asked for a human. What is the right response?",
+  options:[
+    {k:"A", text:"Acknowledge the frustration and offer the reshipment."},
+    {k:"B", text:"Escalate, since frustration indicates the case needs a human."},
+    {k:"C", text:"Process the reshipment without commenting on how they feel."},
+    {k:"D", text:"Ask whether they would prefer a human before proceeding."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The issue is within capability, so resolving it in this contact is the best outcome. Acknowledging the frustration costs nothing and is what makes the resolution land well.",
+    distractors:{
+      B:"Escalating on sentiment sends resolvable cases to humans.",
+      C:"Ignoring evident frustration reads as tone-deaf even when the outcome is right.",
+      D:"Offering escalation unprompted invites it and adds a handoff to a closable case."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.2-s", domain:5, ts:"5.2", scenario:1, type:"single",
+  stem:"A team proposes escalating any request the agent has not seen before. What is the objection?",
+  options:[
+    {k:"A", text:"Novelty is not the same as being outside authority."},
+    {k:"B", text:"Novel requests cannot be detected reliably."},
+    {k:"C", text:"Escalation queues cannot handle the volume."},
+    {k:"D", text:"Novel requests are usually invalid."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Most novel requests are ordinary combinations of things the agent handles routinely. What warrants escalation is a gap in policy, not unfamiliarity of phrasing.",
+    distractors:{
+      C:"Volume is a real consequence but follows from the criterion being wrong.",
+      B:"Novelty detection is feasible; the problem is that it is the wrong signal.",
+      D:"Novel requests are usually perfectly valid."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.2-t", domain:5, ts:"5.2", scenario:1, type:"single",
+  stem:"What most improves escalation calibration in a system prompt?",
+  options:[
+    {k:"A", text:"Named triggers plus examples on both sides of the line."},
+    {k:"B", text:"An instruction to escalate when uncertain."},
+    {k:"C", text:"A list of every case handled in the last year."},
+    {k:"D", text:"A target escalation rate."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Triggers give the rule and contrastive examples calibrate it on the hard cases, which is what a boundary judgement needs.",
+    distractors:{
+      B:"Uncertainty is precisely what the agent judges badly, so this delegates the decision to an unreliable signal.",
+      C:"An exhaustive list is enormous and still fails on the first genuinely new case.",
+      D:"A rate target invites gaming without saying which cases belong on which side."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.3-g", domain:5, ts:"5.3", scenario:3, type:"single",
+  stem:"A subagent times out. Which response gives the coordinator the most useful basis for recovery?",
+  options:[
+    {k:"A", text:"Failure type, attempted query, partial results and alternatives."},
+    {k:"B", text:"A generic 'search unavailable' after internal retries."},
+    {k:"C", text:"An empty result set marked successful."},
+    {k:"D", text:"An exception terminating the workflow."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Each recovery option the coordinator has depends on knowing what was tried and what came back. Structured context is what makes an informed choice possible.",
+    distractors:{
+      B:"The internal retries are sensible; discarding the context is what removes the coordinator's options.",
+      C:"Reporting failure as success prevents recovery and silently ships incomplete work.",
+      D:"Terminating everything discards research that succeeded."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.3-h", domain:5, ts:"5.3", scenario:3, type:"single",
+  stem:"Why is marking a failed search as an empty success the most damaging error-handling choice?",
+  options:[
+    {k:"A", text:"It removes any chance of recovery and hides the gap."},
+    {k:"B", text:"It causes infinite retries."},
+    {k:"C", text:"It violates the MCP specification."},
+    {k:"D", text:"It consumes more context than an error."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"An error that reports itself as success is invisible. The coordinator moves on believing the topic was covered, and the final report claims coverage it does not have.",
+    distractors:{
+      B:"There is no retry; the success status is accepted and the run continues.",
+      C:"The protocol issue is secondary to the silent data loss.",
+      D:"Context cost is trivial and beside the point."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.3-i", domain:5, ts:"5.3", scenario:3, type:"single",
+  stem:"Two of six topics could not be researched. What should the report do?",
+  options:[
+    {k:"A", text:"Annotate which areas have gaps and why."},
+    {k:"B", text:"Omit those topics without comment."},
+    {k:"C", text:"Fill them from background knowledge, marked provisional."},
+    {k:"D", text:"Fail and re-run the whole pipeline."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"An explicit gap annotation is honest and actionable: the reader knows which conclusions rest on evidence and which area remains open.",
+    distractors:{
+      C:"Background knowledge produces unsourced claims in a report whose value is being cited, and 'provisional' is easily lost downstream.",
+      B:"Silent omission implies comprehensiveness the report does not have.",
+      D:"Re-running discards four well-covered areas to retry two whose sources may still be unavailable."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.3-j", domain:5, ts:"5.3", scenario:3, type:"single",
+  stem:"A subagent resolves a rate limit locally and hits an unresolvable permission error. What should it propagate?",
+  options:[
+    {k:"A", text:"The permission error, with what was attempted and partial results."},
+    {k:"B", text:"Both errors, so that the coordinator has complete visibility of what happened."},
+    {k:"C", text:"Neither; return whatever data it gathered."},
+    {k:"D", text:"The rate limit, as evidence of systemic load."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Propagate what needs a decision. The rate limit was handled; the permission error blocks work and only the coordinator can choose how to route around it.",
+    distractors:{
+      B:"Reporting the resolved failure adds noise and may trigger unnecessary recovery.",
+      C:"Suppressing the permission error hides a genuine coverage gap.",
+      D:"This is inverted: the transient failure is the one that needs no attention."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.3-k", domain:5, ts:"5.3", scenario:3, type:"single",
+  stem:"A query runs correctly and matches nothing. How should it be reported?",
+  options:[
+    {k:"A", text:"As a success with zero matches, distinct from a failure."},
+    {k:"B", text:"As an error, since nothing was returned."},
+    {k:"C", text:"As transient, so the coordinator retries."},
+    {k:"D", text:"As a partial result."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A query that ran and matched nothing is a definitive, informative answer. Labelling it a success with zero matches lets the coordinator distinguish it from being unable to look.",
+    distractors:{
+      B:"The subagent did its job; calling it an error triggers pointless recovery.",
+      C:"Retrying a definitive negative produces the same result at extra cost.",
+      D:"'Partial' implies some data was retrieved, which misrepresents a complete query."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.3-l", domain:5, ts:"5.3", scenario:3, type:"single",
+  stem:"Which decision can a coordinator NOT make given only 'search unavailable'?",
+  options:[
+    {k:"A", text:"Whether a narrower query would succeed."},
+    {k:"B", text:"Whether to log the failure."},
+    {k:"C", text:"Whether to mark the run degraded."},
+    {k:"D", text:"Whether to alert an operator."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Reformulating requires knowing what was tried and whether anything came back. The other three need only the fact that something failed.",
+    distractors:{
+      B:"Logging needs only the failure itself.",
+      C:"Marking degraded is a coarse decision the status supports.",
+      D:"Alerting likewise needs only the fact of failure."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.3-m", domain:5, ts:"5.3", scenario:2, type:"single",
+  stem:"A support subagent's tool fails and it returns 'I was unable to complete that request'. What is missing for the coordinator?",
+  options:[
+    {k:"A", text:"Whether the failure was transient, policy or permission."},
+    {k:"B", text:"A friendlier phrasing for the customer."},
+    {k:"C", text:"The number of retries attempted."},
+    {k:"D", text:"The elapsed time before failure."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The category determines the response: retry, explain the policy, or escalate for access. Without it the coordinator has to guess between three quite different actions.",
+    distractors:{
+      B:"Phrasing matters for the customer once the action is decided, not for deciding it.",
+      C:"Retry count is diagnostic detail rather than a basis for the next decision.",
+      D:"Duration is operational telemetry."
+    }
+  },
+  refs:[R_MCP] },
+
+{ id:"d5-5.3-n", domain:5, ts:"5.3", scenario:3, type:"multi",
+  stem:"Which two belong in structured error context passed to a coordinator? (Select 2.)",
+  options:[
+    {k:"A", text:"What was attempted."},
+    {k:"B", text:"Any partial results obtained."},
+    {k:"C", text:"The subagent's system prompt."},
+    {k:"D", text:"The model and temperature used."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"Both bear directly on the recovery decision: what was tried shapes what to try next, and partial results may be enough to proceed with an annotated gap.",
+    distractors:{
+      C:"The system prompt is configuration the coordinator already controls.",
+      D:"Model settings are operational detail rather than recovery input."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.3-o", domain:5, ts:"5.3", scenario:2, type:"single",
+  stem:"A file-read tool returns one generic error for missing files, permission denials and directories. What is the effect on the agent?",
+  options:[
+    {k:"A", text:"It cannot tell which recovery to attempt."},
+    {k:"B", text:"It abandons the tool entirely."},
+    {k:"C", text:"It treats the file as empty."},
+    {k:"D", text:"It retries indefinitely."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Correcting a path, requesting access and listing a directory are three different remedies. Collapsing the causes leaves the agent guessing which applies.",
+    distractors:{
+      D:"Retrying is one guess it might make, but the general problem is that no recovery is determinable.",
+      B:"Abandoning the tool after one failure is unusual behaviour.",
+      C:"An explicit error is not the same as an empty result."
+    }
+  },
+  refs:[R_MCP] },
+
+{ id:"d5-5.3-p", domain:5, ts:"5.3", scenario:2, type:"single",
+  stem:"Why should a subagent handle transient failures locally rather than propagating them?",
+  options:[
+    {k:"A", text:"They need no coordinator decision once resolved."},
+    {k:"B", text:"Coordinators cannot process error responses at all."},
+    {k:"C", text:"Propagated errors terminate the workflow."},
+    {k:"D", text:"Local retries are cheaper than coordinator retries."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A blip the subagent recovered from changes nothing about what the coordinator should do next, so reporting it spends context and invites unnecessary intervention.",
+    distractors:{
+      D:"Cost is similar either way; the argument is about whose decision it is.",
+      B:"Coordinators handle errors routinely.",
+      C:"Propagation does not automatically terminate anything."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.3-q", domain:5, ts:"5.3", scenario:6, type:"single",
+  stem:"An extraction subagent fails on 4 of 60 documents and returns the 56 successes only. What is wrong?",
+  options:[
+    {k:"A", text:"The coordinator will believe all 60 were processed."},
+    {k:"B", text:"Partial results should never be returned."},
+    {k:"C", text:"The 56 results are unreliable without the 4."},
+    {k:"D", text:"Batch results must be returned complete."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Silence about the four makes the run look complete, so nobody retries them and downstream counts are quietly wrong.",
+    distractors:{
+      B:"Partial results are the normal and desirable outcome, provided the gaps are declared.",
+      C:"The 56 are perfectly reliable; the problem is the missing four being invisible.",
+      D:"Completeness is not required; visibility of what is missing is."
+    }
+  },
+  refs:[R_MCP] },
+
+{ id:"d5-5.3-r", domain:5, ts:"5.3", scenario:2, type:"single",
+  stem:"A coordinator receives structured errors from three subagents and proceeds with partial results. What must the final output include?",
+  options:[
+    {k:"A", text:"Coverage annotations for the affected areas."},
+    {k:"B", text:"The raw error payloads verbatim."},
+    {k:"C", text:"A single confidence score covering the whole report."},
+    {k:"D", text:"Nothing; partial results should read as complete."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The reader needs to know which conclusions are well supported and which areas are thin because sources were unavailable. That is what makes a partial report trustworthy.",
+    distractors:{
+      B:"Raw payloads are for operators rather than readers of the report.",
+      C:"A single aggregate score obscures which specific areas are affected.",
+      D:"Presenting partial coverage as complete is the failure the annotations prevent."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.3-s", domain:5, ts:"5.3", scenario:2, type:"single",
+  stem:"What distinguishes an access failure from a valid empty result?",
+  options:[
+    {k:"A", text:"Whether the query ran at all."},
+    {k:"B", text:"Whether any documents exist in the source."},
+    {k:"C", text:"Whether the subagent retried."},
+    {k:"D", text:"Whether the coordinator requested the query."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"An access failure means the question was never answered; an empty result means it was answered and the answer is 'none'. That difference determines whether retrying makes any sense.",
+    distractors:{
+      B:"The source may be full of documents while the query legitimately matches none.",
+      C:"Retrying is a response to the failure rather than what defines it.",
+      D:"Both arise from requested queries."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.3-t", domain:5, ts:"5.3", scenario:2, type:"single",
+  stem:"An engineer proposes that any subagent error should terminate the research run, for safety. What is the objection?",
+  options:[
+    {k:"A", text:"It discards completed work over a recoverable failure."},
+    {k:"B", text:"Termination is not supported by the coordinator."},
+    {k:"C", text:"Errors are rare enough to ignore."},
+    {k:"D", text:"Partial results are always unusable."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Most subagent failures are routable around. Failing the whole run throws away everything that succeeded to avoid a gap that could have been annotated.",
+    distractors:{
+      D:"Partial results with declared gaps are frequently the most useful available output.",
+      C:"Errors are common enough that the policy would fire often.",
+      B:"Termination is implementable; the objection is that it is wasteful."
+    }
+  },
+  refs:[R_SUB] },
+
+/* ---- Domain 5 expansion: task statements 5.4, 5.5 and 5.6 ---- */
+
+{ id:"d5-5.4-g", domain:5, ts:"5.4", scenario:2, type:"single",
+  stem:"An agent exploring a large service starts citing 'typical repository conventions' instead of the modules it identified an hour earlier. What is the remedy?",
+  options:[
+    {k:"A", text:"Keep a scratchpad file and consult it."},
+    {k:"B", text:"Restart the session with the same approach."},
+    {k:"C", text:"Re-read every one of the files examined so far."},
+    {k:"D", text:"Switch to a model with a larger window."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A file survives the context window entirely, so findings can be read back whenever they are needed rather than depending on what remains in the conversation.",
+    distractors:{
+      B:"Restarting identically reproduces the same degradation a few hours later.",
+      C:"Re-reading refills the window with the same volume that displaced the findings.",
+      D:"A larger window postpones the problem without changing its shape."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.4-h", domain:5, ts:"5.4", scenario:2, type:"single",
+  stem:"You need answers to 'where are the integration tests?' and 'what calls the billing API?' while keeping the main agent focused. What structure fits?",
+  options:[
+    {k:"A", text:"A subagent per question, returning only answers."},
+    {k:"B", text:"Answer both questions in the main session, then compact it."},
+    {k:"C", text:"Answer them in a separate session and paste results back."},
+    {k:"D", text:"Defer both until the main work finishes."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Delegation isolates the verbose search output in the subagent's window and returns conclusions, which is exactly what keeps the main conversation coherent.",
+    distractors:{
+      B:"The output enters the main context before compaction can act, and compaction is lossy.",
+      C:"This works but is manual, and pasting large results reintroduces much of the bulk.",
+      D:"The billing dependency may well inform the main work, so deferring is not free."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.4-i", domain:5, ts:"5.4", scenario:2, type:"single",
+  stem:"Moving from discovery into implementation with several subagents, what should be done at the boundary?",
+  options:[
+    {k:"A", text:"Summarise discovery and inject it into each subagent prompt."},
+    {k:"B", text:"Pass the full discovery transcript to each subagent."},
+    {k:"C", text:"Let each subagent rediscover what it needs."},
+    {k:"D", text:"Keep discovery in the coordinator and have subagents query it."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Subagents inherit nothing, so a compact summary is what carries the discovery forward, and summarising first keeps that injection affordable across several of them.",
+    distractors:{
+      B:"A full transcript per subagent multiplies cost and reintroduces the verbosity the boundary was a chance to shed.",
+      C:"Rediscovery repeats work and risks each subagent reaching a different conclusion.",
+      D:"Subagents cannot query the coordinator mid-execution; the prompt is the only channel."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.4-j", domain:5, ts:"5.4", scenario:5, type:"single",
+  stem:"A long multi-agent analysis must survive a crash without repeating completed work. What design supports that?",
+  options:[
+    {k:"A", text:"Structured state exports plus a manifest loaded on resume."},
+    {k:"B", text:"A longer session timeout."},
+    {k:"C", text:"Running all agents in one process."},
+    {k:"D", text:"Relying on session resumption to restore agent state."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Durable state written to a known location, with a manifest the coordinator reads on resume, makes recovery a designed feature rather than an accident.",
+    distractors:{
+      D:"Session resumption restores a conversation, not the internal state of subagents that ran within it.",
+      B:"A longer timeout reduces one cause of interruption without providing recovery.",
+      C:"Consistent total failure is not recovery."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.4-k", domain:5, ts:"5.4", scenario:2, type:"single",
+  stem:"Which command reduces context usage in an extended session?",
+  options:[
+    {k:"A", text:"`/compact`"},
+    {k:"B", text:"`/clear`"},
+    {k:"C", text:"`/reset`"},
+    {k:"D", text:"`/trim`"}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Compaction condenses accumulated content to reclaim room while keeping the session going, which is the documented remedy for a window filling with discovery output.",
+    distractors:{
+      B:"Clearing discards the conversation rather than condensing it.",
+      C:"Not the documented command for reducing context in an ongoing session.",
+      D:"Not a Claude Code command."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d5-5.4-l", domain:5, ts:"5.4", scenario:5, type:"single",
+  stem:"What advantage does a scratchpad file have over relying on the conversation?",
+  options:[
+    {k:"A", text:"It survives compaction and session boundaries."},
+    {k:"B", text:"It is read back faster than conversation context."},
+    {k:"C", text:"It is injected into every subagent's context automatically."},
+    {k:"D", text:"Its contents do not consume tokens when the agent reads it."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Being on disk makes it independent of the window entirely, which is what a multi-day investigation needs.",
+    distractors:{
+      B:"Reading a file costs a tool call and adds latency.",
+      C:"Nothing is injected automatically; the agent must be told to read it.",
+      D:"File contents consume input tokens once read, like any other context."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.4-m", domain:5, ts:"5.4", scenario:5, type:"multi",
+  stem:"Which two practices counteract context degradation in long explorations? (Select 2.)",
+  options:[
+    {k:"A", text:"Persisting key findings to a file."},
+    {k:"B", text:"Delegating verbose investigation to subagents."},
+    {k:"C", text:"Increasing the context window."},
+    {k:"D", text:"Asking the model to remember carefully."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"One moves findings outside the window; the other keeps bulky intermediate work from entering it. Both attack the cause rather than the symptom.",
+    distractors:{
+      C:"A larger window fills with the same material and degrades later.",
+      D:"Retention is not something the model controls by intention."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.4-n", domain:5, ts:"5.4", scenario:5, type:"single",
+  stem:"An agent has read 60 files and answers are becoming vague. Which action best preserves progress?",
+  options:[
+    {k:"A", text:"Write current conclusions to disk before continuing."},
+    {k:"B", text:"Continue and hope the relevant detail survives."},
+    {k:"C", text:"Start a new session with no carried context."},
+    {k:"D", text:"Re-read the 60 files to refresh them."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Capturing conclusions while they are still accurate means the next step, whether compaction or a fresh session, cannot lose them.",
+    distractors:{
+      C:"Starting fresh without capturing anything discards the analysis entirely.",
+      B:"Continuing without capture is how the findings are lost.",
+      D:"Re-reading consumes the remaining window with the same content."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.4-o", domain:5, ts:"5.4", scenario:2, type:"single",
+  stem:"A research coordinator's context fills with subagent outputs before synthesis. What is the most effective change?",
+  options:[
+    {k:"A", text:"Have subagents return structured findings rather than narratives."},
+    {k:"B", text:"Compact the coordinator's context between each of the delegations."},
+    {k:"C", text:"Reduce the number of subagents."},
+    {k:"D", text:"Increase the coordinator's window."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The volume is produced upstream, so constraining what subagents return is where the saving is largest and the information loss smallest.",
+    distractors:{
+      B:"Compaction after the fact is lossy and repeats every delegation.",
+      C:"Fewer subagents means less coverage, which is a real cost to the research.",
+      D:"A larger window accommodates the verbosity rather than removing it."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.4-p", domain:5, ts:"5.4", scenario:5, type:"single",
+  stem:"Why delegate exploration to a subagent rather than exploring in the main session?",
+  options:[
+    {k:"A", text:"The verbose output stays out of the main window."},
+    {k:"B", text:"Subagents search faster than the main agent does."},
+    {k:"C", text:"Subagents have access to more tools."},
+    {k:"D", text:"Subagent output is automatically summarised on return."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Isolation is the point: the subagent's window absorbs the search transcripts and only its conclusion crosses back, leaving the main conversation for coordination.",
+    distractors:{
+      D:"The subagent returns what it decides to return; nothing summarises automatically.",
+      B:"Search speed is the same; the difference is where the output lands.",
+      C:"Subagents typically hold fewer tools, by design."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.4-q", domain:5, ts:"5.4", scenario:2, type:"single",
+  stem:"A developer runs `/compact` and later finds a specific decision has become vague. What trade-off did they accept?",
+  options:[
+    {k:"A", text:"Room reclaimed at the cost of specificity."},
+    {k:"B", text:"Older turns deleted rather than condensed."},
+    {k:"C", text:"Tool results kept and reasoning discarded."},
+    {k:"D", text:"The session restarted with no history."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Compaction summarises, and specifics are the first casualty of summarisation. Anything that must survive should be written down outside the conversation.",
+    distractors:{
+      B:"Content is condensed rather than deleted outright, which is why some of it survives in general form.",
+      C:"It does not preferentially keep one and drop the other.",
+      D:"The session continues with a compacted history."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.4-r", domain:5, ts:"5.4", scenario:6, type:"single",
+  stem:"A crash-recovery design has each agent write state to a shared directory. What must the coordinator do on resume?",
+  options:[
+    {k:"A", text:"Load the manifest and inject the relevant state into prompts."},
+    {k:"B", text:"Re-run every agent to rebuild state."},
+    {k:"C", text:"Resume the prior session to recover agent memory."},
+    {k:"D", text:"Read every state file into its own context."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The manifest tells the coordinator what exists, and each agent needs its own state placed in its prompt, since none of it is inherited.",
+    distractors:{
+      D:"Loading everything into the coordinator wastes its window on state belonging to individual agents.",
+      B:"Re-running discards exactly the completed work the exports preserve.",
+      C:"Session resumption does not restore subagent state."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.4-s", domain:5, ts:"5.4", scenario:6, type:"single",
+  stem:"An engineer proposes never delegating, so all context stays in one place. What is the cost?",
+  options:[
+    {k:"A", text:"Verbose intermediate work displaces the high-level thread."},
+    {k:"B", text:"Investigation becomes slower to execute from end to end across the session."},
+    {k:"C", text:"Findings cannot be persisted to disk."},
+    {k:"D", text:"Tool access becomes more limited."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A single window has to hold both the coordination and every search transcript, and the transcripts crowd out the reasoning that was supposed to sit above them.",
+    distractors:{
+      B:"Single-session work can be faster in wall-clock terms; the cost is contextual.",
+      C:"Persistence is available either way.",
+      D:"Tool access is unaffected by whether work is delegated."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.4-t", domain:5, ts:"5.4", scenario:6, type:"single",
+  stem:"What is the clearest early warning that a session's context has degraded?",
+  options:[
+    {k:"A", text:"Answers shift from specific findings to general patterns."},
+    {k:"B", text:"Responses become shorter."},
+    {k:"C", text:"Tool calls take longer to return."},
+    {k:"D", text:"The model asks more clarifying questions."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Falling back on how things are usually done is what happens when the specifics discovered earlier are no longer available to reference.",
+    distractors:{
+      D:"More questions can indicate lost context but also simply an ambiguous request.",
+      B:"Response length varies with the question being asked.",
+      C:"Tool latency is an infrastructure property."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d5-5.5-g", domain:5, ts:"5.5", scenario:6, type:"single",
+  stem:"Extraction reports 96% accuracy overall. Before automating, what should be checked?",
+  options:[
+    {k:"A", text:"Accuracy per document type and per field."},
+    {k:"B", text:"That the sample exceeded 1,000 documents."},
+    {k:"C", text:"That the confidence threshold sits above the corpus mean."},
+    {k:"D", text:"That processing latency is acceptable at volume."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"An aggregate can conceal a document type or field performing far worse. Segmenting is what reveals whether the number holds everywhere it will be applied.",
+    distractors:{
+      B:"Sample size firms up the aggregate without saying anything about variation between segments.",
+      C:"A threshold set from the corpus mean is arbitrary and unrelated to calibration.",
+      D:"Latency is operational and does not bear on correctness."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.5-h", domain:5, ts:"5.5", scenario:6, type:"single",
+  stem:"After automating high-confidence extractions, how should the error rate in that population be measured?",
+  options:[
+    {k:"A", text:"Stratified random sampling reviewed on an ongoing basis."},
+    {k:"B", text:"Reviewing only downstream rejections."},
+    {k:"C", text:"Reviewing the lowest-confidence items in the band."},
+    {k:"D", text:"Re-running with a second model and reviewing disagreements."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"An unbiased sample of the automated population is the only way to know its true error rate and to notice error types no existing check looks for.",
+    distractors:{
+      D:"Model agreement is a useful signal, but two models share failure modes and agree confidently on the same mistakes.",
+      B:"Downstream rejections catch only errors that break something, missing plausible wrong values.",
+      C:"Sampling the bottom of the band overstates the rate and misses high-confidence errors."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.5-i", domain:5, ts:"5.5", scenario:6, type:"single",
+  stem:"Field-level accuracy is 99% for invoice numbers, 98% for dates and 71% for line-item descriptions. What follows?",
+  options:[
+    {k:"A", text:"Automate the strong fields; route descriptions to review."},
+    {k:"B", text:"Withhold automation until every field matches."},
+    {k:"C", text:"Automate everything, since the aggregate is high."},
+    {k:"D", text:"Remove descriptions from the schema."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Field-level measurement exists so routing can be field-level too. Mixed handling captures most of the value while keeping human attention on the 29% failure rate.",
+    distractors:{
+      B:"Blocking everything on the weakest field forfeits the gains available on the strong ones.",
+      C:"This is exactly the trap segmentation revealed.",
+      D:"Removing a needed field solves the metric rather than the requirement."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.5-j", domain:5, ts:"5.5", scenario:6, type:"single",
+  stem:"What makes model-reported confidence usable for routing?",
+  options:[
+    {k:"A", text:"Calibrating thresholds against a labelled validation set."},
+    {k:"B", text:"Instructing the model to be conservative."},
+    {k:"C", text:"Averaging scores across three runs."},
+    {k:"D", text:"Normalising scores to a uniform distribution."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Comparing scores against known-correct labels tells you what a given score means in error-rate terms, which is the only sound basis for a routing threshold.",
+    distractors:{
+      C:"Averaging reduces variance, but an average of uncalibrated scores is still uncalibrated.",
+      B:"Asking for conservatism shifts the numbers without establishing what they mean.",
+      D:"Forcing a uniform distribution destroys whatever real signal was present."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.5-k", domain:5, ts:"5.5", scenario:6, type:"single",
+  stem:"Reviewer capacity covers 12% of daily volume. Where should it go?",
+  options:[
+    {k:"A", text:"Low-confidence extractions and self-contradictory documents."},
+    {k:"B", text:"A uniform random sample covering twelve per cent of the daily volume."},
+    {k:"C", text:"The 12% highest-value documents."},
+    {k:"D", text:"The 12% longest documents."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Limited review should go where errors are most likely, and those two signals are the best available predictors of an extraction needing adjudication.",
+    distractors:{
+      B:"Uniform sampling is right for measuring the rate but spends most reviewer time on correct extractions.",
+      C:"Value indicates the cost of an error rather than its likelihood, though it is reasonable as a secondary weighting.",
+      D:"Length is a weak proxy for difficulty."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.5-l", domain:5, ts:"5.5", scenario:6, type:"single",
+  stem:"Why sample high-confidence extractions rather than only reviewing flagged ones?",
+  options:[
+    {k:"A", text:"To find error types no existing check flags."},
+    {k:"B", text:"To reduce total reviewer hours."},
+    {k:"C", text:"To raise the measured accuracy figure."},
+    {k:"D", text:"To replace confidence scoring."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Reviewing only what your checks caught can confirm what they already detect. Sampling the confident population is how you discover failure modes nobody thought to check for.",
+    distractors:{
+      B:"Sampling is additional work rather than a reduction.",
+      C:"It usually reveals errors and lowers the measured figure, which is the point.",
+      D:"The two are complementary; the sample is how scores get calibrated."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.5-m", domain:5, ts:"5.5", scenario:6, type:"multi",
+  stem:"Which two signals best predict an extraction needing human review? (Select 2.)",
+  options:[
+    {k:"A", text:"Low calibrated confidence on a field."},
+    {k:"B", text:"The source contradicting itself."},
+    {k:"C", text:"The document exceeding average length."},
+    {k:"D", text:"The document arriving outside business hours."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"Both are properties of the extraction or its source that genuinely correlate with error, and both describe something a reviewer can resolve by reading.",
+    distractors:{
+      C:"Length is weakly related to difficulty and would flag many clean documents.",
+      D:"Arrival time carries no information about extraction quality."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.5-n", domain:5, ts:"5.5", scenario:6, type:"single",
+  stem:"A team automates everything above 0.9 confidence without validating the scores. What is the risk?",
+  options:[
+    {k:"A", text:"0.9 may correspond to a much higher error rate than assumed."},
+    {k:"B", text:"Confidence scores cannot be produced per field."},
+    {k:"C", text:"The threshold will drift over time automatically."},
+    {k:"D", text:"Scores above 0.9 are always correct."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"An uncalibrated score is a number without a meaning. Until it is compared against labelled data, 0.9 might correspond to a 2% error rate or a 20% one.",
+    distractors:{
+      C:"Thresholds do not drift on their own, though the underlying distribution can shift as inputs change.",
+      B:"Per-field scores are producible; the question is what they are worth.",
+      D:"High confidence is compatible with being wrong, which is the whole concern."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.5-o", domain:5, ts:"5.5", scenario:6, type:"single",
+  stem:"Accuracy is uniform across fields but one document type performs far worse. What does this argue for?",
+  options:[
+    {k:"A", text:"Routing that document type to review while automating the rest."},
+    {k:"B", text:"Withholding automation entirely."},
+    {k:"C", text:"Averaging across types and automating everything."},
+    {k:"D", text:"Removing that document type from the pipeline."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Segmentation lets you automate where performance justifies it and hold back exactly the segment that does not, which captures most of the value safely.",
+    distractors:{
+      B:"Blocking everything forfeits the gains on types that perform well.",
+      C:"Averaging is what concealed the problem.",
+      D:"The documents still need processing; removing them moves the work rather than doing it."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.5-p", domain:5, ts:"5.5", scenario:6, type:"single",
+  stem:"What does stratified sampling provide that simple random sampling does not?",
+  options:[
+    {k:"A", text:"Adequate coverage of each segment, including rare ones."},
+    {k:"B", text:"A smaller required sample size overall."},
+    {k:"C", text:"Elimination of sampling error."},
+    {k:"D", text:"Automatic detection of novel error types."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Stratifying guarantees that each document type or confidence band is represented, so a segment that is 3% of volume still gets enough sample to say something about.",
+    distractors:{
+      B:"Sample size requirements are similar and can be larger when many strata must each be covered.",
+      C:"Sampling error is reduced within strata, not eliminated.",
+      D:"Detection comes from human review of the sample rather than from the sampling scheme."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.5-q", domain:5, ts:"5.5", scenario:5, type:"single",
+  stem:"A CI reviewer reports per-finding confidence. How should it be used?",
+  options:[
+    {k:"A", text:"Route uncertain findings to a more experienced reviewer."},
+    {k:"B", text:"Suppress findings below a threshold."},
+    {k:"C", text:"Rank findings by confidence and show the top ten."},
+    {k:"D", text:"Re-run the review when average confidence is low."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Confidence is useful for directing attention. Uncertain findings are exactly the ones where an experienced judgement adds most, so they should be routed rather than discarded.",
+    distractors:{
+      B:"Suppression on an uncalibrated score discards true positives with the false ones.",
+      C:"A top-ten cut hides real findings below the line.",
+      D:"Re-running does not resolve uncertainty about specific findings."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d5-5.5-r", domain:5, ts:"5.5", scenario:6, type:"single",
+  stem:"A validation set is drawn entirely from last quarter's documents. What is the risk when calibrating against it?",
+  options:[
+    {k:"A", text:"Thresholds may not hold as the document mix changes."},
+    {k:"B", text:"Calibration requires at least a year of data."},
+    {k:"C", text:"Recent documents cannot be labelled reliably."},
+    {k:"D", text:"Calibration only applies to the documents it was drawn from."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Calibration is only valid over the distribution it was measured on. If the incoming mix shifts, a threshold tuned on last quarter may admit more errors than intended.",
+    distractors:{
+      D:"Too strong: calibration generalises to similar documents, which is why it is useful at all.",
+      B:"There is no fixed minimum period; representativeness matters more than duration.",
+      C:"Recent documents are labelled the same way as older ones."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.5-s", domain:5, ts:"5.5", scenario:6, type:"single",
+  stem:"Why is an aggregate accuracy figure insufficient for an automation decision?",
+  options:[
+    {k:"A", text:"It can hide a segment performing far below the average."},
+    {k:"B", text:"It is usually computed on too small a sample."},
+    {k:"C", text:"It cannot be computed per field."},
+    {k:"D", text:"It changes each time it is measured."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Automation applies to every segment, so a figure that averages a strong majority with a weak minority tells you nothing about how the weak part will fare.",
+    distractors:{
+      B:"Sample size is a separate concern and can be perfectly adequate.",
+      C:"Per-field accuracy is computable, which is precisely the recommended breakdown.",
+      D:"Measurement variation is normal and not the reason segmentation matters."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.5-t", domain:5, ts:"5.5", scenario:6, type:"single",
+  stem:"After reducing human review, what ongoing measurement should continue?",
+  options:[
+    {k:"A", text:"Sampled review of the automated population."},
+    {k:"B", text:"The original pre-automation accuracy figure."},
+    {k:"C", text:"Only the volume of documents processed."},
+    {k:"D", text:"Nothing, once accuracy has been established."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Accuracy established once is a snapshot. Continued sampling is what detects drift as document mixes change and catches novel error types.",
+    distractors:{
+      B:"A historical figure says nothing about current performance.",
+      C:"Throughput is operational and carries no quality signal.",
+      D:"Treating accuracy as settled is how drift goes unnoticed until it causes a problem."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.6-g", domain:5, ts:"5.6", scenario:2, type:"single",
+  stem:"Two credible sources give market sizes of $2.1B and $3.4B. What should the report do?",
+  options:[
+    {k:"A", text:"Present both with attribution and flag the conflict."},
+    {k:"B", text:"Report the average of the two figures, noting that the sources vary."},
+    {k:"C", text:"Report the more recent figure."},
+    {k:"D", text:"Omit the figure."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Different figures usually reflect different definitions of the market rather than an error. Showing both with sources lets the reader judge which methodology they trust.",
+    distractors:{
+      B:"An average of two differently-defined measurements is a number no source supports.",
+      C:"Recency is not authority, and the difference may not be temporal at all.",
+      D:"Omission hides real information the reader can act on."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.6-h", domain:5, ts:"5.6", scenario:2, type:"single",
+  stem:"Citations are correct at analysis and lost by synthesis. What structural requirement fixes this?",
+  options:[
+    {k:"A", text:"Claim-source mappings each hop must preserve."},
+    {k:"B", text:"A bibliography appended to the report."},
+    {k:"C", text:"An instruction to cite carefully."},
+    {k:"D", text:"Full source text passed to synthesis."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Attribution is lost at compression steps unless the claim-to-source link is an explicit field that each hop is obliged to carry forward.",
+    distractors:{
+      D:"Full text is expensive and still leaves the model to work out which passage supports which claim.",
+      B:"A detached bibliography lists what was read without mapping claims to entries.",
+      C:"An instruction cannot recover a mapping the input never contained."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.6-i", domain:5, ts:"5.6", scenario:2, type:"single",
+  stem:"Adoption is reported as 31% in one source and 58% in another, three years apart, with no dates recorded. What is the risk?",
+  options:[
+    {k:"A", text:"Growth is presented as disagreement."},
+    {k:"B", text:"Both figures are discarded as unreliable."},
+    {k:"C", text:"The average is reported instead."},
+    {k:"D", text:"The larger figure is always chosen."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Without dates the two look like conflicting claims about the same thing, when they are consistent observations of a changing quantity.",
+    distractors:{
+      C:"Averaging is one bad outcome among several, and it is not the fundamental error.",
+      B:"Discarding both loses genuine information.",
+      D:"There is no such rule, and preferring the larger figure would be arbitrary."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.6-j", domain:5, ts:"5.6", scenario:2, type:"single",
+  stem:"A document-analysis subagent finds two contradictory figures within one source. What should it return?",
+  options:[
+    {k:"A", text:"Both, explicitly annotated as conflicting."},
+    {k:"B", text:"An error, since the document is unreliable."},
+    {k:"C", text:"The figure from the summary section."},
+    {k:"D", text:"The rest of the analysis, omitting both figures."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Reporting what the source actually says, including that it disagrees with itself, gives the coordinator an accurate picture and the ability to reconcile with wider context.",
+    distractors:{
+      C:"Summary sections often carry stale figures, so treating them as authoritative is unfounded.",
+      B:"One inconsistent figure does not invalidate the rest of the document.",
+      D:"Silent omission loses information and hides a quality signal about the source."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.6-k", domain:5, ts:"5.6", scenario:2, type:"single",
+  stem:"A report presents financial comparisons, news context and technical findings in one uniform bulleted list. Readers struggle. What is the guidance?",
+  options:[
+    {k:"A", text:"Render each content type in its natural form."},
+    {k:"B", text:"Keep the uniform format and add a reading guide."},
+    {k:"C", text:"Convert everything to prose."},
+    {k:"D", text:"Split the report into one document per content type."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Comparative figures belong in a table where columns align, narrative belongs in prose, and technical findings in structured lists. Flattening destroys the structure that makes each readable.",
+    distractors:{
+      B:"Explaining a poor format does not make it serve the content.",
+      C:"Prose is a poor vehicle for multi-dimensional numeric comparison.",
+      D:"Splitting fragments the narrative the report should present whole."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.6-l", domain:5, ts:"5.6", scenario:2, type:"single",
+  stem:"How should a report distinguish well-established findings from contested ones?",
+  options:[
+    {k:"A", text:"Explicit sections preserving each source's characterisation."},
+    {k:"B", text:"Ordering the findings by the number of sources that support each one."},
+    {k:"C", text:"Including only well-established findings."},
+    {k:"D", text:"A numeric confidence score per finding."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Sectioning makes the epistemic status unmissable, and preserving how each source framed its own finding lets readers evaluate the disagreement themselves.",
+    distractors:{
+      D:"A synthesised score compresses away the reasons for disagreement, which is what the reader needs.",
+      B:"Ordering is an implicit signal readers routinely miss, and source count is a crude proxy.",
+      C:"Contested findings are often the most important."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.6-m", domain:5, ts:"5.6", scenario:2, type:"multi",
+  stem:"Which two belong in a subagent's structured finding to support downstream synthesis? (Select 2.)",
+  options:[
+    {k:"A", text:"The source URL or document name."},
+    {k:"B", text:"The publication or collection date."},
+    {k:"C", text:"The subagent's confidence in its own reading."},
+    {k:"D", text:"The time the retrieval took."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"Source identity supports attribution and dates support temporal interpretation. Both are needed for synthesis to combine findings without distorting them.",
+    distractors:{
+      C:"Self-reported confidence is poorly calibrated and not what synthesis needs to attribute a claim.",
+      D:"Retrieval duration is operational telemetry."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.6-n", domain:5, ts:"5.6", scenario:2, type:"single",
+  stem:"Where in a pipeline is source attribution most often lost?",
+  options:[
+    {k:"A", text:"At summarisation steps that compress findings."},
+    {k:"B", text:"At retrieval, when sources are fetched."},
+    {k:"C", text:"At the final rendering step."},
+    {k:"D", text:"At the coordinator's delegation step."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Compression keeps the substance and drops the metadata, so a claim survives while the record of where it came from does not.",
+    distractors:{
+      B:"Retrieval is where attribution originates and is usually intact.",
+      C:"Rendering can only present what it was given.",
+      D:"Delegation carries prompts rather than findings."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.6-o", domain:5, ts:"5.6", scenario:2, type:"single",
+  stem:"A synthesis agent merges findings from two subagents that used the same source. What should happen to the attribution?",
+  options:[
+    {k:"A", text:"Merge the claims while keeping the single shared source."},
+    {k:"B", text:"Record it as two independent corroborating sources."},
+    {k:"C", text:"Keep only the first subagent's version."},
+    {k:"D", text:"Drop attribution, since it is duplicated."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Two agents reading one document is one piece of evidence. Preserving that keeps the report from implying corroboration that does not exist.",
+    distractors:{
+      B:"This manufactures false corroboration, which is the most misleading option available.",
+      C:"Discarding one version may lose detail the other captured.",
+      D:"Dropping attribution removes the citation the report depends on."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.6-p", domain:5, ts:"5.6", scenario:2, type:"single",
+  stem:"Why annotate a conflict rather than let the coordinator pick a value?",
+  options:[
+    {k:"A", text:"The disagreement is itself information the reader needs."},
+    {k:"B", text:"Coordinators cannot compare numeric values."},
+    {k:"C", text:"Annotation is cheaper than reconciliation."},
+    {k:"D", text:"Picking a value would violate the schema."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"That credible sources disagree tells the reader something true about the state of the evidence, and silently resolving it presents a certainty the sources do not support.",
+    distractors:{
+      C:"Cost is not the argument; fidelity is.",
+      B:"Comparison is trivial; the question is whether choosing is appropriate.",
+      D:"A well-designed schema accommodates conflicting values, which is the point of the flag."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.6-q", domain:5, ts:"5.6", scenario:2, type:"single",
+  stem:"A report cites a statistic with no source. Tracing it shows the analysis subagent had the source but synthesis dropped it. What is the fix?",
+  options:[
+    {k:"A", text:"Require synthesis to carry the source field through."},
+    {k:"B", text:"Have the coordinator add citations afterwards."},
+    {k:"C", text:"Have synthesis re-derive the source by searching."},
+    {k:"D", text:"Remove statistics that cannot be cited."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The mapping existed and was discarded, so the fix belongs at the step that discarded it. Making the field mandatory through synthesis preserves it by construction.",
+    distractors:{
+      B:"Post-hoc attribution is guesswork about which source supported which claim.",
+      C:"Re-searching may find a different source that happens to agree, which is not the same citation.",
+      D:"Removing the statistic loses a genuine finding over a recoverable process defect."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.6-r", domain:5, ts:"5.6", scenario:2, type:"single",
+  stem:"Which report structure best serves a reader who must act on contested evidence?",
+  options:[
+    {k:"A", text:"Established findings, then contested ones with each position."},
+    {k:"B", text:"All findings merged into a single narrative."},
+    {k:"C", text:"Findings ranked by a synthesised confidence score."},
+    {k:"D", text:"Only the findings the synthesis agent judged correct."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Separating the two lets the reader rely on the settled material and apply their own judgement where the evidence genuinely diverges, with both positions in front of them.",
+    distractors:{
+      C:"A single score hides which specific findings are disputed and why.",
+      B:"A merged narrative flattens the distinction between certainty and dispute.",
+      D:"Filtering to one view removes exactly the material requiring judgement."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d5-5.6-s", domain:5, ts:"5.6", scenario:6, type:"single",
+  stem:"An extraction pipeline records values without noting which page they came from. A reviewer disputes one. What is the cost?",
+  options:[
+    {k:"A", text:"The value cannot be checked without re-reading the document."},
+    {k:"B", text:"The extraction must be discarded entirely."},
+    {k:"C", text:"The schema becomes invalid."},
+    {k:"D", text:"Downstream systems reject the record."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Provenance is what makes verification cheap. Without it, checking one disputed field means re-reading the whole document.",
+    distractors:{
+      B:"The extraction is probably fine; it is simply expensive to verify.",
+      C:"Omitting provenance does not violate a schema that never required it.",
+      D:"Downstream systems accept the record; the difficulty is auditing it."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d5-5.6-t", domain:5, ts:"5.6", scenario:2, type:"single",
+  stem:"What is the strongest argument for preserving each source's own characterisation of a finding?",
+  options:[
+    {k:"A", text:"Methodological caveats change how a figure should be read."},
+    {k:"B", text:"It makes the report longer and more thorough."},
+    {k:"C", text:"It avoids paraphrasing, which risks copyright issues."},
+    {k:"D", text:"It allows the report to be generated faster."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A figure described by its author as preliminary, or limited to one region, means something different from the bare number. Stripping that framing changes what the reader concludes.",
+    distractors:{
+      B:"Length is not a virtue in itself.",
+      C:"Copyright is a real consideration but not why the framing matters analytically.",
+      D:"Generation speed is unaffected."
+    }
+  },
+  refs:[R_SUB] },
 ];
 const BANK_D1=BANK_ALL.filter(q=>q.domain===1), BANK_D2=BANK_ALL.filter(q=>q.domain===2),
       BANK_D3=BANK_ALL.filter(q=>q.domain===3), BANK_D4=BANK_ALL.filter(q=>q.domain===4),

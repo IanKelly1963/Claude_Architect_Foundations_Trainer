@@ -119,7 +119,7 @@
   options:[
     {k:"A", text:"Return structured error metadata: an `errorCategory`, an `isRetryable` boolean and a description."},
     {k:"B", text:"Cap retries at two attempts per tool call so indefinite retry loops cannot occur."},
-    {k:"C", text:"Instruct the agent in the system prompt to retry an operation at most once before escalating."},
+    {k:"C", text:"Instruct the agent in the system prompt to retry an operation at most once before escalating it."},
     {k:"D", text:"Return HTTP status codes as the error message so the agent can infer the failure category from the numeric code it receives."}
   ],
   correct:["A"],
@@ -139,7 +139,7 @@
     {k:"A", text:"An error marked non-retryable, carrying a customer-friendly explanation the agent can relay."},
     {k:"B", text:"A transient error, so the agent retries in case the policy engine was temporarily out of date."},
     {k:"C", text:"A successful response with a refund amount of zero, letting the agent infer the refusal."},
-    {k:"D", text:"A generic failure, so the agent escalates to a human who can explain the policy properly."}
+    {k:"D", text:"A generic failure, so that the agent escalates to a human who can explain the policy properly."}
   ],
   correct:["A"],
   explain:{
@@ -271,8 +271,8 @@
   options:[
     {k:"A", text:"`\"any\"`, which requires a tool call but lets the model choose which schema fits."},
     {k:"B", text:"`\"auto\"`, which lets the model decide whether a tool call is warranted."},
-    {k:"C", text:"`{\"type\":\"tool\",\"name\":\"extract_invoice\"}`, forcing the most common schema."},
-    {k:"D", text:"`\"none\"`, which returns text that you then parse into the appropriate schema."}
+    {k:"C", text:"`{\"type\":\"tool\",\"name\":\"extract_invoice\"}`, forcing the most common schema on every document."},
+    {k:"D", text:"`\"none\"`, which returns plain text that you then parse into the appropriate schema yourself."}
   ],
   correct:["A"],
   explain:{
@@ -424,7 +424,7 @@
   options:[
     {k:"A", text:"Tools from all of the configured servers are discovered at connection time and are available at once."},
     {k:"B", text:"Only the highest-precedence scope's servers connect; the others are ignored."},
-    {k:"C", text:"Servers connect lazily, one at a time, when the agent first requests a tool that matches their name."},
+    {k:"C", text:"Servers connect lazily, one at a time, when the agent first requests a tool whose name matches that server."},
     {k:"D", text:"Only servers explicitly enabled in the current session's settings connect."}
   ],
   correct:["A"],
@@ -461,7 +461,7 @@
   stem:"You need to find every call site of a function named `calculateTax` across an unfamiliar TypeScript repository. Which built-in tool is the right starting point?",
   options:[
     {k:"A", text:"Grep, which searches file contents for the pattern."},
-    {k:"B", text:"Glob, which matches file paths against a pattern."},
+    {k:"B", text:"Glob, which matches file paths against a supplied pattern."},
     {k:"C", text:"Read, applied to each file in the repository in turn."},
     {k:"D", text:"Bash, running a recursive directory listing to locate candidate files."}
   ],
@@ -518,7 +518,7 @@
   stem:"An agent asked to understand how authentication works in a 4,000-file repository begins by reading every file under `src/`. It exhausts its context before reaching any conclusion. What is the correct strategy?",
   options:[
     {k:"A", text:"Grep for entry points, then Read selectively to follow imports and trace the flow."},
-    {k:"B", text:"Read all files but summarise each one to a single line before moving to the next."},
+    {k:"B", text:"Read all of the files but summarise each one to a single line before moving on to the next."},
     {k:"C", text:"Read the files in alphabetical order and stop as soon as the context window reaches 80% of capacity."},
     {k:"D", text:"Request a larger context window model and repeat the same exhaustive read."}
   ],

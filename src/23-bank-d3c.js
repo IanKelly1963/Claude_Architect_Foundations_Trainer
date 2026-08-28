@@ -1,7 +1,7 @@
 
 /* ---- Domain 3 expansion: task statements 3.4, 3.5 and 3.6 ---- */
 
-{ id:"d3-3.4-g", domain:3, ts:"3.4", scenario:2, type:"single",
+{ id:"d3-3.4-g", domain:3, ts:"3.4", scenario:4, type:"single",
   stem:"A ticket reads: 'Add a null check to `formatDate` so it returns an empty string for null input.' Which mode fits?",
   options:[
     {k:"A", text:"Direct execution."},
@@ -62,7 +62,7 @@
   stem:"What does plan mode chiefly protect against?",
   options:[
     {k:"A", text:"Committing to a structure too early."},
-    {k:"B", text:"Writing code that fails to compile."},
+    {k:"B", text:"Writing code that fails to compile at build time."},
     {k:"C", text:"Exceeding the session's token budget."},
     {k:"D", text:"Editing files outside the repository."}
   ],
@@ -81,7 +81,7 @@
   stem:"A developer stays in plan mode for a mechanical rename across 45 files after the approach is settled. What is the cost?",
   options:[
     {k:"A", text:"Ceremony on work whose shape is already known."},
-    {k:"B", text:"Plan mode cannot express multi-file changes."},
+    {k:"B", text:"Plan mode cannot express changes spanning multiple files."},
     {k:"C", text:"The plan expires before the edits can be applied."},
     {k:"D", text:"Plan mode forbids more than ten files per plan."}
   ],
@@ -96,13 +96,13 @@
   },
   refs:[R_SUB] },
 
-{ id:"d3-3.4-l", domain:3, ts:"3.4", scenario:2, type:"single",
+{ id:"d3-3.4-l", domain:3, ts:"3.4", scenario:4, type:"single",
   stem:"A bug report includes a stack trace pointing at one line, and the fix is evident from it. A colleague insists on plan mode for all production fixes. What is the strongest counter-argument?",
   options:[
     {k:"A", text:"The criterion is ambiguity, not environment."},
     {k:"B", text:"Plan mode is unavailable for hotfixes."},
-    {k:"C", text:"Production fixes are too urgent to plan."},
-    {k:"D", text:"A stack trace already constitutes a plan."}
+    {k:"C", text:"Production fixes are too urgent to spend time planning."},
+    {k:"D", text:"A stack trace already constitutes a plan in itself."}
   ],
   correct:["A"],
   explain:{
@@ -138,9 +138,9 @@
   stem:"A plan is approved and implementation begins, but a dependency emerges that invalidates part of it. What is the appropriate response?",
   options:[
     {k:"A", text:"Return to planning for the affected part, keeping the rest."},
-    {k:"B", text:"Continue as planned and fix the consequences afterwards."},
+    {k:"B", text:"Continue exactly as planned and fix the consequences afterwards."},
     {k:"C", text:"Abandon the plan entirely and restart."},
-    {k:"D", text:"Implement a workaround so the original plan still holds."}
+    {k:"D", text:"Implement a workaround so that the original plan still holds."}
   ],
   correct:["A"],
   explain:{
@@ -194,8 +194,8 @@
   stem:"A CI job runs Claude Code non-interactively to apply a scripted refactor. Is plan mode relevant?",
   options:[
     {k:"A", text:"No; the approach is decided and nobody reads the plan."},
-    {k:"B", text:"Yes; every automated change should be planned first."},
-    {k:"C", text:"Yes; plan mode is required for non-interactive runs."},
+    {k:"B", text:"Yes; every automated change should be planned before it runs."},
+    {k:"C", text:"Yes; plan mode is required for all non-interactive runs."},
     {k:"D", text:"No; plan mode is unavailable outside interactive sessions."}
   ],
   correct:["A"],
@@ -251,7 +251,7 @@
   stem:"How do plan mode and direct execution combine on a large migration?",
   options:[
     {k:"A", text:"Plan the approach, then execute it directly."},
-    {k:"B", text:"Plan and execute each file in alternation."},
+    {k:"B", text:"Plan and then execute each file in alternation."},
     {k:"C", text:"Execute first, then plan the remaining files."},
     {k:"D", text:"They are alternatives and should not be combined."}
   ],
@@ -499,7 +499,7 @@
     {k:"A", text:"They pin down edge behaviour that prose leaves implicit."},
     {k:"B", text:"They consume fewer tokens than prose."},
     {k:"C", text:"They are processed before the rest of the prompt."},
-    {k:"D", text:"They cannot be misinterpreted under any circumstances."}
+    {k:"D", text:"They cannot be misinterpreted by the model under any circumstances."}
   ],
   correct:["A"],
   explain:{
@@ -688,7 +688,7 @@
     {k:"A", text:"Ensuring the run does not inherit ambient local settings."},
     {k:"B", text:"Pinning the temperature to 0."},
     {k:"C", text:"Running the job on the same machine each time."},
-    {k:"D", text:"Using the same prompt wording as developers use locally."}
+    {k:"D", text:"Using exactly the same prompt wording that developers use when running it locally."}
   ],
   correct:["A"],
   explain:{
@@ -744,7 +744,7 @@
   options:[
     {k:"A", text:"Define which categories to report and which to skip."},
     {k:"B", text:"Ask the model to be more conservative."},
-    {k:"C", text:"Report only findings above a confidence threshold."},
+    {k:"C", text:"Report only those findings that sit above a confidence threshold."},
     {k:"D", text:"Limit the reviewer to five findings per pull request."}
   ],
   correct:["A"],
@@ -764,7 +764,7 @@
     {k:"A", text:"Without it the job blocks waiting for input."},
     {k:"B", text:"Without it the output is not written to stdout."},
     {k:"C", text:"Without it tool use is disabled."},
-    {k:"D", text:"Without it the exit code is always zero."}
+    {k:"D", text:"Without it the exit code is always reported as zero."}
   ],
   correct:["A"],
   explain:{

@@ -157,7 +157,7 @@
   options:[
     {k:"A", text:"Routing all communication through the coordinator preserves observability and error handling."},
     {k:"B", text:"Subagents are technically incapable of invoking other subagents under any configuration."},
-    {k:"C", text:"Direct calls would cause the two subagents to share a context window, exhausting it faster."},
+    {k:"C", text:"Direct calls would cause the two subagents to share one context window, exhausting it faster."},
     {k:"D", text:"The coordinator would no longer receive `stop_reason` values from the delegated calls, so it could not tell when the subagent had actually finished."}
   ],
   correct:["A"],
@@ -175,7 +175,7 @@
   stem:"Your coordinator routes every query through all four subagents. For a simple factual query like 'What year was the transformer architecture published?', this costs four delegations and 90 seconds. What change best addresses this without weakening complex-query handling?",
   options:[
     {k:"A", text:"Have the coordinator analyse query requirements and dynamically select which subagents to invoke."},
-    {k:"B", text:"Add a caching layer keyed on query text so repeated simple questions skip the pipeline entirely."},
+    {k:"B", text:"Add a caching layer keyed on the query text so that repeated simple questions skip the pipeline entirely."},
     {k:"C", text:"Reduce the number of subagents from four to two by merging search with analysis and synthesis with reporting."},
     {k:"D", text:"Run all four subagents in parallel so total latency is bounded by the slowest rather than the sum."}
   ],
@@ -406,7 +406,7 @@
     {k:"A", text:"Add a programmatic prerequisite that blocks `lookup_order` and `process_refund` until `get_customer` returns a verified customer ID."},
     {k:"B", text:"Enhance the system prompt to state that customer verification via `get_customer` is mandatory before any order operations."},
     {k:"C", text:"Add few-shot examples showing the agent always calling `get_customer` first, even when customers volunteer order details."},
-    {k:"D", text:"Implement a routing classifier that analyses each request and enables only the subset of tools appropriate for that request type."}
+    {k:"D", text:"Implement a routing classifier that analyses each incoming request and enables only the subset of tools appropriate to that request type."}
   ],
   correct:["A"],
   explain:{

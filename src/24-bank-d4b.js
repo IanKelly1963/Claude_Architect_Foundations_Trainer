@@ -44,7 +44,7 @@
   options:[
     {k:"A", text:"The criterion rests on an imagined reader, not the code."},
     {k:"B", text:"The instruction is too short to be actionable."},
-    {k:"C", text:"New developers are not a defined role in the codebase."},
+    {k:"C", text:"New developers are not a clearly defined role in this codebase."},
     {k:"D", text:"Confusion is subjective and so cannot be reviewed at all."}
   ],
   correct:["A"],
@@ -102,7 +102,7 @@
     {k:"A", text:"Model confidence is poorly calibrated to correctness."},
     {k:"B", text:"The model cannot compute confidence at all."},
     {k:"C", text:"The instruction is ignored unless placed first."},
-    {k:"D", text:"Confidence applies to whole responses, not findings."}
+    {k:"D", text:"Confidence applies to whole responses rather than to individual findings."}
   ],
   correct:["A"],
   explain:{
@@ -120,7 +120,7 @@
   options:[
     {k:"A", text:"Define the observable failures that make a reply unhelpful."},
     {k:"B", text:"Have it rate helpfulness on a ten-point scale."},
-    {k:"C", text:"Compare each reply against a model-written ideal answer."},
+    {k:"C", text:"Compare each reply against a model-written ideal answer for that case."},
     {k:"D", text:"Have it flag only replies shorter than a threshold."}
   ],
   correct:["A"],
@@ -156,7 +156,7 @@
   stem:"After disabling a noisy category, developers begin engaging with the remaining findings again. What does this demonstrate?",
   options:[
     {k:"A", text:"Trust is shared across categories."},
-    {k:"B", text:"Fewer findings are always better."},
+    {k:"B", text:"Fewer findings are always better for developers."},
     {k:"C", text:"Developers prefer security findings to style findings."},
     {k:"D", text:"The remaining categories improved when the noisy one was removed."}
   ],
@@ -195,7 +195,7 @@
   options:[
     {k:"A", text:"When criteria are clear and judgements hard."},
     {k:"B", text:"Always, since capability dominates finding quality."},
-    {k:"C", text:"Never, since criteria are the only factor."},
+    {k:"C", text:"Never, since the criteria are the only factor that matters."},
     {k:"D", text:"When the codebase is unusually large."}
   ],
   correct:["A"],
@@ -214,7 +214,7 @@
   options:[
     {k:"A", text:"No; it is actionability, not precision."},
     {k:"B", text:"Yes; vague findings count as false positives."},
-    {k:"C", text:"No; it is a model capability problem."},
+    {k:"C", text:"No; it is a model capability problem instead."},
     {k:"D", text:"Yes; unclear findings are dismissed and so are false by outcome."}
   ],
   correct:["A"],
@@ -289,7 +289,7 @@
   stem:"How many few-shot examples does the guidance suggest for an ambiguous scenario, and what should they show?",
   options:[
     {k:"A", text:"Two to four, showing why one action beat another."},
-    {k:"B", text:"One clear example, to avoid conflicting signals."},
+    {k:"B", text:"One clear example, so that conflicting signals cannot arise."},
     {k:"C", text:"Ten or more, covering the full space."},
     {k:"D", text:"As many as context allows."}
   ],
@@ -327,7 +327,7 @@
   stem:"A support agent handles clear requests well but is erratic when a customer raises two issues with conflicting urgency. What helps most?",
   options:[
     {k:"A", text:"Examples showing which issue was taken first, and why."},
-    {k:"B", text:"An instruction to always ask which to address first."},
+    {k:"B", text:"An instruction to always ask the customer which issue to address first."},
     {k:"C", text:"A rule to handle the first-mentioned issue."},
     {k:"D", text:"More tools so every interpretation is available."}
   ],
@@ -384,7 +384,7 @@
   stem:"An extraction prompt includes eight examples, all invoices from one supplier. Accuracy on that supplier is excellent and poor elsewhere. What went wrong?",
   options:[
     {k:"A", text:"They taught one layout rather than the task."},
-    {k:"B", text:"Eight examples exceeds the useful number."},
+    {k:"B", text:"Eight examples exceeds the useful number for one prompt."},
     {k:"C", text:"The examples should have appeared after the document."},
     {k:"D", text:"Invoices are unsuitable for few-shot prompting."}
   ],
@@ -404,7 +404,7 @@
   options:[
     {k:"A", text:"They convey the distinction, not just instances."},
     {k:"B", text:"They are processed with higher weight than instructions."},
-    {k:"C", text:"They bypass the model's instruction following."},
+    {k:"C", text:"They bypass the model's ordinary instruction following."},
     {k:"D", text:"They are cached and reused across requests."}
   ],
   correct:["A"],
@@ -461,7 +461,7 @@
     {k:"A", text:"A tested function with one untested branch."},
     {k:"B", text:"A wholly untested function, marked as a gap."},
     {k:"C", text:"A fully tested function, marked as acceptable."},
-    {k:"D", text:"A coverage report showing the percentage."}
+    {k:"D", text:"A coverage report showing the branch percentage."}
   ],
   correct:["A"],
   explain:{
@@ -556,7 +556,7 @@
     {k:"A", text:"Schemas constrain structure, not relationships."},
     {k:"B", text:"The schema is not marked strict."},
     {k:"C", text:"Numeric fields should be strings."},
-    {k:"D", text:"Tool use is unsuitable for numeric extraction."}
+    {k:"D", text:"Tool use is unsuitable for numeric extraction of any kind."}
   ],
   correct:["A"],
   explain:{
@@ -575,7 +575,7 @@
     {k:"A", text:"Make the field nullable so absence is expressible."},
     {k:"B", text:"Instruct the model never to guess dates."},
     {k:"C", text:"Add a confidence score for the field."},
-    {k:"D", text:"Verify each date against the document afterwards."}
+    {k:"D", text:"Verify each extracted date against the document text afterwards."}
   ],
   correct:["A"],
   explain:{
@@ -705,9 +705,9 @@
   stem:"A CI job needs findings as structured objects rather than prose. Which approach is most reliable?",
   options:[
     {k:"A", text:"A tool whose schema defines the finding shape."},
-    {k:"B", text:"A prompt describing the desired JSON shape."},
+    {k:"B", text:"A prompt describing the desired JSON shape in detail."},
     {k:"C", text:"A markdown template parsed afterwards."},
-    {k:"D", text:"A regular expression over the prose response."}
+    {k:"D", text:"A regular expression applied over the model's prose response."}
   ],
   correct:["A"],
   explain:{
@@ -743,7 +743,7 @@
   stem:"Why extract `calculated_total` alongside `stated_total`?",
   options:[
     {k:"A", text:"A discrepancy between them becomes checkable."},
-    {k:"B", text:"It doubles the chance one value is correct."},
+    {k:"B", text:"It doubles the chance that one of the values is correct."},
     {k:"C", text:"Schemas require a derived field for each stated one."},
     {k:"D", text:"It lets the model choose the more plausible value."}
   ],

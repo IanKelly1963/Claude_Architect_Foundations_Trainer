@@ -23,7 +23,7 @@
   options:[
     {k:"A", text:"`PreToolUse`, which returns a `permissionDecision` of `allow`, `deny`, `ask` or `defer` before execution."},
     {k:"B", text:"`PostToolUse`, which inspects the call and can veto it retroactively."},
-    {k:"C", text:"`Stop`, which runs at the end of the turn and can roll back any tool effects that have already occurred."},
+    {k:"C", text:"`Stop`, which runs at the end of the turn and can roll back any tool effects that have already occurred during it."},
     {k:"D", text:"`SubagentStart`, which gates any tool call made inside a delegated task."}
   ],
   correct:["A"],
@@ -194,7 +194,7 @@
     {k:"A", text:"A separate integration pass examining cross-file data flow and interface consistency across files."},
     {k:"B", text:"A larger per-file context window so each pass can also see the files that import it."},
     {k:"C", text:"A rule that per-file passes should flag any exported symbol as potentially breaking."},
-    {k:"D", text:"Reverting to single-pass review, since cross-file correctness matters more than per-file depth."}
+    {k:"D", text:"Reverting to a single-pass review, on the grounds that cross-file correctness matters more than per-file depth."}
   ],
   correct:["A"],
   explain:{
@@ -270,7 +270,7 @@
     {k:"A", text:"Resume the session and tell it explicitly which three files changed, so it re-analyses only those."},
     {k:"B", text:"Resume the session and continue asking questions, since the agent will notice any discrepancies itself."},
     {k:"C", text:"Start a fresh session and re-explore the entire module from scratch to guarantee accuracy."},
-    {k:"D", text:"Resume the session and immediately run `/compact` to clear the stale file contents from context."}
+    {k:"D", text:"Resume the session and immediately run `/compact` to clear the stale file contents out of context."}
   ],
   correct:["A"],
   explain:{
@@ -306,7 +306,7 @@
   stem:"Which flag continues a specific, previously named conversation in Claude Code?",
   options:[
     {k:"A", text:"`--resume <session-name>`, which continues that specific named conversation."},
-    {k:"B", text:"`--continue`, which loads the most recent conversation in the directory."},
+    {k:"B", text:"`--continue`, which loads the most recent conversation in the current directory."},
     {k:"C", text:"`--session-id <uuid>`, which assigns an identifier when starting a conversation."},
     {k:"D", text:"`--restore <session-name>`, which recovers an archived conversation."}
   ],
@@ -346,7 +346,7 @@
     {k:"A", text:"The agent reasons confidently from stale file contents, producing authoritative-looking errors."},
     {k:"B", text:"The session fails to load, because Claude Code validates file checksums on resume."},
     {k:"C", text:"Tool results older than 24 hours are automatically discarded from the session, so the resumed context comes back silently empty."},
-    {k:"D", text:"Resumed sessions run at reduced context capacity, so the stale content crowds out new work."}
+    {k:"D", text:"Resumed sessions run at reduced context capacity, so the stale content crowds out anything new."}
   ],
   correct:["A"],
   explain:{
@@ -364,7 +364,7 @@
   options:[
     {k:"A", text:"Have the agent maintain a scratchpad file of key findings on disk."},
     {k:"B", text:"Increase the session retention period so old sessions remain resumable for longer."},
-    {k:"C", text:"Always resume with `--resume` rather than starting new sessions."},
+    {k:"C", text:"Always resume with `--resume` rather than ever starting new sessions."},
     {k:"D", text:"Raise the context window size so that a single session can span the entire multi-day investigation without truncation."}
   ],
   correct:["A"],

@@ -6,8 +6,8 @@
   options:[
     {k:"A", text:"Structured findings pairing claim, excerpt and source, not raw retrieved text."},
     {k:"B", text:"The same dump, split across several sequential Task calls to the same subagent."},
-    {k:"C", text:"A summary the coordinator writes itself, discarding the underlying material."},
-    {k:"D", text:"The raw dump with an instruction to read it twice before drawing conclusions."}
+    {k:"C", text:"A summary the coordinator writes itself, discarding the underlying source material."},
+    {k:"D", text:"The raw dump unchanged, with an instruction to read through it twice before drawing any conclusions."}
   ],
   correct:["A"],
   explain:{
@@ -26,7 +26,7 @@
     {k:"A", text:"The paths, entry points and specific questions that make the task concrete."},
     {k:"B", text:"A tool restriction limiting the subagent to read-only operations."},
     {k:"C", text:"A larger model, since the assigned model lacked the depth for code analysis."},
-    {k:"D", text:"An instruction to avoid drawing on background knowledge of authentication."}
+    {k:"D", text:"An instruction to avoid drawing on background knowledge of authentication patterns."}
   ],
   correct:["A"],
   explain:{
@@ -62,9 +62,9 @@
   stem:"A support coordinator invokes a refund subagent with 'Process the refund we discussed.' The subagent asks which order it should refund. Why?",
   options:[
     {k:"A", text:"It has no access to the conversation, so 'we discussed' refers to nothing it can see."},
-    {k:"B", text:"The refund tool requires an order ID that the subagent lacks permission to look up."},
+    {k:"B", text:"The refund tool requires an order ID that this particular subagent lacks permission to look up."},
     {k:"C", text:"The coordinator's context exceeded the size that can be inherited on invocation."},
-    {k:"D", text:"Subagents receive conversation history only on their second and later invocations."}
+    {k:"D", text:"Subagents receive the conversation history only on their second and later invocations."}
   ],
   correct:["A"],
   explain:{
@@ -81,8 +81,8 @@
   stem:"You want two subagents to explore the same repository concurrently, one tracing data flow and one cataloguing tests. Which coordinator behaviour achieves that?",
   options:[
     {k:"A", text:"Both Task calls emitted in one assistant turn, each with its own scoped prompt."},
-    {k:"B", text:"One Task call whose prompt asks the subagent to perform both investigations."},
-    {k:"C", text:"Two Task calls in consecutive turns, with the second referencing the first."},
+    {k:"B", text:"One Task call whose prompt asks a single subagent to perform both investigations."},
+    {k:"C", text:"Two Task calls in consecutive turns, with the second one referencing the first."},
     {k:"D", text:"One Task call repeated twice with the same prompt, relying on sampling variation."}
   ],
   correct:["A"],
@@ -102,7 +102,7 @@
     {k:"A", text:"An agent given tools beyond its role will use them when its own path is blocked."},
     {k:"B", text:"Tool definitions leak between subagents when they share a coordinator."},
     {k:"C", text:"Document analysis cannot be performed without a web search capability."},
-    {k:"D", text:"The coordinator failed to specify which tool each subagent should call first."}
+    {k:"D", text:"The coordinator failed to specify which tool each of the subagents ought to call first."}
   ],
   correct:["A"],
   explain:{
@@ -121,7 +121,7 @@
     {k:"A", text:"Naming the required fields, so every handoff carries the same structure."},
     {k:"B", text:"Asking the subagent to be thorough and to double-check before submitting."},
     {k:"C", text:"Giving the subagent access to the full transcript so it can decide what matters."},
-    {k:"D", text:"Increasing the subagent's output token limit so nothing is truncated."}
+    {k:"D", text:"Increasing the subagent's output token limit so that nothing is truncated."}
   ],
   correct:["A"],
   explain:{
@@ -177,7 +177,7 @@
   options:[
     {k:"A", text:"It bounds what the subagent may do, but not whether it is selected."},
     {k:"B", text:"It is the primary signal the coordinator uses when choosing between subagents."},
-    {k:"C", text:"It is merged with the coordinator's tool set at invocation time."},
+    {k:"C", text:"It is merged with the coordinator's own tool set at invocation time."},
     {k:"D", text:"It must list every tool the coordinator holds, or the invocation is rejected."}
   ],
   correct:["A"],
@@ -233,7 +233,7 @@
   stem:"A coordinator emits three Task calls in one turn. Two subagents succeed and one fails. What should the coordinator receive?",
   options:[
     {k:"A", text:"All three results together, with the failure reported as such alongside the two successes."},
-    {k:"B", text:"Only the two successful results, with the failure retried transparently before returning."},
+    {k:"B", text:"Only the two successful results, with the failure retried transparently before anything is returned to the coordinator."},
     {k:"C", text:"An error for the whole turn, since one call in the batch did not complete."},
     {k:"D", text:"The two successes immediately and the failure in a later turn once it resolves."}
   ],
@@ -311,7 +311,7 @@
     {k:"A", text:"What the agent already told the customer, so the human does not repeat it."},
     {k:"B", text:"The full conversation transcript appended to the structured fields."},
     {k:"C", text:"A confidence score indicating how certain the agent is about the root cause."},
-    {k:"D", text:"The timestamps of each tool call the agent made during the investigation."}
+    {k:"D", text:"The timestamps of each tool call the agent made over the course of the investigation."}
   ],
   correct:["A"],
   explain:{

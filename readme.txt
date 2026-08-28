@@ -3,12 +3,12 @@ CCAR-F ARCHITECT TRAINER
 How and why this app was built, and every quality gate it must pass
 ================================================================================
 
-Last updated after Pass 0 of the bank expansion (commit b173a83).
+Last updated on completion of the bank expansion.
 
-Current state:  187 questions | 30 teaching notes | 152 flashcards
-                30 task statements, 6-7 questions each (target: 20 each)
-                553 distractor rationales | 187/187 items scenario-framed
-                440,415 bytes, one file, no dependencies
+Current state:  600 questions | 30 teaching notes | 152 flashcards
+                30 task statements, exactly 20 questions each
+                1,765 distractor rationales | 600/600 items scenario-framed
+                875,011 bytes, one file, no dependencies
 
 
 --------------------------------------------------------------------------------
@@ -224,9 +224,9 @@ GATE 4 - Bias analysis, as presented (tools/analyse-presented.js)
 
 GATE 5 - Distractor quality guard (tools/distractors.js)
   FAILS on:
-    - any of six blind-elimination heuristics scoring above 35% (chance 25%):
-      longest option, shortest option, avoid-absolutes, prefer-hedged,
-      most stem-word overlap, odd-one-out by leading word
+    - any of eight blind-elimination heuristics scoring above 35% (chance 25%):
+      longest, shortest, second-longest and second-shortest option;
+      avoid-absolutes; prefer-hedged; most stem-word overlap; odd-one-out
     - a near-duplicate distractor pair within one question (Jaccard > 0.55)
     - more than one invented-capability distractor per question
   WARNS on:
@@ -242,8 +242,8 @@ GATE 5 - Distractor quality guard (tools/distractors.js)
 
 GATE 6 - Reproducible build
   Deleting the HTML, rebuilding from src/, and comparing must give a
-  byte-identical file. Last verified at commit b173a83: sha256 882ce32b8caf,
-  440415 bytes, identical.
+  byte-identical file. Last verified after the expansion: sha256 c2f2aed5e8b1,
+  875,011 bytes, identical.
 
 GATE 7 - Manual, before any release
   - practice a set, confirm task-statement scores move on the dashboard
@@ -395,23 +395,52 @@ never committed by accident.
 
 
 --------------------------------------------------------------------------------
-12. WHAT IS IN FLIGHT
+12. THE EXPANSION, AND WHAT IT TAUGHT
 --------------------------------------------------------------------------------
 
-The bank is being expanded from 187 to 600 questions - 20 per task statement -
-because 6-7 is too thin for repeated study: a student begins recognising items,
-which inflates scores against the 85% gate.
+The bank was expanded from 187 to 600 questions - 20 per task statement -
+because 6-7 was too thin for repeated study: a student begins recognising
+items, which inflates scores against the 85% gate.
 
-  Pass 0  DONE  distractor guard, scaled mastery gate, full scenario framing
-  Pass 1        Domain 1  +91
-  Pass 2        Domain 2  +70
-  Pass 3        Domain 3  +84
-  Pass 4        Domain 4  +84
-  Pass 5        Domain 5  +84
-  Pass 6        final verification and documentation
+  Pass 0  distractor guard, scaled mastery gate, full scenario framing
+  Pass 1  Domain 1  +91      Pass 4  Domain 4  +84
+  Pass 2  Domain 2  +70      Pass 5  Domain 5  +84
+  Pass 3  Domain 3  +84      Pass 6  final balancing and verification
 
-Every pass rebuilds, runs all gates, and is committed only when green. The
-per-pass checkpoint exists so an authoring problem surfaces after ~80
-questions rather than after 413.
+Every pass rebuilt, ran all gates, and was committed only when green. The
+guards earned their place: they failed the build six times during the
+expansion, and every failure was real.
+
+  - d3-3.3-h flagged for near-duplicate distractors. On inspection this was a
+    tokeniser limitation rather than a content defect: the options are glob
+    syntax differing only in punctuation, which is what the question tests.
+    Fixed principled rather than by exemption - pairs where both options are
+    predominantly code literals are now skipped, so prose duplicates are still
+    caught.
+  - d4-4.3-q had two options built from the same two terms rearranged.
+    Rewritten to a genuinely different claim.
+  - d5-5.1-r had two invented-capability distractors. One rationale rewritten.
+  - "correct answer is longest" failed three times as new questions were added,
+    because complete correct answers naturally run longer than terse
+    distractors. Roughly 180 option texts were rewritten across the expansion
+    to hold the profile.
+
+THE MOST INSTRUCTIVE FAILURE
+Fixing a "longest answer" tell by extending exactly one distractor moves items
+from rank 1 to rank 2 rather than spreading them. After the expansion the
+histogram was 29/35/18/18 and "pick the second-longest option" scored 35% -
+a ten-point edge, and a tell created entirely by the fix for the previous one.
+
+tools/distractors.js did not catch it, because it only tested the extremes.
+The in-app validator did. Two changes followed: second-longest and
+second-shortest heuristics were added to the guard, and around 120 further
+options were rewritten to flatten the distribution.
+
+The four length ranks now sit at 27.0 / 23.0 / 22.1 / 26.0 per cent, so the
+best available length strategy beats chance by two points rather than ten.
+
+The general lesson, recorded because it will apply to the next bias found:
+correcting a measured bias in one direction tends to create its mirror. Check
+the whole distribution afterwards, not just the metric that failed.
 
 ================================================================================
