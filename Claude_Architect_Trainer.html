@@ -13475,7 +13475,7 @@ function renderPractice(){
   let domOpts = "";
   DOMAINS.forEach(function(D){
     const s = domainStat(D.d);
-    domOpts += '<button class="btn sm" onclick="drillDomain(' + D.d + ')">D' + D.d + ' &middot; ' +
+    domOpts += '<button class="btn sm d' + D.d + '" onclick="drillDomain(' + D.d + ')">' + esc(D.name) + ' &middot; ' +
       (s.untested ? "untested" : pct(s.score)) + '</button>';
   });
 
