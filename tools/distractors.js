@@ -28,8 +28,11 @@
 const fs = require("fs");
 
 const htmlPath = process.argv[2] || "Claude_Architect_Trainer.html";
-const BANK = eval(fs.readFileSync(htmlPath, "utf8")
-  .match(/const BANK_ALL = (\[[\s\S]*?\n\]);/)[1]);
+const _src = fs.readFileSync(htmlPath, "utf8");
+/* The bank cites R_* citation constants declared earlier in the built file.
+   Evaluating the array in isolation would fail on them, so bring them along. */
+const _refs = (_src.match(/^const R_[A-Z0-9_]+ *= *\{[\s\S]*?\};$/gm) || []).join("\n");
+const BANK = eval(_refs + "\n" + _src.match(/const BANK_ALL = (\[[\s\S]*?\n\]);/)[1]);
 const SINGLE = BANK.filter(q => q.type !== "multi");
 
 const fails = [], warns = [];

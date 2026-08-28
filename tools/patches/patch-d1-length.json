@@ -1,0 +1,18 @@
+{
+  "d1-1.2-r|A": "It rebuilds shared state, reintroducing the coupling isolation removes.",
+  "d1-1.2-m|A": "An explicit coverage criterion, so the loop ends on the goal being met.",
+  "d1-1.3-s|A": "Forking once the analysis is complete, so both branches share a baseline.",
+  "d1-1.1-t|A": "`any` forbids a text-only reply, so `end_turn` can never be reached.",
+  "d1-1.5-l|A": "Matching on command text is a denylist, and denylists miss what they omit.",
+  "d1-1.7-o|A": "Subagent results were never persisted, so the resumed run has no record.",
+  "d1-1.3-r|A": "The source document, without which there is nothing to check against.",
+  "d1-1.3-q|A": "It bounds what the subagent may do, but not whether it is selected.",
+  "d1-1.2-n|A": "Carry both forward with attribution and let synthesis present the disagreement.",
+  "d1-1.2-p|A": "The summariser was given the files rather than the findings, so it reviewed afresh.",
+  "d1-1.3-h|A": "Structured findings pairing claim, excerpt and source, not raw retrieved text.",
+  "d1-1.1-p|A": "Treat it as truncated rather than complete, and continue generation.",
+  "d1-1.4-k|A": "What the agent already told the customer, so the human does not repeat it.",
+  "d1-1.4-t|A": "Requiring each finding to arrive already bound to its source.",
+  "d1-1.6-k|A": "It receives only the diff, so the unchanged callers are invisible to it.",
+  "d1-1.5-t|A": "The control guards one tool rather than the capability behind it."
+}

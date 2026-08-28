@@ -1792,6 +1792,1737 @@ const BANK_ALL = [
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
+/* ---- Domain 1 expansion: task statements 1.1 and 1.2 ---- */
+
+{ id:"d1-1.1-h", domain:1, ts:"1.1", scenario:1, type:"single",
+  stem:"Your loop executes the requested tool, then sends a fresh request containing only the tool result and the original system prompt. The agent asks the customer for their order number a second time. What is missing?",
+  options:[
+    {k:"A", text:"Every prior turn, including the assistant's tool calls, must be resent alongside the new result."},
+    {k:"B", text:"The system prompt should be repeated at the end of the request as well as the beginning."},
+    {k:"C", text:"The tool result needs a `cache_control` marker so the model retains it across requests."},
+    {k:"D", text:"The session identifier from the first response must be echoed back to restore server-side state."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The API is stateless. A request containing only the newest result gives the model no record of what the customer already said, so it re-asks. Conversation history is the agent's entire memory and has to travel with every call.",
+    distractors:{
+      B:"Repeating the system prompt is a real technique for keeping instructions salient in long contexts, but it carries no conversational content, so the order number is still absent.",
+      C:"`cache_control` reduces the cost of resending a stable prefix. It is an optimisation over history you are already sending, not a substitute for sending it.",
+      D:"This is a reasonable instinct from stateful APIs, but there is no server-side conversation state to restore; the identifier would carry nothing."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d1-1.1-i", domain:1, ts:"1.1", scenario:3, type:"single",
+  stem:"A research agent's loop treats any response containing a text block as final. Roughly one turn in six, Claude writes 'Let me search for that' and emits a `tool_use` block in the same turn. What happens?",
+  options:[
+    {k:"A", text:"The loop stops with the search unexecuted and presents the narration as the answer."},
+    {k:"B", text:"The loop executes the search but discards the result, because the text block was seen first."},
+    {k:"C", text:"The API rejects the response, since text and `tool_use` cannot appear in one turn."},
+    {k:"D", text:"The loop retries the same request until a turn arrives with no text block."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Treating text presence as completion terminates a turn that was in fact requesting a tool. The user receives the model's narration of what it intended to do, with none of it done, which reads as a confident but empty answer.",
+    distractors:{
+      B:"Nothing executes the search. The loop has already exited on seeing text, so no tool call is dispatched at all.",
+      C:"Mixed text and `tool_use` in a single turn is normal and expected; the API returns it happily.",
+      D:"There is no retry in this design. The loop treats the turn as complete and returns, which is precisely the bug."
+    }
+  },
+  refs:[R_TOOL] },
+
+{ id:"d1-1.1-j", domain:1, ts:"1.1", scenario:4, type:"single",
+  stem:"A code-exploration tool fails and your handler returns the error as ordinary text in the `tool_result`. The agent proceeds as though the file were empty. How should a failed tool execution be returned?",
+  options:[
+    {k:"A", text:"As a `tool_result` marked as an error, so the model can distinguish failure from an empty result."},
+    {k:"B", text:"By omitting the `tool_result` block entirely, so the model retries the call."},
+    {k:"C", text:"By raising the exception to the caller and terminating the loop for that request."},
+    {k:"D", text:"As a `tool_result` containing an empty string, letting the model infer that nothing was found."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"An error and an empty file are different facts, and the model can only act on the difference if you signal it. Marking the result as an error lets it retry, try another path, or report the problem instead of reasoning from a false premise.",
+    distractors:{
+      B:"Omitting the block leaves the tool call unanswered, which breaks the pairing the turn requires and typically causes the model to re-request rather than recover.",
+      C:"Terminating on any tool failure throws away an otherwise healthy session for something the model could often route around.",
+      D:"An empty string is exactly the ambiguity to avoid: it is indistinguishable from a genuinely empty file, which is how the agent reached the wrong conclusion."
+    }
+  },
+  refs:[R_TOOL] },
+
+{ id:"d1-1.1-k", domain:1, ts:"1.1", scenario:1, type:"single",
+  stem:"Your support loop caps iterations at five. A refund case legitimately needs seven tool calls: verify customer, look up two orders, check policy, calculate, process, confirm. What does the student need to understand about the cap?",
+  options:[
+    {k:"A", text:"It is a runaway guard, and using it to terminate normal work truncates legitimate cases."},
+    {k:"B", text:"It should be raised to match the longest workflow, then left as the termination condition."},
+    {k:"C", text:"It is the only bound on cost, so `stop_reason` checking is redundant once it is set."},
+    {k:"D", text:"It should be applied per tool rather than per loop, so each tool gets five attempts."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A cap answers 'has something gone wrong?', not 'is the model finished?'. When it fires during legitimate work the case ends half-processed, which with a refund means money moved but never confirmed.",
+    distractors:{
+      B:"Raising it helps this case but reinstates the same failure at a higher number, and the next unusual case exceeds it too. The cap should not be the thing deciding completion.",
+      C:"This has it backwards. `stop_reason` is what detects completion; the cap only bounds pathological behaviour, and relying on it alone truncates every long task.",
+      D:"Per-tool retry budgets are a sensible idea for transient failures, but they do not address when the overall loop should end."
+    }
+  },
+  refs:[R_TOVR] },
+
+{ id:"d1-1.1-l", domain:1, ts:"1.1", scenario:3, type:"single",
+  stem:"Claude returns one turn containing four `tool_use` blocks: three web searches and one document fetch. Your loop executes them and sends four separate user messages, one per result. What goes wrong?",
+  options:[
+    {k:"A", text:"Each message leaves the remaining calls unanswered, breaking the pairing within that turn."},
+    {k:"B", text:"The four results arrive out of order, so the model attributes them to the wrong calls."},
+    {k:"C", text:"Only the last message is retained, because each user message supersedes the previous one."},
+    {k:"D", text:"The searches execute sequentially rather than in parallel, costing latency but nothing else."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A turn requesting four tools is answered by one user message carrying all four `tool_result` blocks. Splitting it sends a message that answers one call while three remain outstanding, which is not a valid continuation of that turn.",
+    distractors:{
+      B:"Ordering is not the risk, since each result carries the `tool_use_id` of the call it answers; the problem is structural rather than a mix-up.",
+      C:"User messages accumulate in the conversation rather than replacing one another, so nothing is superseded.",
+      D:"Execution order is your choice and unrelated to how results are returned. The defect here is the message structure, not the latency."
+    }
+  },
+  refs:[R_TOOL] },
+
+{ id:"d1-1.1-m", domain:1, ts:"1.1", scenario:4, type:"single",
+  stem:"A developer proposes a loop that inspects the arguments of each `tool_use` block and, if the agent asks to read a file it has already read, substitutes a cached result rather than re-reading. What is the main risk?",
+  options:[
+    {k:"A", text:"The file may have changed since the first read, so the agent reasons from stale content."},
+    {k:"B", text:"Caching breaks the `tool_use_id` pairing, so the model cannot match result to call."},
+    {k:"C", text:"The model will detect the substitution and re-request the file with different arguments."},
+    {k:"D", text:"Cached results cannot be placed in a `tool_result` block, so the turn cannot be completed."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Agents often re-read a file precisely because they have just edited it. Serving a cached copy hands back the pre-edit content, and the agent then reasons confidently from a version that no longer exists on disk.",
+    distractors:{
+      B:"The pairing is preserved as long as you return the result under the same `tool_use_id`; the cache is invisible at that level.",
+      C:"The model has no way to tell a cached result from a fresh one, which is what makes the staleness dangerous rather than self-correcting.",
+      D:"A cached string goes into a `tool_result` exactly like a fresh one; there is no structural obstacle."
+    }
+  },
+  refs:[R_TOOL] },
+
+{ id:"d1-1.1-n", domain:1, ts:"1.1", scenario:6, type:"single",
+  stem:"An extraction agent loops over a 200-page document, calling a page-reader tool. After 40 iterations the responses start omitting details from pages read early in the run. What is the most likely cause?",
+  options:[
+    {k:"A", text:"Accumulated tool results have filled the context, so early pages are no longer well attended."},
+    {k:"B", text:"The loop has exceeded the maximum number of `tool_result` blocks a conversation can hold."},
+    {k:"C", text:"`stop_reason` has switched to `max_tokens`, silently truncating the earlier history."},
+    {k:"D", text:"The tool is returning pages in a different format after the fortieth call."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Forty pages of tool output is a large amount of context, and material in the middle of a long input is the least reliably attended. The fix is to extract what matters from each page as you go rather than carrying every page forward whole.",
+    distractors:{
+      B:"There is no cap on the number of `tool_result` blocks in a conversation; the constraint is the context window, which is a different thing.",
+      C:"`max_tokens` bounds the length of a single response and does not retroactively remove earlier history from the conversation you send.",
+      D:"A format change would show as parsing failures or obviously wrong values on recent pages, not as gradual loss of detail from early ones."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d1-1.1-o", domain:1, ts:"1.1", scenario:1, type:"single",
+  stem:"Which sequence correctly describes one full iteration of an agentic loop?",
+  options:[
+    {k:"A", text:"Send history, read `stop_reason`, execute any requested tools, append results, send again."},
+    {k:"B", text:"Send history, execute the tools named in the system prompt, read `stop_reason`, append results."},
+    {k:"C", text:"Execute the next tool in the configured sequence, send the result, then read `stop_reason`."},
+    {k:"D", text:"Send history, wait for `end_turn`, execute all tools the model mentioned, then send again."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The model decides what to call, so nothing is executed until its response has been read. `stop_reason` tells you whether tools were requested, the results are appended, and the enlarged conversation goes back for the next decision.",
+    distractors:{
+      B:"Tools are requested by the model in its response, not enumerated in the system prompt, so there is nothing to execute before reading the reply.",
+      C:"A configured sequence is a pipeline rather than an agentic loop, and it removes the model's ability to choose the next action from what it has learned.",
+      D:"`end_turn` means the model has finished and is requesting nothing, so waiting for it before executing tools means no tool ever runs."
+    }
+  },
+  refs:[R_TOOL] },
+
+{ id:"d1-1.1-p", domain:1, ts:"1.1", scenario:5, type:"single",
+  stem:"A CI review agent runs a loop over a pull request. It sometimes ends after a single turn with a partial review, and the logs show `stop_reason: \"max_tokens\"`. What should the loop do?",
+  options:[
+    {k:"A", text:"Treat it as truncated rather than complete, and continue generation."},
+    {k:"B", text:"Treat it as equivalent to `end_turn`, since the model has stopped producing output either way."},
+    {k:"C", text:"Retry the identical request, since truncation is a transient sampling artefact."},
+    {k:"D", text:"Discard the turn and reduce the number of files in the request until the response fits."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"`max_tokens` means the response hit its output limit mid-thought. It is neither a finished turn nor a tool request, and presenting it ships a review that stops in the middle of a sentence.",
+    distractors:{
+      B:"Both stop generation, but only `end_turn` means the model considered itself finished. Conflating them is how truncated output reaches the user as though it were complete.",
+      C:"Truncation is deterministic given the same input and limit, so an identical retry truncates at the same place.",
+      D:"Reducing scope is a reasonable longer-term response to persistently oversized reviews, but it discards work already generated and does not handle the case in front of you."
+    }
+  },
+  refs:[R_TOOL] },
+
+{ id:"d1-1.1-q", domain:1, ts:"1.1", scenario:2, type:"single",
+  stem:"Your loop appends tool results but reconstructs the assistant's turn from scratch, keeping only its text and dropping the `tool_use` blocks. What breaks?",
+  options:[
+    {k:"A", text:"The results answer calls with no matching request, so the conversation is inconsistent."},
+    {k:"B", text:"Nothing breaks; `tool_use` blocks are only needed at the moment of execution."},
+    {k:"C", text:"The model loses its system prompt, since it is carried on the assistant turn."},
+    {k:"D", text:"Token usage rises, because the model regenerates the dropped blocks on the next turn."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A `tool_result` refers back to a `tool_use_id`. Removing the assistant's `tool_use` blocks leaves results pointing at calls that no longer appear anywhere in the history, so the record of what the agent did is incoherent.",
+    distractors:{
+      B:"This is a tempting simplification because execution is already finished, but the blocks are also the conversational record of what was requested, and the results depend on them.",
+      C:"The system prompt is a separate top-level parameter and is unaffected by what the assistant turn contains.",
+      D:"The model does not regenerate prior turns. The consequence is an inconsistent history, not extra generation."
+    }
+  },
+  refs:[R_TOOL] },
+
+{ id:"d1-1.1-r", domain:1, ts:"1.1", scenario:3, type:"multi",
+  stem:"Your loop must decide what to do with a response. Which two `stop_reason` values mean the loop should NOT execute any tools for that turn? (Select 2.)",
+  options:[
+    {k:"A", text:"`end_turn`"},
+    {k:"B", text:"`max_tokens`"},
+    {k:"C", text:"`tool_use`"},
+    {k:"D", text:"`pause_turn`"}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"`end_turn` means the model has finished and requested nothing. `max_tokens` means it was cut off mid-response, so any partially formed request is not something to act on. Neither is an instruction to run a tool.",
+    distractors:{
+      C:"`tool_use` is precisely the case where tools should be executed and their results returned.",
+      D:"`pause_turn` indicates a long-running turn that should be continued by sending the response back, so the turn is not finished and work does continue."
+    }
+  },
+  refs:[R_TOOL] },
+
+{ id:"d1-1.1-s", domain:1, ts:"1.1", scenario:4, type:"single",
+  stem:"An engineer wants the agent to always call `list_files` before `read_file`, and proposes enforcing it inside the loop by rejecting any `read_file` call that arrives first. What is the trade-off?",
+  options:[
+    {k:"A", text:"It is deterministic, but it removes the model's ability to skip a listing it does not need."},
+    {k:"B", text:"It cannot work, because the loop has no visibility of which tool the model requested."},
+    {k:"C", text:"It is equivalent to a system prompt instruction, so it adds complexity for no gain."},
+    {k:"D", text:"It guarantees ordering only when both tools appear in the same turn."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Loop-level gating does give a hard guarantee, which is right when the ordering is a genuine safety requirement. The cost is that a model given an exact path it already knows now has to make a redundant call first.",
+    distractors:{
+      B:"The loop reads every `tool_use` block before executing it, so it has full visibility of the tool name and arguments.",
+      C:"The two are not equivalent at all: the prompt version is followed most of the time, and the gate is followed every time. That difference is the whole reason to consider it.",
+      D:"A gate can track what has already been called across the whole conversation, so it is not limited to a single turn."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.1-t", domain:1, ts:"1.1", scenario:6, type:"single",
+  stem:"An extraction loop sends `tool_choice: \"any\"` on every iteration to guarantee structured output. After the extraction succeeds the loop never terminates. Why?",
+  options:[
+    {k:"A", text:"`any` forbids a text-only reply, so `end_turn` can never be reached."},
+    {k:"B", text:"`any` disables `stop_reason`, so the loop has nothing to test against."},
+    {k:"C", text:"`any` retries the same tool until its output validates against the schema."},
+    {k:"D", text:"`any` is only valid on the first request and is silently ignored afterwards."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Forcing a tool call on every turn removes the model's only way to say it has finished. The setting is right for the extraction request itself and wrong as a permanent loop-wide default; relax it once the structured output has been captured.",
+    distractors:{
+      B:"`stop_reason` is returned on every response regardless of `tool_choice`; it simply keeps reporting `tool_use`.",
+      C:"`tool_choice` does not validate output or drive retries; schema validation is something you do with the result.",
+      D:"The parameter applies to whichever request carries it, so sending it every time keeps forcing a call every time."
+    }
+  },
+  refs:[R_TOVR] },
+
+{ id:"d1-1.2-h", domain:1, ts:"1.2", scenario:3, type:"single",
+  stem:"Your coordinator delegates to four subagents and aggregates their output, but when the document-analysis subagent returns nothing usable the coordinator still runs synthesis and ships the report. What is missing from the coordinator's role?",
+  options:[
+    {k:"A", text:"Evaluating results before deciding the next step, rather than aggregating whatever arrives."},
+    {k:"B", text:"A longer timeout on the document-analysis subagent so it has more chance to succeed."},
+    {k:"C", text:"Instructions to the synthesis subagent to refuse input it judges insufficient."},
+    {k:"D", text:"A larger context window on the coordinator so it can hold all four outputs at once."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Aggregation is only half the coordinator's job. It also has to judge whether what came back is good enough to proceed on, and re-delegate when it is not. Without that step the pipeline runs to completion regardless of quality.",
+    distractors:{
+      B:"A longer timeout helps if the cause was slowness, but it does nothing about the coordinator proceeding on a poor result once it arrives.",
+      C:"Pushing the judgement downstream puts it in the agent with the least context about what was requested, and the synthesis agent still has to produce something.",
+      D:"Context capacity is not the constraint; the coordinator received all four outputs and chose to proceed."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.2-i", domain:1, ts:"1.2", scenario:3, type:"single",
+  stem:"A coordinator dispatches the same broad query to three research subagents and merges the results, reasoning that three attempts beat one. Cost triples and coverage improves by under 5%. What went wrong?",
+  options:[
+    {k:"A", text:"Identical assignments produce overlapping work rather than additional coverage."},
+    {k:"B", text:"The three subagents shared a context window, so later ones saw the earlier results."},
+    {k:"C", text:"Merging by union discards findings that appear in only one of the three."},
+    {k:"D", text:"Three subagents exceed the recommended fan-out, so the third was silently dropped."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Parallel capacity only buys coverage if the assignments differ. Given the same query, three agents largely retrace the same ground, so you pay three times for close to one agent's result.",
+    distractors:{
+      B:"Subagents have isolated context by design, so none of them could see what the others were finding.",
+      C:"A union merge keeps everything including singletons; the shortfall is in what was gathered, not in how it was combined.",
+      D:"There is no such fan-out limit, and all three ran, which is exactly why the cost tripled."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.2-j", domain:1, ts:"1.2", scenario:1, type:"single",
+  stem:"A support coordinator delegates a billing question to a specialist subagent, which returns a correct but bare figure. The customer reply omits the context they asked for. Where should the shortfall be addressed?",
+  options:[
+    {k:"A", text:"In the coordinator, which owns composing the customer-facing response from subagent output."},
+    {k:"B", text:"In the billing subagent, which should write the full customer reply itself."},
+    {k:"C", text:"In the system prompt, by asking every subagent to write in a customer-friendly register."},
+    {k:"D", text:"In the customer's original message, which should be rewritten before delegation."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Subagents return findings; the coordinator turns findings into a resolution. It is the only component that saw the whole customer message, so it is the only one that knows which parts of the question remain unanswered.",
+    distractors:{
+      B:"A specialist writing the final reply has only its own slice of the case, so it cannot address the concerns handled elsewhere in the same message.",
+      C:"Register is a reasonable thing to standardise, but tone was not the gap; the missing context was.",
+      D:"Rewriting the customer's words risks discarding the very detail that is missing from the reply."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.2-k", domain:1, ts:"1.2", scenario:3, type:"single",
+  stem:"Which responsibility belongs to the coordinator rather than to a subagent?",
+  options:[
+    {k:"A", text:"Deciding which subagents a given query actually requires."},
+    {k:"B", text:"Choosing which search terms to use for an assigned subtopic."},
+    {k:"C", text:"Recovering locally from a transient timeout on its own tool call."},
+    {k:"D", text:"Judging whether a retrieved source is relevant to its assigned scope."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Only the coordinator sees the whole query and the full roster, so routing is its decision. The others are judgements a specialist makes within the scope it was given.",
+    distractors:{
+      B:"Query formulation is exactly what a search subagent is specialised for, and dictating terms from above removes its ability to adapt.",
+      C:"Local recovery from transient failures is the subagent's job; escalating every retry would flood the coordinator with noise it cannot act on.",
+      D:"Relevance within an assigned scope is a specialist judgement, and the coordinator lacks the retrieved material to make it."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.2-l", domain:1, ts:"1.2", scenario:4, type:"single",
+  stem:"A codebase-exploration coordinator spawns a subagent per directory. On a repository with 300 directories the run costs far more than reading the code directly. What principle was missed?",
+  options:[
+    {k:"A", text:"Decomposition should follow the shape of the question, not the shape of the filesystem."},
+    {k:"B", text:"Subagents should always be spawned sequentially rather than in parallel."},
+    {k:"C", text:"Each subagent should have been given the full repository for context."},
+    {k:"D", text:"Directory-level work should be done by the coordinator and file-level work delegated."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Delegation earns its cost when a subtask is substantial and self-contained. Mapping one subagent onto each directory ignores whether that directory has anything to do with the question, so most of the fan-out investigates nothing relevant.",
+    distractors:{
+      B:"Sequential execution would make the same 300 investigations slower without making any of them more useful.",
+      C:"Giving each subagent the whole repository multiplies the context cost by 300 and still does not make the irrelevant directories worth visiting.",
+      D:"Swapping which layer handles which granularity leaves the same problem: the work is being divided by structure rather than by relevance."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.2-m", domain:1, ts:"1.2", scenario:3, type:"single",
+  stem:"After adding an iterative refinement loop, your coordinator re-delegates and re-synthesises up to twelve times on broad topics before it is satisfied. What should bound it?",
+  options:[
+    {k:"A", text:"An explicit coverage criterion, so the loop ends on the goal being met."},
+    {k:"B", text:"A hard cap of two refinement rounds, applied to every topic regardless of breadth."},
+    {k:"C", text:"Removing refinement entirely, since the first synthesis is usually adequate."},
+    {k:"D", text:"Delegating the stopping decision to the synthesis subagent, which sees the report."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A refinement loop needs a definition of done. Stated coverage criteria let a narrow topic finish in one round and a broad one take four, and both terminate for the same principled reason.",
+    distractors:{
+      B:"A flat cap is simple and predictable, but it truncates genuinely broad topics at the same point it comfortably fits narrow ones.",
+      C:"Removing refinement returns you to shipping whatever the first pass produced, which is the gap the loop was added to close.",
+      D:"The synthesis subagent sees only the findings it was handed, so it cannot tell whether the topic as a whole has been covered."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.2-n", domain:1, ts:"1.2", scenario:3, type:"single",
+  stem:"Two subagents report contradictory findings on the same sub-question. What should the coordinator do?",
+  options:[
+    {k:"A", text:"Carry both forward with attribution and let synthesis present the disagreement."},
+    {k:"B", text:"Re-run both subagents until they converge on the same answer."},
+    {k:"C", text:"Accept the finding from whichever subagent returned more sources."},
+    {k:"D", text:"Drop the sub-question from the report, since the evidence is unreliable."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Two credible agents disagreeing is usually a real disagreement in the sources, not a bug. Preserving both with attribution tells the reader something true; silently resolving it invents a certainty the evidence does not support.",
+    distractors:{
+      B:"Re-running until agreement selects for consensus rather than accuracy, and may simply converge on whichever answer is easier to find.",
+      C:"Source count measures how much was written, not which account is correct; a well-covered error is still an error.",
+      D:"Dropping the sub-question hides a genuine finding, and contested points are often the ones most worth reporting."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.2-o", domain:1, ts:"1.2", scenario:1, type:"single",
+  stem:"A customer message needs an order lookup and a policy check. Your coordinator runs them sequentially because the policy check 'might depend on' the order. Inspection shows it never does. What is the cost?",
+  options:[
+    {k:"A", text:"Latency roughly doubles for no benefit, since the two are genuinely independent."},
+    {k:"B", text:"The policy check receives stale order data, because it runs after the lookup completes."},
+    {k:"C", text:"The coordinator cannot aggregate results that arrived at different times."},
+    {k:"D", text:"Sequential delegation prevents the subagents from sharing customer context."},
+  ],
+  correct:["A"],
+  explain:{
+    why:"Two independent lookups run concurrently in the time of the slower one. Serialising them on a dependency that does not exist is a straight latency loss, which matters when a customer is waiting.",
+    distractors:{
+      B:"Running later means fresher data, not staler, so ordering does not harm correctness here.",
+      C:"Aggregation is unaffected by arrival time; the coordinator simply waits for both.",
+      D:"Shared context comes from what the coordinator puts in each prompt, and is available whether the calls are concurrent or not."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.2-p", domain:1, ts:"1.2", scenario:5, type:"single",
+  stem:"A CI coordinator delegates per-file review to subagents, then asks a final subagent to write the summary comment. The summary contradicts individual file findings. What is the likely cause?",
+  options:[
+    {k:"A", text:"The summariser was given the files rather than the findings, so it reviewed afresh."},
+    {k:"B", text:"The per-file subagents ran in parallel, so their findings arrived in a non-deterministic order."},
+    {k:"C", text:"The summary subagent inherited the coordinator's context and merged it with its own."},
+    {k:"D", text:"Contradictions are unavoidable when more than one subagent reviews the same pull request."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A summariser handed source files does the review again, in a single pass, with none of the depth the per-file agents applied. Give it the findings and its job becomes combining them, which is what you actually wanted.",
+    distractors:{
+      B:"Arrival order affects how you assemble the list, not whether the conclusions conflict.",
+      C:"Subagents do not inherit coordinator context; whatever this one saw was placed in its prompt deliberately.",
+      D:"Contradictions are avoidable precisely by having the summary work from the findings rather than forming independent ones."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.2-q", domain:1, ts:"1.2", scenario:3, type:"multi",
+  stem:"Which two are genuine reasons to route all subagent communication through the coordinator? (Select 2.)",
+  options:[
+    {k:"A", text:"One component sees every delegation, so failures are observable in a single place."},
+    {k:"B", text:"Error handling stays consistent, rather than each agent inventing its own recovery."},
+    {k:"C", text:"It reduces total token usage, because messages travel a shorter path."},
+    {k:"D", text:"It allows subagents to share a single context window and avoid duplication."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"Hub-and-spoke buys observability and consistency. Every delegation and every failure passes through one component, so behaviour can be seen and error policy applied uniformly.",
+    distractors:{
+      C:"Routing through a hub adds a hop rather than removing one, so token usage goes up slightly, not down.",
+      D:"Subagents keep isolated context under any topology; the coordinator does not merge their windows."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.2-r", domain:1, ts:"1.2", scenario:4, type:"single",
+  stem:"An engineer proposes that the coordinator write its delegation decisions to a log the subagents can read, so they know what the others are doing. What is the strongest objection?",
+  options:[
+    {k:"A", text:"It rebuilds shared state, reintroducing the coupling isolation removes."},
+    {k:"B", text:"Subagents cannot perform file reads, so they could not access the log."},
+    {k:"C", text:"The log would exceed the context window of any subagent that read it."},
+    {k:"D", text:"Delegation decisions are not knowable until every subagent has returned."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Isolation is what keeps a subagent's behaviour a function of its prompt alone, which makes it testable and its failures local. A shared log recreates a channel between peers with none of the coordinator's oversight.",
+    distractors:{
+      B:"Subagents routinely have file tools, so access is a configuration matter rather than an obstacle.",
+      C:"A delegation log is small, and size would not be the reason to reject the design.",
+      D:"The coordinator makes each decision before dispatching, so they are available to write down at the time."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.2-s", domain:1, ts:"1.2", scenario:6, type:"single",
+  stem:"An extraction pipeline uses a coordinator with one subagent per document type. A new document type appears and is routed to the closest existing subagent, producing confidently wrong output. What should change?",
+  options:[
+    {k:"A", text:"The coordinator should recognise when no subagent fits and route the document for review."},
+    {k:"B", text:"The closest subagent should be broadened until it covers every document type."},
+    {k:"C", text:"A subagent should be created for every document type the business might ever receive."},
+    {k:"D", text:"The document should be reformatted to match the nearest supported type before routing."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Forced routing turns an unknown into a plausible-looking error. A coordinator that can say 'none of these fit' converts a silent extraction failure into a visible one a human can resolve.",
+    distractors:{
+      B:"A subagent broad enough for everything loses the specialisation that made per-type extraction accurate in the first place.",
+      C:"Enumerating future document types in advance is not achievable, and the next unanticipated one recreates the problem.",
+      D:"Reshaping a document to fit a schema it does not match discards or distorts exactly the fields that differ."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.2-t", domain:1, ts:"1.2", scenario:2, type:"single",
+  stem:"A developer asks why the coordinator should decide which subagents to run, rather than running all of them and letting each decide whether it has anything to contribute. What is the strongest answer?",
+  options:[
+    {k:"A", text:"An agent asked whether it is relevant will usually find something to say."},
+    {k:"B", text:"Subagents cannot decline an invocation once it has been dispatched."},
+    {k:"C", text:"Running every subagent exceeds the maximum concurrent delegations allowed."},
+    {k:"D", text:"Only the coordinator has permission to invoke tools on the subagents' behalf."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Self-selection is weak: a document-analysis agent handed an irrelevant query tends to produce a thin, plausible answer rather than an abstention, and that output then flows into synthesis as though it were a finding.",
+    distractors:{
+      B:"An agent can certainly return an empty result; the difficulty is that it usually will not.",
+      C:"There is no such concurrency ceiling, and the objection would be about cost rather than correctness.",
+      D:"Subagents invoke their own tools; the coordinator does not proxy for them."
+    }
+  },
+  refs:[R_SUB] },
+
+/* ---- Domain 1 expansion: task statements 1.3 and 1.4 ---- */
+
+{ id:"d1-1.3-h", domain:1, ts:"1.3", scenario:3, type:"single",
+  stem:"Your coordinator passes the synthesis subagent a 40,000-token dump of raw search results. The subagent's report is shallow and misses several findings buried in the middle. What should the coordinator pass instead?",
+  options:[
+    {k:"A", text:"Structured findings pairing claim, excerpt and source, not raw retrieved text."},
+    {k:"B", text:"The same dump, split across several sequential Task calls to the same subagent."},
+    {k:"C", text:"A summary the coordinator writes itself, discarding the underlying material."},
+    {k:"D", text:"The raw dump with an instruction to read it twice before drawing conclusions."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Raw retrieval is mostly noise, and material in the middle of a very long input is the least reliably attended. Structured findings carry what synthesis needs at a fraction of the tokens, and keep attribution attached to each claim.",
+    distractors:{
+      B:"Splitting helps with sheer length, but each call still receives unstructured text, and the subagent now cannot see all the findings together to combine them.",
+      C:"A coordinator-written summary is more compact, but it strips the evidence and sources that make a synthesised report citable.",
+      D:"Instructing more careful reading does not change the attention profile of a very long input; the middle stays weakest."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.3-i", domain:1, ts:"1.3", scenario:4, type:"single",
+  stem:"A coordinator spawns an exploration subagent with the prompt 'Investigate the authentication module.' The subagent returns a general description of authentication patterns rather than findings about this codebase. What is missing?",
+  options:[
+    {k:"A", text:"The paths, entry points and specific questions that make the task concrete."},
+    {k:"B", text:"A tool restriction limiting the subagent to read-only operations."},
+    {k:"C", text:"A larger model, since the assigned model lacked the depth for code analysis."},
+    {k:"D", text:"An instruction to avoid drawing on background knowledge of authentication."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A subagent inherits nothing, so 'the authentication module' names something it cannot locate. With no starting path and no specific question, describing authentication in general is the only response the prompt actually supports.",
+    distractors:{
+      B:"Read-only restrictions are good hygiene for exploration, but they constrain what the subagent may do rather than telling it where to look.",
+      C:"Model capability is not the limit here; no model can investigate a module it has not been pointed at.",
+      D:"Forbidding background knowledge removes the fallback without supplying the specifics, so the subagent would have even less to work with."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.3-j", domain:1, ts:"1.3", scenario:3, type:"single",
+  stem:"You define a subagent whose description reads 'Handles analysis tasks.' The coordinator routes document analysis, statistical work and code review to it indiscriminately. What is the fix?",
+  options:[
+    {k:"A", text:"Rewrite the description to state the specific work it does and what it should not receive."},
+    {k:"B", text:"Add a tool restriction so it can only perform document analysis."},
+    {k:"C", text:"Give the coordinator a routing table mapping task keywords to subagent names."},
+    {k:"D", text:"Rename the subagent to `document_analysis_agent` and leave the description as it is."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The description is what the coordinator reads when choosing, and 'handles analysis tasks' matches all three kinds of work. Naming the intended scope and the boundary against neighbours is what makes the choice determinate.",
+    distractors:{
+      B:"Restricting tools stops the subagent doing the wrong work well, but it is still selected for it, so those tasks now fail instead of being routed elsewhere.",
+      C:"A keyword table is brittle and duplicates a decision the description should already support, though it is a reasonable fallback when descriptions genuinely cannot disambiguate.",
+      D:"A better name helps a little, but the description is the primary signal and it still claims all analysis work."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.3-k", domain:1, ts:"1.3", scenario:1, type:"single",
+  stem:"A support coordinator invokes a refund subagent with 'Process the refund we discussed.' The subagent asks which order it should refund. Why?",
+  options:[
+    {k:"A", text:"It has no access to the conversation, so 'we discussed' refers to nothing it can see."},
+    {k:"B", text:"The refund tool requires an order ID that the subagent lacks permission to look up."},
+    {k:"C", text:"The coordinator's context exceeded the size that can be inherited on invocation."},
+    {k:"D", text:"Subagents receive conversation history only on their second and later invocations."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The prompt is the only channel into a subagent. A reference back to a shared conversation is empty from inside an isolated context, so the subagent asks for the one fact it needs and was not given.",
+    distractors:{
+      B:"A permissions problem would surface as a tool error rather than a clarifying question about which order was meant.",
+      C:"Nothing is inherited at any size, so there is no threshold that was crossed here.",
+      D:"No invocation inherits history, first or later; each one starts from its prompt alone."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.3-l", domain:1, ts:"1.3", scenario:4, type:"single",
+  stem:"You want two subagents to explore the same repository concurrently, one tracing data flow and one cataloguing tests. Which coordinator behaviour achieves that?",
+  options:[
+    {k:"A", text:"Both Task calls emitted in one assistant turn, each with its own scoped prompt."},
+    {k:"B", text:"One Task call whose prompt asks the subagent to perform both investigations."},
+    {k:"C", text:"Two Task calls in consecutive turns, with the second referencing the first."},
+    {k:"D", text:"One Task call repeated twice with the same prompt, relying on sampling variation."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Concurrency comes from multiple Task calls within a single assistant turn. Separate scoped prompts also keep each subagent's context focused on one question rather than two.",
+    distractors:{
+      B:"A single subagent doing both runs them sequentially inside one context, which is the serialisation you were trying to avoid.",
+      C:"Calls in consecutive turns are sequential by construction, since each turn must return before the next begins.",
+      D:"Identical prompts produce overlapping work rather than two different investigations, whatever the sampling does."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.3-m", domain:1, ts:"1.3", scenario:3, type:"single",
+  stem:"Your subagent definitions all specify the same broad tool set. The document-analysis agent begins issuing web searches when its assigned sources are thin. What does this illustrate?",
+  options:[
+    {k:"A", text:"An agent given tools beyond its role will use them when its own path is blocked."},
+    {k:"B", text:"Tool definitions leak between subagents when they share a coordinator."},
+    {k:"C", text:"Document analysis cannot be performed without a web search capability."},
+    {k:"D", text:"The coordinator failed to specify which tool each subagent should call first."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Availability drives use. Faced with thin sources and a search tool in reach, the agent takes the path that produces an answer, which quietly turns your analysis specialist into a second-rate researcher.",
+    distractors:{
+      B:"Each subagent's tools come from its own definition; nothing is inherited from a sibling.",
+      C:"Document analysis operates on supplied documents, and needing to search for more is a sign the assignment was underspecified.",
+      D:"Dictating call order would constrain the symptom without removing the capability that made it possible."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.3-n", domain:1, ts:"1.3", scenario:1, type:"single",
+  stem:"A coordinator prompt for an escalation subagent reads: 'Escalate this. Include everything relevant.' Handoffs vary widely in what they contain. What would improve consistency most?",
+  options:[
+    {k:"A", text:"Naming the required fields, so every handoff carries the same structure."},
+    {k:"B", text:"Asking the subagent to be thorough and to double-check before submitting."},
+    {k:"C", text:"Giving the subagent access to the full transcript so it can decide what matters."},
+    {k:"D", text:"Increasing the subagent's output token limit so nothing is truncated."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"'Everything relevant' is a judgement the subagent re-makes each time. Listing customer ID, root cause, amount and recommended action turns it into a form to complete, which is why the output stops varying.",
+    distractors:{
+      B:"Thoroughness instructions raise effort without defining what a complete handoff contains, so the variation persists.",
+      C:"More material to sift through widens the judgement rather than narrowing it, and the human receiving the handoff still gets a different shape each time.",
+      D:"Truncation is not the issue; the handoffs differ in what they choose to include, not in being cut off."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.3-o", domain:1, ts:"1.3", scenario:4, type:"single",
+  stem:"An engineer argues that since subagents cannot see the parent conversation, the coordinator should paste its entire history into every subagent prompt. What is the objection?",
+  options:[
+    {k:"A", text:"It spends the subagent's context on material irrelevant to its narrow task."},
+    {k:"B", text:"Conversation history cannot be embedded in a Task prompt for structural reasons."},
+    {k:"C", text:"The subagent would then inherit the coordinator's tools along with its history."},
+    {k:"D", text:"Pasted history is treated as instructions, so the subagent would follow the user's earlier requests."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Isolation exists so a subagent works in a clean window on one question. Pasting everything in forfeits that benefit and pushes the relevant instruction into the middle of a long input, where it is least reliably read.",
+    distractors:{
+      B:"History is just text and embeds fine; the objection is about what it costs, not whether it is possible.",
+      C:"Tools come from the subagent's own definition and are unaffected by what its prompt contains.",
+      D:"This is a real hazard worth care in prompt construction, but it is a framing problem rather than the primary reason to avoid wholesale pasting."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.3-p", domain:1, ts:"1.3", scenario:3, type:"single",
+  stem:"You need the synthesis subagent to keep source attribution intact. Which prompt structure best supports that?",
+  options:[
+    {k:"A", text:"Findings as discrete records, each pairing a claim with its source and excerpt."},
+    {k:"B", text:"Findings as prose, with a numbered bibliography appended at the end."},
+    {k:"C", text:"Findings as prose, with an instruction to cite carefully throughout."},
+    {k:"D", text:"Findings as prose, followed by the full text of every source consulted."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Attribution survives a hop when the claim-to-source link is a structural property of the input rather than something to be inferred. Discrete records make the mapping explicit and hard to lose in compression.",
+    distractors:{
+      B:"A detached bibliography lists what was read without saying which entry supports which claim, so the mapping must be guessed.",
+      C:"An instruction to cite carefully cannot recover a mapping the input never contained.",
+      D:"Full source text is expensive and still leaves the subagent to work out which passage backs which statement."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.3-q", domain:1, ts:"1.3", scenario:1, type:"single",
+  stem:"Which statement about the `AgentDefinition` tools field is correct?",
+  options:[
+    {k:"A", text:"It bounds what the subagent may do, but not whether it is selected."},
+    {k:"B", text:"It is the primary signal the coordinator uses when choosing between subagents."},
+    {k:"C", text:"It is merged with the coordinator's tool set at invocation time."},
+    {k:"D", text:"It must list every tool the coordinator holds, or the invocation is rejected."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Selection happens before invocation and is driven by the description. The tool list takes effect afterwards, constraining what the chosen subagent can actually do.",
+    distractors:{
+      B:"The description carries the selection signal; the tool list is not what the coordinator reads when deciding.",
+      C:"Tool sets are per-definition and are not merged, which is precisely how scoped access is achieved.",
+      D:"A subagent normally holds a narrower set than its coordinator, and that difference is the point."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.3-r", domain:1, ts:"1.3", scenario:6, type:"single",
+  stem:"An extraction coordinator invokes a validation subagent after each document. The validator reports every document as valid, including ones with obvious field errors. Its prompt contains only the extracted JSON. What is missing?",
+  options:[
+    {k:"A", text:"The source document, without which there is nothing to check against."},
+    {k:"B", text:"A stricter instruction emphasising that it should look hard for errors."},
+    {k:"C", text:"The JSON schema, so the validator can confirm the structure is well formed."},
+    {k:"D", text:"Field-level confidence scores from the extraction step to guide its attention."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Validation is a comparison. Given only the output, the validator can confirm it looks like a well-formed record but has nothing to check the values against, so everything passes.",
+    distractors:{
+      C:"A schema catches structural problems, but tool-use extraction has already guaranteed those; the errors here are in the values.",
+      B:"Exhortation cannot supply the missing half of a comparison, so the validator would look hard at the only thing it has.",
+      D:"Confidence scores help route attention, but with no source to compare against there is still nothing to verify."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d1-1.3-s", domain:1, ts:"1.3", scenario:2, type:"single",
+  stem:"You are exploring two refactoring strategies from a shared codebase analysis, and want each branch to inherit that analysis without seeing the other's reasoning. Which mechanism fits?",
+  options:[
+    {k:"A", text:"Forking once the analysis is complete, so both branches share a baseline."},
+    {k:"B", text:"Spawning two subagents, each passed the analysis in its prompt."},
+    {k:"C", text:"Running both strategies in one session and comparing at the end."},
+    {k:"D", text:"Resuming the analysis session twice in sequence, once per strategy."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Forking is built for divergent exploration from a common point: both branches carry the completed analysis and then evolve independently, which is exactly the comparison you want.",
+    distractors:{
+      B:"Subagents would work, but each pays to re-ingest the analysis through its prompt and returns a summary rather than an explorable branch you can continue.",
+      C:"One session means the second strategy is anchored on the first, which is the contamination the requirement rules out.",
+      D:"Sequential resumption of the same session carries the first exploration into the second, so the branches are not independent."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.3-t", domain:1, ts:"1.3", scenario:4, type:"single",
+  stem:"A coordinator emits three Task calls in one turn. Two subagents succeed and one fails. What should the coordinator receive?",
+  options:[
+    {k:"A", text:"All three results together, with the failure reported as such alongside the two successes."},
+    {k:"B", text:"Only the two successful results, with the failure retried transparently before returning."},
+    {k:"C", text:"An error for the whole turn, since one call in the batch did not complete."},
+    {k:"D", text:"The two successes immediately and the failure in a later turn once it resolves."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Every call in the turn is answered, and a failure is a legitimate answer. The coordinator can then decide whether to proceed on partial results, re-delegate, or annotate a gap.",
+    distractors:{
+      B:"Silent retries hide information the coordinator may want, and if the retry also fails you have delayed the decision without improving it.",
+      C:"Failing the whole turn discards two successful investigations over one problem that may well be routable around.",
+      D:"Deferring part of a turn leaves calls unanswered within it, which is not a valid continuation of that turn."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.4-h", domain:1, ts:"1.4", scenario:1, type:"single",
+  stem:"Your prerequisite gate blocks `process_refund` until `get_customer` succeeds. A customer with a verified identity is refused because the verification happened three turns earlier and the gate only inspects the current turn. What is the defect?",
+  options:[
+    {k:"A", text:"The gate should evaluate conversation state, not a single turn."},
+    {k:"B", text:"The gate should be removed, since it now blocks legitimate refunds."},
+    {k:"C", text:"`get_customer` should be re-called before every refund regardless of prior verification."},
+    {k:"D", text:"The gate should trust the model's assertion that verification already occurred."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The prerequisite is a property of the conversation: this customer has been verified. Scoping the check to one turn makes a satisfied condition look unsatisfied whenever the steps are not adjacent.",
+    distractors:{
+      B:"Removing the gate reinstates the unverified-refund risk it exists to prevent, trading a false refusal for a real financial error.",
+      C:"Re-verifying every time is safe and would work, but it adds a redundant call to every refund to compensate for a gate that is simply looking in the wrong place.",
+      D:"Trusting the model's word reduces the gate to a prompt instruction, discarding the deterministic guarantee that motivated it."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.4-i", domain:1, ts:"1.4", scenario:1, type:"single",
+  stem:"A customer raises three issues. Your agent investigates all three in parallel, then sends three separate replies in quick succession. First-contact resolution does not improve. What step was skipped?",
+  options:[
+    {k:"A", text:"Synthesising the findings into one reply that resolves the contact as a whole."},
+    {k:"B", text:"Investigating the issues sequentially so each reply reflects the previous one."},
+    {k:"C", text:"Asking the customer to confirm the three issues before starting work."},
+    {k:"D", text:"Escalating the contact, since three concurrent issues exceed autonomous handling."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Decomposition is only half the pattern. Three replies leave the customer to assemble their own resolution and may contradict one another on shared facts such as the refund total.",
+    distractors:{
+      B:"Sequential investigation costs latency and does not by itself produce a single coherent reply.",
+      C:"A confirmation round adds a turn before any work starts, which pushes resolution further away rather than closer.",
+      D:"Three routine issues are well within autonomous capability; escalating them wastes human capacity and fails the target outright."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.4-j", domain:1, ts:"1.4", scenario:4, type:"single",
+  stem:"A developer-productivity agent must never modify files outside the repository. Which control gives that guarantee?",
+  options:[
+    {k:"A", text:"Intercepting write calls and denying any path that resolves outside the project root."},
+    {k:"B", text:"A CLAUDE.md instruction stating that files outside the repository are off limits."},
+    {k:"C", text:"Removing the Write tool, leaving only Read and Grep available."},
+    {k:"D", text:"Few-shot examples showing the agent declining out-of-repository edits."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Path resolution at the point of the call is deterministic: the check sees the actual target and can refuse it. That is what makes the boundary hold regardless of how the model reasoned about the request.",
+    distractors:{
+      B:"CLAUDE.md is context rather than enforcement, which the documentation states plainly; it lowers the rate without removing it.",
+      C:"Removing writes does enforce it absolutely, but it also removes the agent's ability to do the editing work it exists for.",
+      D:"Examples shape behaviour probabilistically and offer no guarantee on the case that was never exemplified."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.4-k", domain:1, ts:"1.4", scenario:1, type:"single",
+  stem:"Your escalation handoff includes customer ID, root cause, amount and recommended action. Human agents still ask the customer to repeat what happened. What is likely missing?",
+  options:[
+    {k:"A", text:"What the agent already told the customer, so the human does not repeat it."},
+    {k:"B", text:"The full conversation transcript appended to the structured fields."},
+    {k:"C", text:"A confidence score indicating how certain the agent is about the root cause."},
+    {k:"D", text:"The timestamps of each tool call the agent made during the investigation."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The handoff describes the case but not the conversation. Without knowing what has already been said and promised, the human has to re-establish it with the customer, which is what the structured summary was meant to prevent.",
+    distractors:{
+      B:"A transcript contains the information but returns the human to reading the whole exchange, which is the cost the summary exists to remove.",
+      C:"A self-reported confidence figure is poorly calibrated and tells the human nothing about what the customer has been told.",
+      D:"Call timestamps support debugging the agent rather than resuming the conversation."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.4-l", domain:1, ts:"1.4", scenario:3, type:"single",
+  stem:"A research coordinator must always run a fact-check pass before publishing. The team disagrees on whether to enforce it in the pipeline or instruct it in the coordinator prompt. What determines the answer?",
+  options:[
+    {k:"A", text:"Whether a single unchecked publication is acceptable."},
+    {k:"B", text:"Whether the fact-check step takes longer than the synthesis step."},
+    {k:"C", text:"Whether the coordinator uses a model large enough to follow multi-step instructions."},
+    {k:"D", text:"Whether the pipeline already contains other programmatic gates."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The criterion is the cost of the exception, not the shape of the workflow. If one unchecked report reaching a customer is tolerable, a prompt is proportionate; if it is not, only a gate gives the guarantee.",
+    distractors:{
+      B:"Relative duration affects scheduling and cost, not whether the ordering can be allowed to fail occasionally.",
+      C:"Larger models comply more often, but more often is still not always, and the decision turns on whether the residual matters.",
+      D:"Consistency with existing gates is a reasonable secondary consideration, but it does not tell you whether this step needs one."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.4-m", domain:1, ts:"1.4", scenario:1, type:"single",
+  stem:"A hook blocks a $900 refund. The agent tells the customer 'That request was denied by policy' and closes. What is wrong with this outcome?",
+  options:[
+    {k:"A", text:"A blocked action should route into the alternative workflow, not terminate the contact."},
+    {k:"B", text:"The agent should have retried the refund at a lower amount to stay within policy."},
+    {k:"C", text:"The block should have been silent, so the customer never learns a limit exists."},
+    {k:"D", text:"The hook should have allowed the refund and flagged it for later audit."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The threshold marks the point where a human decides, not where the customer's claim becomes invalid. Handing the case to escalation keeps the policy intact and still resolves the customer's issue.",
+    distractors:{
+      B:"Silently reducing the amount gives the customer less than they are owed while implying the matter is settled.",
+      C:"Concealing the reason leaves the customer with no path forward and no idea why, which is worse service than an honest referral.",
+      D:"Allowing it and auditing afterwards means the money has already moved, which is exactly what the threshold exists to prevent."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.4-n", domain:1, ts:"1.4", scenario:4, type:"single",
+  stem:"A team wants generated code to always be formatted before commit. They are choosing between a prompt instruction, a skill, and a hook. Which gives the guarantee, and why?",
+  options:[
+    {k:"A", text:"A hook, because it runs at a fixed lifecycle point regardless of what the model decides."},
+    {k:"B", text:"A skill, because its frontmatter can restrict tools to formatting operations."},
+    {k:"C", text:"A prompt instruction, because formatting is simple enough to be followed reliably."},
+    {k:"D", text:"Any of the three, since all are equally binding once configured."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Hooks execute as shell commands at defined lifecycle events, so the formatter runs whether or not the model thought of it. That is the property the requirement asks for.",
+    distractors:{
+      B:"A skill has to be invoked, so a commit that never invokes it is never formatted.",
+      C:"Simplicity raises the compliance rate but does not make it certain, and 'always' rules out a residual.",
+      D:"Only the hook is enforced by the harness; the other two shape behaviour without binding it."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.4-o", domain:1, ts:"1.4", scenario:1, type:"multi",
+  stem:"Which two facts belong in a structured escalation handoff to a human agent who cannot see the conversation? (Select 2.)",
+  options:[
+    {k:"A", text:"The diagnosed root cause of the customer's problem."},
+    {k:"B", text:"The specific action the agent recommends the human take."},
+    {k:"C", text:"The number of tool calls the agent made while investigating."},
+    {k:"D", text:"The model and temperature settings used for the conversation."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"The human needs to understand the case and know what is being proposed. Root cause and recommended action are the two things that let them verify quickly and act, rather than restarting the investigation.",
+    distractors:{
+      C:"Call count is an operational metric. It says nothing about what the customer needs.",
+      D:"Model configuration matters when debugging the agent, not when resolving the customer's issue."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.4-p", domain:1, ts:"1.4", scenario:5, type:"single",
+  stem:"A CI pipeline must not post review comments when the test suite failed, because the failures make the diff misleading. Where does this belong?",
+  options:[
+    {k:"A", text:"In the pipeline, gating the review job on the test job's exit status."},
+    {k:"B", text:"In the review prompt, telling Claude to check whether tests passed first."},
+    {k:"C", text:"In CLAUDE.md, documenting that reviews assume a green test suite."},
+    {k:"D", text:"In a post-processing filter that deletes comments after they are posted."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Job ordering is exactly what a pipeline expresses, and an exit-status dependency cannot be talked out of. The review simply does not run.",
+    distractors:{
+      B:"This asks the model to check something the pipeline already knows, and it can misread or skip the check.",
+      C:"Documenting an assumption records the intent without preventing the run.",
+      D:"Deleting after posting means reviewers have already seen and possibly acted on misleading comments."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d1-1.4-q", domain:1, ts:"1.4", scenario:4, type:"single",
+  stem:"An engineer adds a gate requiring `run_tests` before `commit_changes`. The agent now calls `run_tests` with an empty filter to satisfy the gate cheaply. What does this reveal?",
+  options:[
+    {k:"A", text:"The gate checks that a call happened, not that it accomplished anything."},
+    {k:"B", text:"Gates cannot inspect the arguments of the calls they intercept."},
+    {k:"C", text:"The agent is behaving adversarially and should be given a stricter system prompt."},
+    {k:"D", text:"Prerequisite gates are unsuitable for any workflow involving test execution."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A prerequisite expressed as 'this tool was invoked' is satisfied by any invocation. Conditioning on the result instead, such as a non-empty run that passed, closes the gap.",
+    distractors:{
+      B:"Arguments and results are both available at interception, which is precisely how the stronger condition can be written.",
+      C:"The agent is satisfying the stated condition in the cheapest way, which is ordinary behaviour rather than adversarial intent.",
+      D:"Gates work well here; this one was simply specified too loosely."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.4-r", domain:1, ts:"1.4", scenario:6, type:"single",
+  stem:"An extraction pipeline must never write to the downstream database when validation failed. Which design makes that structurally impossible?",
+  options:[
+    {k:"A", text:"Making the write step consume the validator's output, so it cannot run without a pass."},
+    {k:"B", text:"Instructing the agent to check validation status before calling the write tool."},
+    {k:"C", text:"Logging validation failures so a human can reverse any bad writes afterwards."},
+    {k:"D", text:"Running validation and writing concurrently to reduce total latency."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A data dependency is stronger than a rule about ordering: with nothing to consume, the write has no input and cannot proceed. The constraint stops being something anyone has to remember.",
+    distractors:{
+      B:"An instruction is followed most of the time, and the exceptions are corrupt rows in the database.",
+      C:"Reversal is after the fact, and downstream consumers may already have read the bad data.",
+      D:"Concurrency removes the ordering guarantee entirely, allowing a write before validation completes."
+    }
+  },
+  refs:[R_STRUCT] },
+
+{ id:"d1-1.4-s", domain:1, ts:"1.4", scenario:1, type:"single",
+  stem:"Your team asks why the refund threshold is enforced in a hook rather than simply given to the model as a rule, when the model has never violated it in testing. What is the strongest response?",
+  options:[
+    {k:"A", text:"Testing bounds the observed rate, not the true one, and the exceptions here move money."},
+    {k:"B", text:"Hooks execute faster than the model's own reasoning about the threshold."},
+    {k:"C", text:"Models cannot compare numeric values reliably enough to apply a threshold."},
+    {k:"D", text:"Prompt rules stop applying once the conversation exceeds the context window."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A clean test run raises confidence without establishing that the rate is zero, and production inputs are more varied than any test set. When each exception is an unauthorised payment, the residual is the entire concern.",
+    distractors:{
+      B:"Latency is negligible either way and is not why the control exists.",
+      C:"Models compare numbers perfectly well; the issue is compliance under unusual framing, not arithmetic.",
+      D:"Long conversations do dilute instructions, but the rule does not simply switch off at a boundary, and the argument would not hold for short ones."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.4-t", domain:1, ts:"1.4", scenario:3, type:"single",
+  stem:"A research coordinator must cite every statistic in the final report. Which approach makes an uncited statistic structurally unlikely rather than merely discouraged?",
+  options:[
+    {k:"A", text:"Requiring each finding to arrive already bound to its source."},
+    {k:"B", text:"Instructing the synthesis agent to add a citation to every number it writes."},
+    {k:"C", text:"Running a checker that flags uncited statistics after the report is produced."},
+    {k:"D", text:"Limiting the report to statistics that appeared in more than one source."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"If the only statistics in scope arrive already bound to a source, writing an uncited one means inventing it rather than merely omitting a citation. The structure of the input carries the guarantee.",
+    distractors:{
+      B:"The instruction is sound, but a synthesis agent handed unattributed numbers has nothing to cite them to.",
+      C:"A checker catches the problem after the fact and cannot recover the mapping once it is lost.",
+      D:"Corroboration is a different quality bar, and single-source statistics are often the most important ones in the report."
+    }
+  },
+  refs:[R_SUB] },
+
+/* ---- Domain 1 expansion: task statements 1.5, 1.6 and 1.7 ---- */
+
+{ id:"d1-1.5-h", domain:1, ts:"1.5", scenario:1, type:"single",
+  stem:"Three MCP tools return customer status as `active`, `1`, and `ACTIVE_SUBSCRIBER`. The agent applies different eligibility rules depending on which tool it happened to call. What is the cleanest fix?",
+  options:[
+    {k:"A", text:"Normalise the status vocabulary in a `PostToolUse` hook."},
+    {k:"B", text:"Document each tool's status vocabulary in the system prompt and let the agent translate between them as needed."},
+    {k:"C", text:"Add few-shot examples covering eligibility decisions for each of the three status formats."},
+    {k:"D", text:"Have the agent call all three tools every time and take the majority status value."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Reshaping results on the way back is what `PostToolUse` is for. One conversion in code, applied to every call, removes the ambiguity before the model ever reasons about eligibility.",
+    distractors:{
+      B:"This does work much of the time, but it asks the model to perform a translation on every decision, and the failures are silent eligibility errors rather than visible ones.",
+      C:"Examples raise accuracy without removing the underlying inconsistency, so a fourth backend or an unusual value reintroduces it.",
+      D:"Calling three backends for one fact triples cost and latency, and a majority vote across different vocabularies is not meaningful."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.5-i", domain:1, ts:"1.5", scenario:4, type:"single",
+  stem:"You want to log every file an agent reads for an audit trail, without changing what the agent sees. Which hook fits?",
+  options:[
+    {k:"A", text:"`PostToolUse`, recording the call and returning the result unchanged."},
+    {k:"B", text:"`PreToolUse` returning `deny`, then re-issuing the call yourself after logging it."},
+    {k:"C", text:"`Stop`, which fires once per turn and can enumerate the tools that were used."},
+    {k:"D", text:"`PostToolUse` with `updatedToolOutput` set to the original content plus a log marker."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Observation without modification is the simplest use of a post-execution hook: you see the call and its result, write your record, and pass the output through untouched.",
+    distractors:{
+      B:"Denying and re-issuing changes the control flow, risks double execution, and surfaces a denial the model has to reason about.",
+      C:"A turn-level event can report that tools ran but is a poor place to capture per-call arguments, and it fires too late for a per-read trail.",
+      D:"Appending a marker satisfies the logging requirement but violates the constraint that the agent's view stays unchanged."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.5-j", domain:1, ts:"1.5", scenario:1, type:"single",
+  stem:"A `PreToolUse` hook returns `ask` for refunds between $200 and $500. What behaviour does that produce?",
+  options:[
+    {k:"A", text:"The decision is escalated to the user rather than settled in the hook."},
+    {k:"B", text:"The call is blocked, and the model is told to try a smaller amount."},
+    {k:"C", text:"The call proceeds, and a warning is attached to the result."},
+    {k:"D", text:"The hook defers to the next hook in the chain for that tool."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"`ask` hands the choice to the human in the loop, which suits a middle band where neither automatic approval nor outright refusal is right.",
+    distractors:{
+      B:"`deny` blocks the call; `ask` does not decide the outcome at all, it defers it to a person.",
+      C:"Allowing with an annotation would be `allow` combined with post-execution context, which is a different decision.",
+      D:"Passing to the normal permission flow rather than settling it is `defer`, which is a distinct value."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.5-k", domain:1, ts:"1.5", scenario:3, type:"single",
+  stem:"A research agent's `search_web` tool returns 30 results with full page text. Context fills after four searches. Which hook change helps most?",
+  options:[
+    {k:"A", text:"Trim each result to title, URL and a short excerpt in `PostToolUse`."},
+    {k:"B", text:"Block the fifth and later searches in `PreToolUse` to protect the context window."},
+    {k:"C", text:"Rewrite the search arguments in `PreToolUse` to request fewer results per call."},
+    {k:"D", text:"Summarise the whole conversation in a `Stop` hook once context passes a threshold."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The waste is per result, not per search. Trimming at the point of entry keeps thirty relevant titles for the cost of a few full pages, and the agent still sees everything it found.",
+    distractors:{
+      C:"Fewer results per call is a genuine improvement and worth doing, but it narrows coverage to solve a problem caused by verbosity rather than count.",
+      B:"Capping searches protects the window by preventing research, which defeats the agent's purpose.",
+      D:"Turn-end summarisation compresses after the damage is done, and it is lossy exactly where the sources are."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.5-l", domain:1, ts:"1.5", scenario:2, type:"single",
+  stem:"A team adds a hook denying `Bash` commands containing `rm -rf`. An engineer points out the agent can still write a shell script and execute it. What does this show?",
+  options:[
+    {k:"A", text:"Matching on command text is a denylist, and denylists miss what they omit."},
+    {k:"B", text:"Hooks cannot inspect Bash arguments, only the tool name."},
+    {k:"C", text:"The hook should have used `ask` rather than `deny` for destructive commands."},
+    {k:"D", text:"Bash should be replaced with individual tools for each permitted operation."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Blocking a string blocks that string. Anything that reaches the same effect by another route passes, which is why a narrow permit list beats an open denylist for destructive capability.",
+    distractors:{
+      B:"Hooks see the full command, which is how the original pattern match worked at all.",
+      C:"Prompting a human on every destructive-looking command is exhausting and still relies on recognising the pattern.",
+      D:"This is a defensible redesign and would help, but it is a larger change than the question's point about why the current control leaks."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.5-m", domain:1, ts:"1.5", scenario:6, type:"single",
+  stem:"An extraction agent receives dates from three sources in different formats. Where should conversion happen, and why?",
+  options:[
+    {k:"A", text:"In a `PostToolUse` hook, so the model only ever sees one format."},
+    {k:"B", text:"In the extraction schema, using a `format` keyword to coerce incoming values."},
+    {k:"C", text:"In the prompt, by describing each source's format to the model."},
+    {k:"D", text:"In the downstream consumer, which can normalise whatever the pipeline emits."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Converting once in code, before the model reads anything, makes every subsequent comparison and calculation operate on a single representation. The ambiguity never reaches the reasoning.",
+    distractors:{
+      B:"JSON Schema `format` annotates and validates; it does not coerce a value from one representation to another.",
+      C:"Describing the formats works often enough to be tempting, but it leaves date arithmetic to the model and the failures are silent.",
+      D:"Fixing it downstream means the model has already reasoned about mixed formats, and any date comparison it made is suspect."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.5-n", domain:1, ts:"1.5", scenario:1, type:"single",
+  stem:"Your hook denies a policy-violating call and returns the message 'Denied.' The agent retries the same call four times before giving up. What should the denial include?",
+  options:[
+    {k:"A", text:"Why it was denied and what would be permitted instead."},
+    {k:"B", text:"A retry counter, so the agent knows how many attempts remain."},
+    {k:"C", text:"Nothing further; the agent should treat any denial as final."},
+    {k:"D", text:"The full policy document, so the agent can determine the rule itself."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A denial is information the agent has to act on. Saying that the amount exceeds a threshold and that escalation is the route turns a dead end into a next step, which is why the retries stop.",
+    distractors:{
+      B:"A counter tells the agent when to stop repeating a mistake without telling it what to do instead.",
+      C:"Treating denials as final is a reasonable default, but here it leaves a legitimate customer request unresolved when a route existed.",
+      D:"A whole policy document is a large amount of context for one decision, and the agent still has to infer which clause applied."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.5-o", domain:1, ts:"1.5", scenario:4, type:"single",
+  stem:"Which pair correctly matches hook event to capability?",
+  options:[
+    {k:"A", text:"`PreToolUse` decides whether a call runs; `PostToolUse` reshapes what comes back."},
+    {k:"B", text:"`PreToolUse` reshapes arguments only; `PostToolUse` decides whether the call runs."},
+    {k:"C", text:"Both can block a call, but only `PreToolUse` can modify the result."},
+    {k:"D", text:"`PreToolUse` fires per turn; `PostToolUse` fires per tool call."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"One runs before execution and controls whether it happens; the other runs after and controls what the model sees. That split is the whole design.",
+    distractors:{
+      B:"This inverts them. By the time `PostToolUse` runs, the call has already executed and its side effects have happened.",
+      C:"`PostToolUse` cannot block anything, since the call is already complete when it fires.",
+      D:"Both fire per tool call; neither is a turn-level event."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.5-p", domain:1, ts:"1.5", scenario:3, type:"single",
+  stem:"A hook rewrites subagent results to strip reasoning chains before the coordinator reads them. Coordinator quality improves, but it can no longer explain why a subagent reached a conclusion. What is the trade-off being made?",
+  options:[
+    {k:"A", text:"Context efficiency against the ability to audit a subagent's reasoning."},
+    {k:"B", text:"Latency against accuracy, since stripping adds a processing step."},
+    {k:"C", text:"Determinism against flexibility, since hooks always run."},
+    {k:"D", text:"Cost against coverage, since fewer subagents can now be invoked."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Reasoning chains are expensive in context and rarely needed for the coordinator's next decision, but they are exactly what you want when a conclusion looks wrong. Stripping buys room and gives up explicability.",
+    distractors:{
+      B:"The stripping step is negligible in time, and accuracy improved rather than fell.",
+      C:"Determinism is unchanged; the hook runs consistently either way.",
+      D:"Coverage is unaffected, and freeing context makes more invocations possible rather than fewer."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.5-q", domain:1, ts:"1.5", scenario:3, type:"single",
+  stem:"An engineer wants a hook to enforce that commit messages follow a house format. The hook rejects messages it dislikes, and the agent rewrites and retries until one passes. Is this a sound design?",
+  options:[
+    {k:"A", text:"Yes, provided the rejection explains the rule so the retries converge."},
+    {k:"B", text:"No, because hooks cannot inspect the arguments of a commit call."},
+    {k:"C", text:"No, because format is a style matter and never warrants enforcement."},
+    {k:"D", text:"Yes, and no explanation is needed since the agent will infer the rule from repeated rejection."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A rejection carrying the rule turns retries into correction rather than guessing, and the deterministic check means no badly formatted message gets through regardless of how many attempts it takes.",
+    distractors:{
+      B:"Hooks see the arguments, which is what makes inspecting the message possible at all.",
+      C:"House format is a legitimate thing to enforce; whether it is worth a hook depends on how much the team cares, not on it being style.",
+      D:"Inference from bare rejection is slow and unreliable, and the agent may converge on something that merely passes rather than the intended format."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.5-r", domain:1, ts:"1.5", scenario:5, type:"single",
+  stem:"A CI agent posts review comments through a `post_comment` tool. You need to guarantee no comment is posted to a closed pull request. Which control fits?",
+  options:[
+    {k:"A", text:"A `PreToolUse` check on the PR state, denying the call when it is closed."},
+    {k:"B", text:"A `PostToolUse` hook that deletes comments posted to closed pull requests."},
+    {k:"C", text:"A review prompt instruction to check PR state before commenting."},
+    {k:"D", text:"A scheduled cleanup job that removes stray comments each night."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The check has to happen before the call, because posting is the side effect you are trying to prevent. Denying on state gives that guarantee.",
+    distractors:{
+      B:"Deleting afterwards means the comment existed, notifications fired, and subscribers may already have seen it.",
+      C:"The instruction is reasonable and will usually be followed, but 'no comment ever' rules out the residual failures.",
+      D:"Nightly cleanup leaves comments visible for hours and does not prevent the notification."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.5-s", domain:1, ts:"1.5", scenario:1, type:"single",
+  stem:"Which task is a `PostToolUse` hook unable to accomplish?",
+  options:[
+    {k:"A", text:"Preventing a refund from being issued."},
+    {k:"B", text:"Removing sensitive fields from a customer record before the model reads it."},
+    {k:"C", text:"Converting a Unix timestamp in the result into an ISO 8601 string."},
+    {k:"D", text:"Appending a note to the result explaining a status code."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"By the time a post-execution hook runs the refund has already been issued. Preventing an action requires intercepting it before it executes.",
+    distractors:{
+      B:"Redaction before the model reads the result is exactly what replacing the tool output achieves.",
+      C:"Format conversion on the way back is the archetypal use of this hook.",
+      D:"Adding context to a result is directly supported and does not require replacing it."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.5-t", domain:1, ts:"1.5", scenario:4, type:"single",
+  stem:"A hook denies a call, and the team is surprised that the agent's next action ignores the denial entirely and calls a different tool to achieve the same end. What does this indicate?",
+  options:[
+    {k:"A", text:"The control guards one tool rather than the capability behind it."},
+    {k:"B", text:"The denial was not returned in a form the model could read."},
+    {k:"C", text:"Hooks apply to a single call and are cleared afterwards."},
+    {k:"D", text:"The agent is malfunctioning and should be restarted."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Guarding one tool while an equivalent route stays open protects the name rather than the effect. The control belongs wherever the capability is reachable.",
+    distractors:{
+      B:"A readable denial would change how the agent explains itself, but it would not close the alternative route.",
+      C:"Hooks apply on every matching call, not once; the second call simply did not match.",
+      D:"Finding another way to complete the task is ordinary agent behaviour, not a fault."
+    }
+  },
+  refs:[R_HOOK] },
+
+{ id:"d1-1.6-h", domain:1, ts:"1.6", scenario:5, type:"single",
+  stem:"A pull request touches 3 files with 900 lines of change concentrated in one algorithm. Your per-file plus integration pass structure produces thin feedback. Why might it be the wrong shape here?",
+  options:[
+    {k:"A", text:"The complexity is within one file, not across the three."},
+    {k:"B", text:"Per-file passes cannot be applied to changes under 1,000 lines."},
+    {k:"C", text:"Three files is below the minimum for an integration pass to run."},
+    {k:"D", text:"Line count rather than file count determines whether decomposition applies."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Decomposition should follow where the difficulty lives. Splitting by file helps when attention is spread thin across many files; here it isolates one dense algorithm that would benefit from several focused passes of its own.",
+    distractors:{
+      D:"Line count is a better signal than file count in this case, but stating it as the general rule misses that the real question is where the complexity is concentrated.",
+      B:"There is no size threshold below which per-file review stops working.",
+      C:"An integration pass over three files is perfectly meaningful; it simply has little to find here."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d1-1.6-i", domain:1, ts:"1.6", scenario:4, type:"single",
+  stem:"An agent is asked to 'find out why the nightly job started failing last week.' Which decomposition suits it?",
+  options:[
+    {k:"A", text:"Adaptive: follow the evidence, letting each finding determine the next step."},
+    {k:"B", text:"Fixed: check the code, then the config, then the infrastructure, then the data."},
+    {k:"C", text:"Parallel: investigate all four layers simultaneously and merge conclusions."},
+    {k:"D", text:"Exhaustive: review every change made in the last week in chronological order."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Diagnosis is driven by what you find. A stack trace pointing at a config value makes the code review irrelevant, and only an adaptive plan can act on that.",
+    distractors:{
+      B:"A fixed order investigates layers that the first finding may already have ruled out, at full cost.",
+      C:"Parallel investigation of all layers is fast but spends effort on three areas that are usually innocent, and merging unrelated conclusions is awkward.",
+      D:"Chronological review is thorough and sometimes necessary, but it is the most expensive option and ignores the evidence the failure itself provides."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.6-j", domain:1, ts:"1.6", scenario:3, type:"single",
+  stem:"A coordinator decomposes 'the economics of remote work' into four subtopics and researches each. The report is coherent but shallow on labour-market effects, which turned out to be the largest area. What should the decomposition have done?",
+  options:[
+    {k:"A", text:"Sized each subtask to the breadth of its subtopic rather than splitting evenly."},
+    {k:"B", text:"Used a single subagent for the whole topic to avoid uneven splits."},
+    {k:"C", text:"Decomposed into eight subtopics instead of four."},
+    {k:"D", text:"Researched the subtopics sequentially so later ones could learn from earlier ones."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Equal division assumes equal size. When one subtopic is much larger, it needs proportionally more capacity or its own second-level split, or the report is thin exactly where it matters most.",
+    distractors:{
+      C:"Eight even splits is still even division, so the largest area remains under-resourced relative to its size.",
+      B:"One agent for everything removes the imbalance by removing the parallelism, and depth falls across the board.",
+      D:"Sequential research allows learning between subtopics but does nothing about how the effort was allocated."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.6-k", domain:1, ts:"1.6", scenario:5, type:"single",
+  stem:"Your integration pass reports 'no cross-file issues' on every pull request, including ones where a signature changed and callers were missed. What is the most likely defect?",
+  options:[
+    {k:"A", text:"It receives only the diff, so the unchanged callers are invisible to it."},
+    {k:"B", text:"It runs before the per-file passes and so has no findings to integrate."},
+    {k:"C", text:"Integration passes cannot detect signature changes by design."},
+    {k:"D", text:"The per-file passes already reported the issue, so it is suppressed as a duplicate."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A caller that was not updated does not appear in the diff. An integration pass restricted to changed lines is structurally blind to exactly the breakage it exists to find.",
+    distractors:{
+      B:"Ordering matters for using per-file findings, but a pass with the right files can find cross-file breakage regardless of when it runs.",
+      C:"Signature mismatches are among the most tractable cross-file checks when the caller sites are visible.",
+      D:"Per-file passes cannot see other files, so they never reported it and there is nothing to deduplicate."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d1-1.6-l", domain:1, ts:"1.6", scenario:4, type:"single",
+  stem:"A developer asks whether to plan a large refactor as one task or decompose it. The refactor has a known, mechanical shape across 60 files. What is the better answer?",
+  options:[
+    {k:"A", text:"Chain it: the steps are known, so a fixed sequence is predictable and cheap."},
+    {k:"B", text:"Decompose adaptively, since 60 files is too many for a fixed plan."},
+    {k:"C", text:"Treat each file as an independent investigation with its own plan."},
+    {k:"D", text:"Avoid decomposition entirely and process all 60 files in a single pass."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Adaptivity earns its cost when the shape is unknown. A mechanical change with a known pattern is exactly the case for a fixed chain, which is cheaper and easier to verify.",
+    distractors:{
+      B:"File count does not make a plan uncertain. A known transformation stays known at 60 files.",
+      C:"Per-file planning re-derives the same conclusion 60 times.",
+      D:"A single pass over 60 files reintroduces attention dilution, which is what decomposition avoids."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d1-1.6-m", domain:1, ts:"1.6", scenario:4, type:"single",
+  stem:"An agent asked to 'improve test coverage' generates tests for the easiest functions first, reaching 85% coverage while the payment engine stays untested. What was missing from the decomposition?",
+  options:[
+    {k:"A", text:"A prioritisation step ranking areas by risk rather than by ease."},
+    {k:"B", text:"A coverage target expressed per file rather than for the repository."},
+    {k:"C", text:"An instruction to write more tests per function."},
+    {k:"D", text:"A restriction preventing the agent from testing trivial functions."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Coverage optimises for lines touched, which rewards the cheapest code. Mapping structure and ranking by impact first is what points the effort at the payment engine.",
+    distractors:{
+      B:"Per-file targets spread effort evenly, which still treats a config module as equal in importance to payments.",
+      C:"More tests per function deepens coverage of whatever was already chosen, and the choice was the problem.",
+      D:"Banning trivial functions removes the cheapest wins without establishing what actually matters."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.6-n", domain:1, ts:"1.6", scenario:3, type:"single",
+  stem:"Which signal most reliably indicates that a task needs adaptive decomposition rather than a fixed chain?",
+  options:[
+    {k:"A", text:"The next useful step depends on what the previous step found."},
+    {k:"B", text:"The task involves more than four distinct stages."},
+    {k:"C", text:"The task will run for more than a few minutes."},
+    {k:"D", text:"The task spans several different tools."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Dependence of the plan on intermediate findings is the defining property. If you can write the steps down before starting, a chain will do.",
+    distractors:{
+      B:"Stage count says nothing about whether the stages were knowable in advance; a ten-step checklist is still a checklist.",
+      C:"Duration follows from the work rather than from whether the plan is discoverable upfront.",
+      D:"Tool variety is common in entirely predictable pipelines."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d1-1.6-o", domain:1, ts:"1.6", scenario:5, type:"single",
+  stem:"A team splits reviews into six passes: style, security, performance, tests, documentation and naming. Reviewers complain the output is repetitive and long. What is the likely cause?",
+  options:[
+    {k:"A", text:"Overlapping passes report the same underlying issue from several angles."},
+    {k:"B", text:"Six passes exceeds the maximum supported decomposition depth."},
+    {k:"C", text:"Each pass sees the whole diff, so attention dilution persists."},
+    {k:"D", text:"The passes run in parallel, so their findings arrive interleaved."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Decomposition helps when the parts are distinct. A poorly named function with no test can surface under naming, tests and documentation, so the reader sees one problem three times.",
+    distractors:{
+      C:"Seeing the whole diff is fine when each pass has a narrow question; the repetition comes from the questions overlapping.",
+      B:"There is no such depth limit.",
+      D:"Interleaving affects presentation order and could be fixed by sorting, but the duplication would remain."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d1-1.6-p", domain:1, ts:"1.6", scenario:2, type:"single",
+  stem:"An engineer proposes decomposing every task, on the grounds that focused passes always beat single passes. Where does that reasoning fail?",
+  options:[
+    {k:"A", text:"On small tasks, where the coordination cost exceeds any attention benefit."},
+    {k:"B", text:"On large tasks, where too many subtasks exhaust the context window."},
+    {k:"C", text:"On tasks using MCP tools, which cannot be split across passes."},
+    {k:"D", text:"It does not fail; decomposition is beneficial at every scale."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Splitting has overhead: prompts to write, results to combine, and more round trips. On a two-file change that overhead buys nothing, because attention was never stretched.",
+    distractors:{
+      B:"Decomposition reduces per-pass context rather than exhausting it; that is much of the point.",
+      C:"MCP tools are usable from any pass and impose no such constraint.",
+      D:"This is the claim under examination, and it ignores the fixed cost that decomposition adds."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d1-1.6-q", domain:1, ts:"1.6", scenario:4, type:"multi",
+  stem:"Which two tasks are better served by adaptive decomposition than by a fixed chain? (Select 2.)",
+  options:[
+    {k:"A", text:"Tracing why a specific customer's data went missing."},
+    {k:"B", text:"Understanding how an unfamiliar service handles retries."},
+    {k:"C", text:"Applying a known rename across every file that imports a module."},
+    {k:"D", text:"Generating a changelog entry for each merged pull request."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"Both are investigations whose next step depends on what the last one revealed. The route through the code or the data is not knowable before you start looking.",
+    distractors:{
+      C:"A known rename across known importers is mechanical, and the file list can be produced before any work begins.",
+      D:"Changelog generation is a uniform transformation applied per pull request, with no discovery involved."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.6-r", domain:1, ts:"1.6", scenario:3, type:"single",
+  stem:"A coordinator's decomposition is reviewed and found sound, yet the report still misses a major area. Logs show one subagent returned an error the coordinator ignored. Where is the defect now?",
+  options:[
+    {k:"A", text:"In error handling, not in decomposition."},
+    {k:"B", text:"In the decomposition, which should have allocated two subagents to that area."},
+    {k:"C", text:"In the synthesis agent, which should have noticed the gap."},
+    {k:"D", text:"In the subagent, which should have retried until it succeeded."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A correct plan can still produce an incomplete result if a failure is swallowed. Once the decomposition is verified sound, the next place to look is what happened to each delegation.",
+    distractors:{
+      B:"Duplicating coverage would mask a failure rather than handle it, and doubles cost across the board.",
+      C:"Gap detection in synthesis is a useful safety net, but the area was never researched, so there is nothing for it to work from.",
+      D:"Local retry is right for transient failures, but the coordinator ignoring a reported error is the defect regardless of what the subagent tried."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.6-s", domain:1, ts:"1.6", scenario:5, type:"single",
+  stem:"Your per-file review passes each receive one file and its full history. Reviews are slow and cite commits from years ago as relevant context. What should change?",
+  options:[
+    {k:"A", text:"Pass only the current file and the diff, unless history is specifically needed."},
+    {k:"B", text:"Pass the full history but instruct the reviewer to ignore old commits."},
+    {k:"C", text:"Merge the per-file passes back into a single pass to reduce total context."},
+    {k:"D", text:"Pass the history summarised to one line per commit."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Scope the input to the question. A review of this change needs this change, and history that was included will be used, however tangential.",
+    distractors:{
+      D:"Summarised history is cheaper and a reasonable middle ground, but it still invites the reviewer to reach for context the task does not require.",
+      B:"Instructing the model to ignore material you have supplied is weaker than not supplying it.",
+      C:"Merging passes reintroduces attention dilution to solve an input-scoping problem."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d1-1.6-t", domain:1, ts:"1.6", scenario:6, type:"single",
+  stem:"An extraction pipeline processes contracts of wildly varying length, from two pages to four hundred. A single fixed chunking strategy performs poorly at both extremes. What does this suggest?",
+  options:[
+    {k:"A", text:"Chunking should adapt to document structure rather than to a fixed size."},
+    {k:"B", text:"Long documents should be rejected and handled manually."},
+    {k:"C", text:"The chunk size should be set to the average document length."},
+    {k:"D", text:"Every document should be split into exactly the same number of chunks."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A two-page contract has no natural split, and a four-hundred-page one has many. Splitting on structure such as clauses or sections keeps each chunk coherent at either extreme.",
+    distractors:{
+      C:"An average sits between the two failure modes and performs badly at both, which is the situation described.",
+      B:"Rejecting long documents removes the hardest and often most valuable cases from the pipeline.",
+      D:"A fixed chunk count makes short-document chunks meaninglessly small and long-document chunks unusably large."
+    }
+  },
+  refs:[R_BATCH] },
+
+{ id:"d1-1.7-h", domain:1, ts:"1.7", scenario:4, type:"single",
+  stem:"You resume a week-old exploration session and immediately ask a question about a file. The answer describes code that was deleted in Tuesday's refactor. What went wrong?",
+  options:[
+    {k:"A", text:"The session holds the old file contents and has no signal that they changed."},
+    {k:"B", text:"Resumption reloads files from disk, so the answer should have been current."},
+    {k:"C", text:"The session's context was compacted, losing the accurate version."},
+    {k:"D", text:"The file was renamed, so the agent answered about a different file."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Resumption restores the conversation, including whatever the files looked like when they were read. Nothing re-reads them, and nothing tells the agent that the disk has moved on.",
+    distractors:{
+      B:"Resumption does not re-read anything; that assumption is exactly what makes stale answers surprising.",
+      C:"Compaction summarises rather than substituting older content for newer, and would not produce a confident description of deleted code.",
+      D:"A rename would surface as a missing file rather than a fluent description of code that no longer exists."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.7-i", domain:1, ts:"1.7", scenario:2, type:"single",
+  stem:"A developer keeps one long-running session for an entire feature, spanning several days and many unrelated sub-tasks. Answers become inconsistent. What practice would help most?",
+  options:[
+    {k:"A", text:"Start a fresh session per sub-task, carrying forward a short summary."},
+    {k:"B", text:"Keep the single session and run `/compact` whenever answers drift."},
+    {k:"C", text:"Keep the single session but raise the context window size."},
+    {k:"D", text:"Fork the session at the start of each sub-task."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Unrelated sub-tasks accumulate context that is irrelevant to whatever is current. A fresh session per task keeps the window filled with material that bears on the question, and a short summary carries the decisions forward.",
+    distractors:{
+      B:"Compaction reclaims room but preserves the mixture of unrelated topics in summary form, so the drift returns.",
+      C:"A larger window holds more irrelevant material rather than less.",
+      D:"Forking is for exploring alternatives from a shared baseline; here the sub-tasks are unrelated, so the baseline is not worth carrying."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.7-j", domain:1, ts:"1.7", scenario:4, type:"single",
+  stem:"You want to compare two migration strategies, each explored in depth, from the same completed dependency analysis. Which is the decisive advantage of forking over two fresh sessions?",
+  options:[
+    {k:"A", text:"Both branches start from provably identical analysis."},
+    {k:"B", text:"Forked sessions run concurrently, whereas fresh sessions cannot."},
+    {k:"C", text:"Forked sessions share a context window and so cost less."},
+    {k:"D", text:"Only forked sessions can be resumed later by name."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A fair comparison needs the same starting evidence. Two fresh analyses might differ in what they noticed, so any difference in outcome could come from the baseline rather than the strategy.",
+    distractors:{
+      C:"Forked branches have independent context; nothing is shared after the split.",
+      B:"Concurrency is available either way and is not what forking provides.",
+      D:"Named resumption is not exclusive to forks."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.7-k", domain:1, ts:"1.7", scenario:1, type:"single",
+  stem:"A support agent resumes a conversation after the customer replies two days later. The refund amount discussed earlier is now wrong, because the order was partially returned in between. What design would prevent this?",
+  options:[
+    {k:"A", text:"Re-fetch the transactional facts on resume rather than trusting the stored ones."},
+    {k:"B", text:"Refuse to resume conversations older than 24 hours."},
+    {k:"C", text:"Store the refund amount in the system prompt so it cannot be lost."},
+    {k:"D", text:"Summarise the earlier conversation more aggressively before resuming."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Transactional facts have a lifetime. Anything that can change on the backend between turns should be read again at the point of use rather than carried forward from an earlier turn.",
+    distractors:{
+      B:"A hard cut-off protects correctness by refusing legitimate follow-ups, which is poor service.",
+      C:"Pinning the number makes the stale value more durable, which is the opposite of what is needed.",
+      D:"Summarisation compresses the conversation; it does nothing about the world having changed."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d1-1.7-l", domain:1, ts:"1.7", scenario:4, type:"single",
+  stem:"Which situation most clearly favours resuming rather than starting fresh?",
+  options:[
+    {k:"A", text:"Continuing yesterday's analysis of code nobody has touched since."},
+    {k:"B", text:"Revisiting an investigation after a large refactor landed."},
+    {k:"C", text:"Beginning an unrelated task in the same repository."},
+    {k:"D", text:"Comparing two approaches that must not influence each other."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Resumption pays off when the prior context is still true. Unchanged code means yesterday's reads remain accurate and the analysis can continue directly.",
+    distractors:{
+      B:"After a refactor much of the stored context describes code that no longer exists, which misleads rather than helps.",
+      C:"An unrelated task gains nothing from the previous conversation and inherits its clutter.",
+      D:"Independent comparison is what forking is for, since resumption would let the first exploration colour the second."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.7-m", domain:1, ts:"1.7", scenario:2, type:"single",
+  stem:"After resuming, an engineer tells the agent 'I changed some files since last time.' The agent re-reads nothing and continues from stale content. Why?",
+  options:[
+    {k:"A", text:"The statement names no files, so there is nothing specific to re-read."},
+    {k:"B", text:"Resumed sessions ignore user messages until the first tool call."},
+    {k:"C", text:"The agent lacks file tools after resumption and cannot re-read."},
+    {k:"D", text:"Re-reading requires an explicit `--refresh` flag at resume time."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Vague notice gives the agent no target. Naming the files converts the warning into an actionable re-read of exactly what moved.",
+    distractors:{
+      B:"User messages are processed normally throughout a resumed session.",
+      C:"Tool availability is unchanged by resumption.",
+      D:"No such flag exists, and re-reading is an ordinary tool call rather than a session-level setting."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.7-n", domain:1, ts:"1.7", scenario:6, type:"single",
+  stem:"A long extraction run is interrupted after 700 of 1,000 documents. On restart it begins again at document one. What design would avoid the rework?",
+  options:[
+    {k:"A", text:"Persist per-document completion state, and resume from what is unfinished."},
+    {k:"B", text:"Resume the agent session, which retains how far it had progressed."},
+    {k:"C", text:"Increase the timeout so the run is less likely to be interrupted."},
+    {k:"D", text:"Process the documents in reverse order on the second attempt."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Durable progress belongs outside the session. A record of which documents are done makes restart a matter of filtering the remaining work, independent of what the agent remembers.",
+    distractors:{
+      B:"Session resumption restores a conversation, not a reliable record of which side effects completed.",
+      C:"A longer timeout reduces one cause of interruption without providing recovery when it happens anyway.",
+      D:"Reversing the order re-processes the same 700 documents from the other end."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d1-1.7-o", domain:1, ts:"1.7", scenario:3, type:"single",
+  stem:"A research run is resumed the next day and the coordinator re-delegates work that already completed. What is the most likely cause?",
+  options:[
+    {k:"A", text:"Subagent results were never persisted, so the resumed run has no record."},
+    {k:"B", text:"Resumption always clears the coordinator's memory of prior delegations."},
+    {k:"C", text:"Subagents cannot be invoked twice with the same prompt."},
+    {k:"D", text:"The coordinator's context window was exceeded during the original run."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"If findings lived only inside subagent invocations, a resumed coordinator sees delegations without results and reasonably concludes the work still needs doing.",
+    distractors:{
+      B:"Resumption restores the conversation rather than wiping it, so prior turns are present.",
+      C:"Repeat invocation with the same prompt is permitted, which is precisely why the duplicate work ran.",
+      D:"Exceeding the window would show as degraded answers during the original run rather than duplicate delegation after it."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d1-1.7-p", domain:1, ts:"1.7", scenario:4, type:"single",
+  stem:"An engineer resumes a session and immediately runs `/compact` to make room, then finds the agent has forgotten a decision made earlier. What is the trade-off they hit?",
+  options:[
+    {k:"A", text:"Compaction reclaims context by summarising, and summaries lose specifics."},
+    {k:"B", text:"Compaction deletes the oldest turns entirely rather than summarising them."},
+    {k:"C", text:"Compaction cannot be run in a resumed session and silently failed."},
+    {k:"D", text:"Compaction discards tool results but preserves all assistant reasoning."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Summarisation is lossy, and specific decisions are exactly the kind of detail that condenses away. Anything that must survive should be written down outside the conversation.",
+    distractors:{
+      B:"Compaction condenses rather than truncating, which is why some information survives in general form.",
+      C:"It works normally in resumed sessions.",
+      D:"It does not preserve reasoning wholesale while dropping results; both are subject to summarisation."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d1-1.7-q", domain:1, ts:"1.7", scenario:1, type:"single",
+  stem:"Which practice best protects a multi-day investigation against context loss?",
+  options:[
+    {k:"A", text:"Writing key findings to a file the agent re-reads each session."},
+    {k:"B", text:"Resuming the same session every day without starting new ones."},
+    {k:"C", text:"Running `/compact` at the end of each working day."},
+    {k:"D", text:"Keeping every session under one hour."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A file on disk is independent of context windows, compaction and session lifetimes. Reading it back at the start of each session reconstitutes the findings whatever happened to the conversation.",
+    distractors:{
+      B:"A single long-lived session accumulates clutter and still degrades, and it goes stale as the code changes.",
+      C:"End-of-day compaction reduces size while making the surviving record vaguer.",
+      D:"Short sessions limit accumulation but also fragment the work, with nothing carrying findings between them."
+    }
+  },
+  refs:[R_CTX] },
+
+{ id:"d1-1.7-r", domain:1, ts:"1.7", scenario:2, type:"single",
+  stem:"A team wants every investigation session to be resumable by a meaningful name rather than an opaque identifier. What does this require?",
+  options:[
+    {k:"A", text:"Naming the session when it is created, so it can be resumed by that name."},
+    {k:"B", text:"Recording the identifier in a shared document after each session."},
+    {k:"C", text:"Using a fork, since only forks can carry names."},
+    {k:"D", text:"Nothing; sessions are automatically named after their first prompt."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Resumption accepts a name as well as an identifier, but the name has to be assigned when the session starts. Choosing it up front is what makes later resumption human-friendly.",
+    distractors:{
+      B:"A registry of opaque identifiers works but recreates the lookup problem the team is trying to remove.",
+      C:"Forking creates a branch and is unrelated to how sessions are addressed.",
+      D:"Automatic naming from the first prompt is not something to rely on for deliberate, memorable session names."
+    }
+  },
+  refs:[{label:"Claude Code: CLI reference", url:"https://code.claude.com/docs/en/cli-reference"}] },
+
+{ id:"d1-1.7-s", domain:1, ts:"1.7", scenario:5, type:"single",
+  stem:"A CI job resumes a named session for each run so the reviewer 'remembers' the project. Reviews slowly fill with stale findings about code that has since changed. What should change?",
+  options:[
+    {k:"A", text:"Start each run fresh, supplying project context from CLAUDE.md instead."},
+    {k:"B", text:"Resume the session but run `/compact` at the start of every job."},
+    {k:"C", text:"Resume a different named session for each day of the week."},
+    {k:"D", text:"Keep resuming, and instruct the reviewer to ignore findings older than a week."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"CI runs against a moving codebase, so accumulated conversation goes stale by construction. Durable project knowledge belongs in CLAUDE.md, which is re-read fresh on every run.",
+    distractors:{
+      B:"Compaction shrinks the stale content without making it current.",
+      C:"Rotating sessions spreads the staleness across seven conversations rather than removing it.",
+      D:"Asking the model to disregard material you supplied is weaker than not supplying it."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d1-1.7-t", domain:1, ts:"1.7", scenario:6, type:"single",
+  stem:"Which is the strongest argument for injecting a written summary into a fresh session rather than resuming?",
+  options:[
+    {k:"A", text:"You control exactly what carries forward, and nothing stale comes with it."},
+    {k:"B", text:"Fresh sessions have larger context windows than resumed ones."},
+    {k:"C", text:"Summaries are cheaper to produce than the original conversation."},
+    {k:"D", text:"Resumed sessions cannot call tools that the original session did not use."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A summary is a deliberate selection. Resumption is all-or-nothing, so it brings the stale tool results along with the conclusions worth keeping.",
+    distractors:{
+      B:"Window size is a property of the model and configuration, not of how the session began.",
+      C:"Producing the summary is an extra step, so it costs more rather than less; the benefit is control.",
+      D:"Tool availability comes from configuration and is unaffected by what was used previously."
+    }
+  },
+  refs:[R_SUB] },
+
 /* ---------------- Domain 2: Tool Design & MCP Integration ---------------- */
 
 { id:"d2-2.1-a", domain:2, ts:"2.1", scenario:1, type:"single",

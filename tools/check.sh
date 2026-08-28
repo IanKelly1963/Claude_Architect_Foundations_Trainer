@@ -9,7 +9,10 @@ trap 'rm -rf "$TMP"' EXIT
 sed -n '/^<script>$/,/^<\/script>$/p' "$OUT" | sed '1d;$d' > "$TMP/app.js"
 node --check "$TMP/app.js" && echo "JS syntax OK ($(wc -l < "$TMP/app.js") lines)"
 
-awk '/^const BANK_ALL = \[$/,/^\];$/' "$OUT" > "$TMP/bank.js"
+# the bank references R_* citation constants declared earlier in the file,
+# so they must come along or the extracted module will not evaluate
+grep -E '^const R_[A-Z0-9_]+ *= *\{' "$OUT" > "$TMP/bank.js"
+awk '/^const BANK_ALL = \[$/,/^\];$/' "$OUT" >> "$TMP/bank.js"
 echo "module.exports = BANK_ALL;" >> "$TMP/bank.js"
 cp "$ROOT/tools/analyse.js" "$ROOT/tools/analyse-presented.js" "$TMP/"
 ( cd "$TMP" && node analyse.js && node analyse-presented.js )
