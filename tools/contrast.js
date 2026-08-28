@@ -79,15 +79,15 @@ const PAIRS = [
 
   /* raised surfaces */
   ["ink",   "panel-3", "text", "code and kbd spans"],
-  ["ink-2", "panel-3", "text", ".tag base, .tag.d5"],
+  ["ink-2", "panel-3", "text", ".tag base, .tag.d5, .btn.d5"],
   ["ink-3", "panel-3", "text", ".chip.new (deliberately de-emphasised)"],
   ["ink-2", "panel-3", "text", ".timer countdown"],
 
   /* status text on its own tint */
-  ["good",  "good-bg", "text", ".chip.ok, .callout.good .ct, .tag.d2"],
-  ["warn",  "warn-bg", "text", ".chip.near, .callout.warn .ct, .tag.d3"],
-  ["bad",   "bad-bg",  "text", ".chip.weak, .callout.bad .ct, .tag.d4, .timer.low"],
-  ["info",  "info-bg", "text", ".tag.d1, .callout.info .ct"],
+  ["good",  "good-bg", "text", ".chip.ok, .callout.good .ct, .tag.d2, .btn.d2"],
+  ["warn",  "warn-bg", "text", ".chip.near, .callout.warn .ct, .tag.d3, .btn.d3"],
+  ["bad",   "bad-bg",  "text", ".chip.weak, .callout.bad .ct, .tag.d4, .timer.low, .btn.d4"],
+  ["info",  "info-bg", "text", ".tag.d1, .callout.info .ct, .btn.d1"],
 
   /* status text directly on a panel */
   ["good",  "panel",   "text", ".verdict.right, .stat-good"],

@@ -84,6 +84,16 @@ main{max-width:1120px; margin:0 auto; padding:26px 20px 90px}
 .btn.sm{font-size:12.5px; padding:5px 10px}
 .btn.ghost{background:none; border-color:transparent; color:var(--ink-2)}
 .btn.ghost:hover{background:var(--panel-3); color:var(--ink)}
+/* Same domain colours as .tag.d1-d5, reused rather than a second colour
+   system, for domain-filter buttons (Flashcards, Practice's "drill one
+   domain"). Hover brightens by filter rather than swapping to a new
+   background, so text and fill scale together and contrast holds. */
+.btn.d1{background:var(--info-bg); color:var(--info); border-color:var(--info-line)}
+.btn.d2{background:var(--good-bg); color:var(--good); border-color:var(--good-line)}
+.btn.d3{background:var(--warn-bg); color:var(--warn); border-color:var(--warn-line)}
+.btn.d4{background:var(--bad-bg); color:var(--bad); border-color:var(--bad-line)}
+.btn.d5{background:var(--panel-3); color:var(--ink-2); border-color:var(--line-2)}
+.btn.d1:hover,.btn.d2:hover,.btn.d3:hover,.btn.d4:hover,.btn.d5:hover{filter:brightness(1.18)}
 .card{background:var(--panel); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
 .pad{padding:18px 20px}
 .muted{color:var(--ink-2)} .dim{color:var(--ink-3)}
