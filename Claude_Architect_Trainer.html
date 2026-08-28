@@ -13558,7 +13558,7 @@ function renderCards(){
       '<button class="btn primary" onclick="startCards(0)">All ' + CARDS.length + ' cards</button>';
     DOMAINS.forEach(function(D){
       const n = CARDS.filter(function(c){ return TASK_BY_ID[c.ts] && TASK_BY_ID[c.ts].d === D.d; }).length;
-      if(n) opts += '<button class="btn sm" onclick="startCards(' + D.d + ')">D' + D.d + ' &middot; ' + n + '</button>';
+      if(n) opts += '<button class="btn sm" onclick="startCards(' + D.d + ')">' + esc(D.name) + ' &middot; ' + n + '</button>';
     });
     opts += '</div>';
     el("v-cards").innerHTML = '<div class="qwrap"><div class="card pad">' +
