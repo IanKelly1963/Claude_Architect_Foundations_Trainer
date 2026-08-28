@@ -13366,7 +13366,7 @@ function renderLearn(){
   TASKS.forEach(function(t){
     if(t.d !== lastD){
       lastD = t.d;
-      nav += '<span class="tag d' + t.d + '" style="align-self:center">D' + t.d + '</span>';
+      nav += '<span class="tag d' + t.d + '" style="align-self:center">' + esc(DOMAIN_BY_ID[t.d].name) + '</span>';
     }
     nav += '<button class="' + (t.ts === curNote ? "on" : "") + '" onclick="openNote(\'' + t.ts +
            '\')" title="' + esc(t.name) + '">' + t.ts + '</button>';
