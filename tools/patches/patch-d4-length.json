@@ -1,0 +1,15 @@
+{
+  "d4-4.1-i|A": "The criterion rests on an imagined reader, not the code.",
+  "d4-4.1-l|A": "Model confidence is poorly calibrated to correctness.",
+  "d4-4.1-o|A": "Trust is shared across categories.",
+  "d4-4.1-r|A": "No; it is actionability, not precision.",
+  "d4-4.2-l|A": "When good instructions still give inconsistent output.",
+  "d4-4.2-m|A": "They taught one layout rather than the task.",
+  "d4-4.2-n|A": "They convey the distinction, not just instances.",
+  "d4-4.2-t|A": "The examples, so conflicts must be removed.",
+  "d4-4.3-h|A": "Schemas constrain structure, not relationships.",
+  "d4-4.3-n|A": "Required fields pressure the model to supply something.",
+  "d4-4.3-q|A": "Shape and types, but not that the values are right.",
+  "d4-4.3-r|A": "A discrepancy between them becomes checkable.",
+  "d4-4.1-q|A": "When criteria are clear and the judgements are genuinely hard."
+}

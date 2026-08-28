@@ -1,7 +1,7 @@
 
 /* ---------------- Domain 4: Prompt Engineering & Structured Output ---------------- */
 
-{ id:"d4-4.1-a", domain:4, ts:"4.1", scenario:5, type:"single",
+{ id:"d4-4.1-a", domain:4, ts:"4.1", scenario:1, type:"single",
   stem:"Your automated reviewer flags outdated comments with a 70% false positive rate. The current instruction is 'check that comments are accurate'. Adding 'be conservative and only report high-confidence findings' did not help. What will?",
   options:[
     {k:"A", text:"Replace it with an explicit criterion: flag only where the comment contradicts the code."},
@@ -20,7 +20,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.1-b", domain:4, ts:"4.1", scenario:5, type:"single",
+{ id:"d4-4.1-b", domain:4, ts:"4.1", scenario:1, type:"single",
   stem:"Your reviewer produces accurate security and bug findings but very noisy style findings. Developers have started ignoring all its comments. What is the pragmatic response?",
   options:[
     {k:"A", text:"Temporarily disable the style category while you improve its criteria."},
@@ -39,7 +39,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.1-c", domain:4, ts:"4.1", scenario:5, type:"single",
+{ id:"d4-4.1-c", domain:4, ts:"4.1", scenario:1, type:"single",
   stem:"Severity labels from your reviewer are inconsistent: the same class of issue is marked critical in one run and minor in another. What produces consistent classification?",
   options:[
     {k:"A", text:"Define explicit severity criteria with a concrete code example illustrating each level."},
@@ -58,7 +58,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.1-d", domain:4, ts:"4.1", scenario:5, type:"single",
+{ id:"d4-4.1-d", domain:4, ts:"4.1", scenario:1, type:"single",
   stem:"Which prompt instruction is most likely to actually reduce false positives?",
   options:[
     {k:"A", text:"'Report only issues causing incorrect behaviour, data loss or a security vulnerability.'"},
@@ -77,7 +77,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.1-e", domain:4, ts:"4.1", scenario:5, type:"single",
+{ id:"d4-4.1-e", domain:4, ts:"4.1", scenario:1, type:"single",
   stem:"Why do false positives in one review category matter beyond the wasted triage time?",
   options:[
     {k:"A", text:"They undermine developer trust in the accurate categories."},
@@ -115,7 +115,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.2-a", domain:4, ts:"4.2", scenario:5, type:"single",
+{ id:"d4-4.2-a", domain:4, ts:"4.2", scenario:1, type:"single",
   stem:"Your review output format varies run to run despite detailed formatting instructions: sometimes bulleted, sometimes prose, sometimes missing the suggested fix. What is the most effective technique?",
   options:[
     {k:"A", text:"Add few-shot examples of the desired shape: location, issue, severity, suggested fix."},
@@ -134,7 +134,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.2-b", domain:4, ts:"4.2", scenario:6, type:"single",
+{ id:"d4-4.2-b", domain:4, ts:"4.2", scenario:1, type:"single",
   stem:"Your extraction system handles research papers well when citations are inline, but returns nulls when the paper uses a numbered bibliography, or embeds methodology details in prose. What addresses this?",
   options:[
     {k:"A", text:"Few-shot examples demonstrating correct extraction from documents with each of the varied structures."},
@@ -172,7 +172,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.2-d", domain:4, ts:"4.2", scenario:5, type:"single",
+{ id:"d4-4.2-d", domain:4, ts:"4.2", scenario:1, type:"single",
   stem:"You want to reduce false positives without making the reviewer blind to novel variants of the same problem. Which use of few-shot examples fits?",
   options:[
     {k:"A", text:"Examples contrasting acceptable code patterns with genuine issues."},
@@ -210,7 +210,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.2-f", domain:4, ts:"4.2", scenario:5, type:"single",
+{ id:"d4-4.2-f", domain:4, ts:"4.2", scenario:2, type:"single",
   stem:"Your reviewer reports whole-file coverage gaps but misses branch-level ones, such as an untested error path inside a tested function. What helps most?",
   options:[
     {k:"A", text:"Few-shot examples identifying branch-level gaps inside otherwise covered functions."},
@@ -229,7 +229,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.3-a", domain:4, ts:"4.3", scenario:6, type:"single",
+{ id:"d4-4.3-a", domain:4, ts:"4.3", scenario:2, type:"single",
   stem:"Your extraction pipeline parses JSON out of the model's text responses and roughly 4% of responses fail to parse due to trailing commas, unescaped quotes or markdown fences. What eliminates this class of failure?",
   options:[
     {k:"A", text:"Define the extraction contract as a tool with a JSON schema, then read the data from the `tool_use` response."},
@@ -248,7 +248,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.3-b", domain:4, ts:"4.3", scenario:6, type:"single",
+{ id:"d4-4.3-b", domain:4, ts:"4.3", scenario:2, type:"single",
   stem:"After moving to tool use with a strict JSON schema, you still see invoices where the line items do not sum to the stated total. What does this indicate?",
   options:[
     {k:"A", text:"Strict schemas eliminate syntax errors but not semantic ones, so arithmetic needs separate validation."},
@@ -267,7 +267,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.3-c", domain:4, ts:"4.3", scenario:6, type:"single",
+{ id:"d4-4.3-c", domain:4, ts:"4.3", scenario:2, type:"single",
   stem:"Roughly 15% of your source contracts genuinely do not state a renewal date, but the model always produces one, sometimes inventing plausible values. The field is marked required. What is the fix?",
   options:[
     {k:"A", text:"Make the field optional or nullable, so absence can be represented without fabrication."},
@@ -286,7 +286,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.3-d", domain:4, ts:"4.3", scenario:6, type:"single",
+{ id:"d4-4.3-d", domain:4, ts:"4.3", scenario:2, type:"single",
   stem:"Your `document_type` enum has eight values. New document types keep appearing and the model forces them into the closest existing value, corrupting downstream routing. How should the schema change?",
   options:[
     {k:"A", text:"Add an `other` enum value paired with a free-text detail field describing the actual type."},
@@ -305,7 +305,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.3-e", domain:4, ts:"4.3", scenario:6, type:"single",
+{ id:"d4-4.3-e", domain:4, ts:"4.3", scenario:2, type:"single",
   stem:"Source documents write dates as `03/04/2026`, `4 March 2026` and `2026-03-04`. Your schema specifies an ISO date string. Where should the normalisation rule live?",
   options:[
     {k:"A", text:"In the prompt, alongside the schema, stating how ambiguous formats should be read."},
@@ -324,7 +324,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.3-f", domain:4, ts:"4.3", scenario:6, type:"single",
+{ id:"d4-4.3-f", domain:4, ts:"4.3", scenario:2, type:"single",
   stem:"Which schema design choice best handles a field where the source is genuinely ambiguous, as opposed to simply absent?",
   options:[
     {k:"A", text:"Include an `unclear` enum value so ambiguity can be reported distinctly from absence."},
@@ -343,7 +343,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.4-a", domain:4, ts:"4.4", scenario:6, type:"single",
+{ id:"d4-4.4-a", domain:4, ts:"4.4", scenario:2, type:"single",
   stem:"Pydantic validation rejects an extraction because a field arrived as a string where a number was expected. What is the most effective retry design?",
   options:[
     {k:"A", text:"Send a follow-up containing the original document, the failed extraction and the specific validation error."},
@@ -362,7 +362,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.4-b", domain:4, ts:"4.4", scenario:6, type:"single",
+{ id:"d4-4.4-b", domain:4, ts:"4.4", scenario:2, type:"single",
   stem:"An extraction repeatedly fails validation because the `parent_company` field is empty. Investigation shows the source document never names a parent company; that information lives in a separate corporate registry. What should happen?",
   options:[
     {k:"A", text:"Stop retrying, because the information is absent from the source."},
@@ -381,7 +381,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.4-c", domain:4, ts:"4.4", scenario:6, type:"single",
+{ id:"d4-4.4-c", domain:4, ts:"4.4", scenario:2, type:"single",
   stem:"You want extraction output to make arithmetic inconsistencies visible without a separate validation service. What schema design accomplishes this?",
   options:[
     {k:"A", text:"Extract `calculated_total` alongside `stated_total` so discrepancies are observable."},
@@ -400,7 +400,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.4-d", domain:4, ts:"4.4", scenario:5, type:"single",
+{ id:"d4-4.4-d", domain:4, ts:"4.4", scenario:2, type:"single",
   stem:"Developers dismiss many findings but you cannot tell which code constructs trigger the bad ones. What addition to the structured finding output enables systematic analysis?",
   options:[
     {k:"A", text:"A `detected_pattern` field naming the trigger."},
@@ -419,7 +419,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.4-e", domain:4, ts:"4.4", scenario:6, type:"single",
+{ id:"d4-4.4-e", domain:4, ts:"4.4", scenario:3, type:"single",
   stem:"A source document states two different values for the same figure in different sections. What extraction design surfaces this rather than hiding it?",
   options:[
     {k:"A", text:"Add a `conflict_detected` boolean plus fields capturing both values."},
@@ -438,7 +438,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.4-f", domain:4, ts:"4.4", scenario:6, type:"multi",
+{ id:"d4-4.4-f", domain:4, ts:"4.4", scenario:3, type:"multi",
   stem:"Which two validation failures are likely to be resolved by a retry with error feedback? (Select 2.)",
   options:[
     {k:"A", text:"A numeric field returned as a formatted string such as `\"1,240.00\"` instead of a number."},
@@ -456,7 +456,7 @@
   },
   refs:[{label:"API: Structured outputs", url:"https://platform.claude.com/docs/en/build-with-claude/structured-outputs"}] },
 
-{ id:"d4-4.5-a", domain:4, ts:"4.5", scenario:5, type:"single",
+{ id:"d4-4.5-a", domain:4, ts:"4.5", scenario:3, type:"single",
   stem:"Two workflows currently use real-time calls: a blocking pre-merge check developers wait on, and an overnight technical debt report reviewed the next morning. Your manager proposes switching both to the Message Batches API for its 50% saving. How should you evaluate this?",
   options:[
     {k:"A", text:"Use batch for the technical debt reports only; keep real-time for the pre-merge checks."},
@@ -475,7 +475,7 @@
   },
   refs:[{label:"API: Batch processing", url:"https://platform.claude.com/docs/en/build-with-claude/batch-processing"}] },
 
-{ id:"d4-4.5-b", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-b", domain:4, ts:"4.5", scenario:3, type:"single",
   stem:"You must guarantee results within 30 hours of a document arriving, using the batch API whose worst case is 24 hours. What submission cadence achieves this?",
   options:[
     {k:"A", text:"Submit every 4 hours, so worst-case wait plus worst-case processing stays within 28 hours."},
@@ -494,7 +494,7 @@
   },
   refs:[{label:"API: Batch processing", url:"https://platform.claude.com/docs/en/build-with-claude/batch-processing"}] },
 
-{ id:"d4-4.5-c", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-c", domain:4, ts:"4.5", scenario:3, type:"single",
   stem:"Of 100 documents in a batch, 6 failed because they exceeded the context limit. What is the correct recovery?",
   options:[
     {k:"A", text:"Resubmit only those 6, identified by `custom_id`, after chunking them to fit."},
@@ -513,7 +513,7 @@
   },
   refs:[{label:"API: Batch processing", url:"https://platform.claude.com/docs/en/build-with-claude/batch-processing"}] },
 
-{ id:"d4-4.5-d", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-d", domain:4, ts:"4.5", scenario:3, type:"single",
   stem:"Your extraction workflow calls a lookup tool mid-request to enrich each document, then continues. Can this move to the batch API as-is?",
   options:[
     {k:"A", text:"No, because the batch API does not support multi-turn tool calling within a single request."},
@@ -532,7 +532,7 @@
   },
   refs:[{label:"API: Batch processing", url:"https://platform.claude.com/docs/en/build-with-claude/batch-processing"}] },
 
-{ id:"d4-4.5-e", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-e", domain:4, ts:"4.5", scenario:3, type:"single",
   stem:"You are about to batch-process 50,000 documents with a newly written extraction prompt. What should you do first?",
   options:[
     {k:"A", text:"Refine the prompt on a small sample before committing the full volume."},
@@ -551,7 +551,7 @@
   },
   refs:[{label:"API: Batch processing", url:"https://platform.claude.com/docs/en/build-with-claude/batch-processing"}] },
 
-{ id:"d4-4.5-f", domain:4, ts:"4.5", scenario:6, type:"single",
+{ id:"d4-4.5-f", domain:4, ts:"4.5", scenario:3, type:"single",
   stem:"What is the role of `custom_id` in the Message Batches API?",
   options:[
     {k:"A", text:"It correlates each request with its corresponding response, and must be unique within the batch."},
@@ -570,7 +570,7 @@
   },
   refs:[{label:"API: Batch processing", url:"https://platform.claude.com/docs/en/build-with-claude/batch-processing"}] },
 
-{ id:"d4-4.6-a", domain:4, ts:"4.6", scenario:5, type:"single",
+{ id:"d4-4.6-a", domain:4, ts:"4.6", scenario:3, type:"single",
   stem:"You add 'now review your work carefully for bugs' to the end of your code generation prompt. It catches very little. Why?",
   options:[
     {k:"A", text:"The session retains the reasoning that produced the code; an independent instance is needed."},
@@ -589,7 +589,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.6-b", domain:4, ts:"4.6", scenario:5, type:"single",
+{ id:"d4-4.6-b", domain:4, ts:"4.6", scenario:4, type:"single",
   stem:"You want reviewer output that supports routing some findings straight to developers and others to a senior engineer. What review architecture supports this?",
   options:[
     {k:"A", text:"A verification pass where the model self-reports confidence alongside each finding."},
@@ -608,7 +608,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.6-c", domain:4, ts:"4.6", scenario:5, type:"single",
+{ id:"d4-4.6-c", domain:4, ts:"4.6", scenario:4, type:"single",
   stem:"Which review structure best catches a bug where one file's function signature changed and callers in other files were not updated?",
   options:[
     {k:"A", text:"An integration pass dedicated to cross-file data flow, run in addition to per-file passes."},
@@ -627,7 +627,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.6-d", domain:4, ts:"4.6", scenario:5, type:"single",
+{ id:"d4-4.6-d", domain:4, ts:"4.6", scenario:4, type:"single",
   stem:"What distinguishes an independent review instance from a self-review instruction, in practical terms?",
   options:[
     {k:"A", text:"The independent instance has no prior reasoning context, so it evaluates on the merits."},
@@ -646,7 +646,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.6-e", domain:4, ts:"4.6", scenario:5, type:"single",
+{ id:"d4-4.6-e", domain:4, ts:"4.6", scenario:4, type:"single",
   stem:"A team proposes running three independent review passes and reporting only findings that appear in at least two. What is the flaw?",
   options:[
     {k:"A", text:"It suppresses genuine bugs that are only caught intermittently."},
@@ -665,7 +665,7 @@
   },
   refs:[{label:"API: Prompting best practices", url:"https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices"}] },
 
-{ id:"d4-4.6-f", domain:4, ts:"4.6", scenario:5, type:"single",
+{ id:"d4-4.6-f", domain:4, ts:"4.6", scenario:4, type:"single",
   stem:"Per-file review passes handle local issues well. What is the correct complement for a complete multi-pass architecture?",
   options:[
     {k:"A", text:"A separate integration pass examining cross-file data flow and interface consistency."},

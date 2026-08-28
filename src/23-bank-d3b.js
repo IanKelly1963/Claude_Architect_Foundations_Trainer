@@ -174,7 +174,7 @@
 { id:"d3-3.1-p", domain:3, ts:"3.1", scenario:4, type:"single",
   stem:"After running `/compact`, a developer notices an instruction they gave in conversation is no longer being followed, while CLAUDE.md rules still are. Why?",
   options:[
-    {k:"A", text:"Project CLAUDE.md is re-injected after compaction; conversation is not."},
+    {k:"A", text:"Project CLAUDE.md is re-injected; conversation is not."},
     {k:"B", text:"Compaction removes the most recent turns first."},
     {k:"C", text:"Conversation instructions expire after a fixed number of turns."},
     {k:"D", text:"CLAUDE.md is exempt because it is loaded as a system prompt."}
