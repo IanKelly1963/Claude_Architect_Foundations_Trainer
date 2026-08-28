@@ -33,6 +33,12 @@ python tools/apply_patch.py tools/patches/<file>.json     # rewrite option texts
 python tools/retag.py tools/patches/<file>.json           # reassign scenarios by question id
 ```
 
+`tools/patches/` holds a JSON file per content migration, kept as a record — not scratch
+output. `.gitignore` excludes `bank.js`/`extracted.js`/`app.js` (check.sh's temp extraction),
+`ccarf-progress-*.json` (exported personal study data), and `*.zip` (local packaging, not a
+build artefact) — `git add -A` will happily stage any of these back in if they exist
+untracked, so check `git status` before a broad add rather than after.
+
 `tools/analyse.js` and `tools/analyse-presented.js` expect a `bank.js` module in the
 working directory. `check.sh` extracts one into a temp dir before running them; to run one
 standalone, replicate that extraction rather than invoking it from the repo root.
