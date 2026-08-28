@@ -201,7 +201,10 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
   border:1px solid var(--line-2); color:var(--ink-2)}
 .timer.low{background:var(--bad-bg); color:var(--bad); border-color:var(--bad-line)}
 .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px}
-.note-nav{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px}
+.note-nav{display:flex; flex-direction:column; gap:9px; margin-bottom:18px}
+.note-nav-group{display:flex; flex-direction:column; gap:6px}
+.note-nav-group > .tag{align-self:flex-start}
+.note-nav-tasks{display:flex; flex-wrap:wrap; gap:6px}
 .note-nav button{appearance:none; font:inherit; font-size:11.5px; font-family:var(--mono); font-weight:600;
   padding:4px 9px; border-radius:99px; border:1px solid var(--line-2); background:var(--panel);
   color:var(--ink-2); cursor:pointer}
@@ -13361,16 +13364,24 @@ let curNote = "1.1";
 function openNote(ts){ curNote = ts; go("learn"); }
 
 function renderLearn(){
+  /* One row per domain: the full coloured name on its own line, task-statement
+     pills wrapping beneath it. Running the name and the pills together on one
+     flex-wrap line worked while the name was "D1", but a full domain name
+     mixed into a row of pills reads as clutter rather than a heading. */
   let nav = '<div class="note-nav">';
-  let lastD = 0;
+  let lastD = 0, openGroup = false;
   TASKS.forEach(function(t){
     if(t.d !== lastD){
       lastD = t.d;
-      nav += '<span class="tag d' + t.d + '" style="align-self:center">' + esc(DOMAIN_BY_ID[t.d].name) + '</span>';
+      if(openGroup) nav += '</div></div>';
+      nav += '<div class="note-nav-group"><span class="tag d' + t.d + '">' +
+             esc(DOMAIN_BY_ID[t.d].name) + '</span><div class="note-nav-tasks">';
+      openGroup = true;
     }
     nav += '<button class="' + (t.ts === curNote ? "on" : "") + '" onclick="openNote(\'' + t.ts +
            '\')" title="' + esc(t.name) + '">' + t.ts + '</button>';
   });
+  if(openGroup) nav += '</div></div>';
   nav += '</div>';
 
   const n = NOTE_BY_TS[curNote], t = TASK_BY_ID[curNote], s = tsStat(curNote);

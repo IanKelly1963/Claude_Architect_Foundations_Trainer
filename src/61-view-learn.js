@@ -5,16 +5,24 @@ let curNote = "1.1";
 function openNote(ts){ curNote = ts; go("learn"); }
 
 function renderLearn(){
+  /* One row per domain: the full coloured name on its own line, task-statement
+     pills wrapping beneath it. Running the name and the pills together on one
+     flex-wrap line worked while the name was "D1", but a full domain name
+     mixed into a row of pills reads as clutter rather than a heading. */
   let nav = '<div class="note-nav">';
-  let lastD = 0;
+  let lastD = 0, openGroup = false;
   TASKS.forEach(function(t){
     if(t.d !== lastD){
       lastD = t.d;
-      nav += '<span class="tag d' + t.d + '" style="align-self:center">' + esc(DOMAIN_BY_ID[t.d].name) + '</span>';
+      if(openGroup) nav += '</div></div>';
+      nav += '<div class="note-nav-group"><span class="tag d' + t.d + '">' +
+             esc(DOMAIN_BY_ID[t.d].name) + '</span><div class="note-nav-tasks">';
+      openGroup = true;
     }
     nav += '<button class="' + (t.ts === curNote ? "on" : "") + '" onclick="openNote(\'' + t.ts +
            '\')" title="' + esc(t.name) + '">' + t.ts + '</button>';
   });
+  if(openGroup) nav += '</div></div>';
   nav += '</div>';
 
   const n = NOTE_BY_TS[curNote], t = TASK_BY_ID[curNote], s = tsStat(curNote);
