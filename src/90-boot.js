@@ -5,13 +5,11 @@
 
 probeStorage();
 load();
-applyTheme();
 
 document.getElementById("tabs").addEventListener("click", function(e){
   const b = e.target.closest("button[data-v]");
   if(b) go(b.dataset.v);
 });
-document.getElementById("btnTheme").addEventListener("click", cycleTheme);
 
 /* open on the first unmastered task statement's notes, so Learn is useful
    the moment you switch to it */

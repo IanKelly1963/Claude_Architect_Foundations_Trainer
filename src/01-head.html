@@ -7,58 +7,60 @@
 <style>
 *,*::before,*::after{box-sizing:border-box}
 :root{
-  --bg:#f7f7f5; --panel:#fff; --panel-2:#fbfbf9; --panel-3:#f2f1ed;
-  --ink:#1a1a18; --ink-2:#57554f; --ink-3:#8b8881;
-  --line:#e6e4df; --line-2:#d4d1ca;
-  --accent:#b0543a; --accent-ink:#fff;
-  --good:#2f7d55; --good-bg:#e9f4ee; --good-line:#bfe0cd;
-  --warn:#9d650f; --warn-bg:#fbf2e0; --warn-line:#ecd9ab;
-  --bad:#b0352c;  --bad-bg:#fbecea;  --bad-line:#efc7c2;
-  --info:#2a6a8e; --info-bg:#eaf2f7; --info-line:#c3dced;
+  /* Single dark palette. High-contrast by measurement, not by eye:
+     tools/contrast.js checks every foreground/background pair this
+     stylesheet actually uses against WCAG AA and fails the build below it.
+
+     Ground is near-black rather than #000 so that panels can step up in
+     lightness to express elevation, and so pure-white text does not halate
+     against it on OLED. The neutral ramp carries a slight warm cast to sit
+     with the terracotta accent instead of fighting it. */
+  --bg:#0b0b0a; --panel:#141413; --panel-2:#1c1c1a; --panel-3:#262623;
+  --ink:#f7f5f1; --ink-2:#d0ccc4; --ink-3:#aea9a0;
+  --line:#302f2c; --line-2:#67655e;
+  --accent:#ff9166; --accent-ink:#1a0d06;
+  /* Status hues are lifted and desaturated relative to their light-mode
+     equivalents: fully saturated colour vibrates against a dark ground and
+     cannot reach 4.5:1 as text. Each pairs a light foreground for use on
+     panels with a deep tinted background and a mid-tone border. */
+  --good:#5fdca1; --good-bg:#0e2418; --good-line:#3a7a5a; --good-ink:#04170d;
+  --warn:#f6c058; --warn-bg:#251c0c; --warn-line:#856728; --warn-ink:#1d1403;
+  --bad:#ff9184;  --bad-bg:#2a1310;  --bad-line:#a64c40;  --bad-ink:#210806;
+  --info:#7ac8f4; --info-bg:#0d1f2a; --info-line:#347192; --info-ink:#04161f;
+  --focus:#ffd08a;
   --r:10px; --r-sm:7px;
-  --shadow:0 1px 2px rgba(20,20,18,.05), 0 4px 14px rgba(20,20,18,.045);
+  /* On a dark ground a drop shadow reads as dirt rather than lift, so
+     elevation comes from the --panel/--panel-2/--panel-3 lightness ramp and
+     the shadow only anchors the card edge. */
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 6px 20px rgba(0,0,0,.34);
   --mono:ui-monospace,SFMono-Regular,"Cascadia Code",Consolas,"Liberation Mono",monospace;
   --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#141413; --panel:#1d1d1b; --panel-2:#232321; --panel-3:#2b2b28;
-    --ink:#efede8; --ink-2:#b2afa8; --ink-3:#7e7b75;
-    --line:#33322e; --line-2:#45443f;
-    --accent:#d97757; --accent-ink:#16110e;
-    --good:#6cbe8f; --good-bg:#16261d; --good-line:#2c4a38;
-    --warn:#dfa44b; --warn-bg:#282015; --warn-line:#4b3c1f;
-    --bad:#e37a70;  --bad-bg:#2a1816;  --bad-line:#4e2a26;
-    --info:#7ab5d7; --info-bg:#15222b; --info-line:#2b414f;
-    --shadow:0 1px 2px rgba(0,0,0,.35), 0 4px 16px rgba(0,0,0,.28);
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#141413; --panel:#1d1d1b; --panel-2:#232321; --panel-3:#2b2b28;
-  --ink:#efede8; --ink-2:#b2afa8; --ink-3:#7e7b75;
-  --line:#33322e; --line-2:#45443f;
-  --accent:#d97757; --accent-ink:#16110e;
-  --good:#6cbe8f; --good-bg:#16261d; --good-line:#2c4a38;
-  --warn:#dfa44b; --warn-bg:#282015; --warn-line:#4b3c1f;
-  --bad:#e37a70;  --bad-bg:#2a1816;  --bad-line:#4e2a26;
-  --info:#7ab5d7; --info-bg:#15222b; --info-line:#2b414f;
-  --shadow:0 1px 2px rgba(0,0,0,.35), 0 4px 16px rgba(0,0,0,.28);
-}
+html{color-scheme:dark}
 html,body{margin:0;padding:0}
 body{background:var(--bg); color:var(--ink); font-family:var(--sans);
   font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
 h1,h2,h3,h4{line-height:1.25; margin:0; font-weight:640; letter-spacing:-.011em}
 p{margin:0 0 .7em}
 code,kbd{font-family:var(--mono); font-size:.88em; background:var(--panel-3);
-  border:1px solid var(--line); border-radius:5px; padding:.08em .34em}
+  border:1px solid var(--line-2); border-radius:5px; padding:.08em .34em; color:var(--ink)}
 a{color:var(--accent); text-underline-offset:2px}
-.topbar{position:sticky; top:0; z-index:40; background:var(--panel); border-bottom:1px solid var(--line)}
+::selection{background:rgba(255,145,102,.28); color:var(--ink)}
+/* The app is fully keyboard-driven (1-4 to answer, Enter to submit, arrows
+   to move between exam questions) but had no visible focus indication at
+   all. One ring, on :focus-visible so a mouse click does not draw it. */
+:focus-visible{outline:2px solid var(--focus); outline-offset:2px; border-radius:3px}
+.btn:focus-visible,.opt:focus-visible,nav.tabs button:focus-visible,
+.note-nav button:focus-visible,.tstable tbody tr:focus-visible{outline-offset:2px}
+.opt:focus-visible{border-color:var(--focus)}
+.topbar{position:sticky; top:0; z-index:40; background:rgba(11,11,10,.86);
+  backdrop-filter:saturate(140%) blur(10px); -webkit-backdrop-filter:saturate(140%) blur(10px);
+  border-bottom:1px solid var(--line)}
 .topbar-in{max-width:1120px; margin:0 auto; padding:0 20px}
 .tb-row{display:flex; align-items:center; gap:16px; padding:12px 0 10px; flex-wrap:wrap}
 .brand{display:flex; align-items:baseline; gap:9px; margin-right:auto; min-width:0}
 .brand b{font-size:16px; font-weight:660; letter-spacing:-.02em; white-space:nowrap}
 .brand span{font-size:11.5px; color:var(--ink-3); font-family:var(--mono); white-space:nowrap}
-.tb-actions{display:flex; align-items:center; gap:7px}
 .readypill{display:flex; align-items:center; gap:9px; background:var(--panel-2);
   border:1px solid var(--line); border-radius:999px; padding:4px 13px 4px 13px}
 .readypill .lbl{font-size:10.5px; color:var(--ink-3); text-transform:uppercase; letter-spacing:.06em; font-weight:640}
@@ -75,7 +77,7 @@ main{max-width:1120px; margin:0 auto; padding:26px 20px 90px}
 .btn{appearance:none; font:inherit; font-size:13.5px; font-weight:560; cursor:pointer;
   background:var(--panel); color:var(--ink); border:1px solid var(--line-2);
   border-radius:var(--r-sm); padding:7px 13px; transition:background .12s,border-color .12s}
-.btn:hover{background:var(--panel-3)}
+.btn:hover{background:var(--panel-3); border-color:var(--ink-3)}
 .btn:disabled{opacity:.45; cursor:not-allowed}
 .btn.primary{background:var(--accent); color:var(--accent-ink); border-color:transparent; font-weight:600}
 .btn.primary:hover{filter:brightness(1.07)}
@@ -85,6 +87,7 @@ main{max-width:1120px; margin:0 auto; padding:26px 20px 90px}
 .card{background:var(--panel); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
 .pad{padding:18px 20px}
 .muted{color:var(--ink-2)} .dim{color:var(--ink-3)}
+.stat-good{color:var(--good)} .stat-warn{color:var(--warn)} .stat-bad{color:var(--bad)}
 .small{font-size:13px} .xs{font-size:12px}
 .mono{font-family:var(--mono)}
 .tnum{font-variant-numeric:tabular-nums}
@@ -114,7 +117,8 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 .callout.bad{background:var(--bad-bg); border-color:var(--bad-line); border-left-color:var(--bad)}
 .callout.bad .ct{color:var(--bad)}
 .callout p:last-child{margin-bottom:0}
-.bar{height:6px; border-radius:99px; background:var(--panel-3); overflow:hidden; position:relative}
+.bar{height:6px; border-radius:99px; background:var(--panel-3); overflow:hidden;
+  position:relative; box-shadow:inset 0 0 0 1px var(--line)}
 .bar > i{display:block; height:100%; border-radius:99px; background:var(--ink-3);
   transition:width .45s cubic-bezier(.3,.9,.3,1)}
 .bar.good > i{background:var(--good)} .bar.warn > i{background:var(--warn)} .bar.bad > i{background:var(--bad)}
@@ -147,6 +151,7 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 .tstable .tsname{font-weight:540}
 .tstable .num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
 .tstable .barcell{width:110px}
+.vh{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap}
 .chip{display:inline-block; font-size:10px; font-weight:680; padding:2px 7px; border-radius:99px;
   white-space:nowrap; text-transform:uppercase; letter-spacing:.04em; border:1px solid transparent}
 .chip.ok{background:var(--good-bg); color:var(--good); border-color:var(--good-line)}
@@ -166,18 +171,20 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 .opt{display:flex; gap:11px; align-items:flex-start; padding:11px 13px; border:1px solid var(--line-2);
   border-radius:var(--r-sm); background:var(--panel); cursor:pointer; transition:border-color .12s,background .12s;
   font-size:14px; line-height:1.5; text-align:left; width:100%; font-family:inherit; color:var(--ink)}
-.opt:hover:not(.locked){border-color:var(--ink-3); background:var(--panel-2)}
+.opt:hover:not(.locked){border-color:var(--accent); background:var(--panel-2)}
 .opt .k{flex:none; width:22px; height:22px; border-radius:50%; border:1px solid var(--line-2);
   display:flex; align-items:center; justify-content:center; font-size:11.5px; font-weight:680;
   font-family:var(--mono); color:var(--ink-2); margin-top:1px}
-.opt.sel{border-color:var(--accent); background:var(--panel-2)}
+.opt.sel{border-color:var(--accent); background:var(--panel-2);
+  box-shadow:inset 0 0 0 1px var(--accent)}
 .opt.sel .k{background:var(--accent); color:var(--accent-ink); border-color:transparent}
 .opt.locked{cursor:default}
 .opt.right{border-color:var(--good); background:var(--good-bg)}
-.opt.right .k{background:var(--good); color:#fff; border-color:transparent}
+.opt.right .k{background:var(--good); color:var(--good-ink); border-color:transparent}
 .opt.wrong{border-color:var(--bad); background:var(--bad-bg)}
-.opt.wrong .k{background:var(--bad); color:#fff; border-color:transparent}
-.opt.missed{border-color:var(--good); border-style:dashed; background:transparent}
+.opt.wrong .k{background:var(--bad); color:var(--bad-ink); border-color:transparent}
+.opt.missed{border-color:var(--good); border-style:dashed; background:var(--good-bg)}
+.opt.missed .k{border-color:var(--good); color:var(--good)}
 .verdict{display:flex; align-items:center; gap:9px; font-weight:660; font-size:14.5px; margin-bottom:10px}
 .verdict.right{color:var(--good)} .verdict.wrong{color:var(--bad)}
 .expl{border:1px solid var(--line); border-radius:var(--r-sm); background:var(--panel-2);
@@ -190,7 +197,8 @@ hr.sep{border:0; border-top:1px solid var(--line); margin:22px 0}
 .refs{margin-top:12px; padding-top:11px; border-top:1px solid var(--line); font-size:12.5px}
 .refs a{margin-right:12px; white-space:nowrap}
 .timer{font-family:var(--mono); font-size:14px; font-weight:660; font-variant-numeric:tabular-nums;
-  padding:4px 11px; border-radius:99px; background:var(--panel-3); border:1px solid var(--line)}
+  padding:4px 11px; border-radius:99px; background:var(--panel-3);
+  border:1px solid var(--line-2); color:var(--ink-2)}
 .timer.low{background:var(--bad-bg); color:var(--bad); border-color:var(--bad-line)}
 .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px}
 .note-nav{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px}

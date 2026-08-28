@@ -58,7 +58,8 @@ function renderDashboard(){
     'a proportion of its attempts and distinct questions, scaled to how many questions that ' +
     'statement has (up to ' + MIN_ATTEMPTS + ' attempts across ' + MIN_DISTINCT + ' distinct). Click a row for the notes.</p></div>' +
     '<div class="tscroll"><table class="tstable"><thead><tr><th>ID</th><th>Task statement</th>' +
-    '<th class="barcell">Score</th><th class="num">Seen</th><th class="num">Score</th><th>Status</th></tr></thead><tbody>';
+    '<th class="barcell"><span class="vh">Score, as a bar</span></th>' +
+    '<th class="num">Seen</th><th class="num">Score</th><th>Status</th></tr></thead><tbody>';
 
   let lastD = 0;
   TASKS.forEach(function(t){
@@ -76,7 +77,7 @@ function renderDashboard(){
     else if(s.blocker === "distinct") statusText = "need variety";
     else statusText = statusCls === "near" ? "close" : "weak";
 
-    html += '<tr onclick="openNote(\'' + t.ts + '\')" title="Open the notes for ' + t.ts + '">' +
+    html += '<tr tabindex="0" onclick="openNote(\'' + t.ts + '\')" title="Open the notes for ' + t.ts + '">' +
       '<td class="tsid">' + t.ts + '</td>' +
       '<td class="tsname">' + esc(t.name) + '</td>' +
       '<td class="barcell">' + bar(s.score, s.untested) + '</td>' +

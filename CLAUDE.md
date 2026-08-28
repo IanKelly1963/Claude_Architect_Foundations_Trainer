@@ -28,6 +28,7 @@ bash tools/build.sh && bash tools/check.sh
 bash tools/build.sh                                   # src/ -> Claude_Architect_Trainer.html
 bash tools/check.sh                                   # all gates; non-zero exit on failure
 node tools/distractors.js Claude_Architect_Trainer.html   # just the distractor guard
+node tools/contrast.js Claude_Architect_Trainer.html      # just the contrast guard
 python tools/apply_patch.py tools/patches/<file>.json     # rewrite option texts by "id|letter"
 python tools/retag.py tools/patches/<file>.json           # reassign scenarios by question id
 ```
@@ -100,6 +101,7 @@ guards now exist so they cannot silently return. When adding questions, all must
 | Answer position | `tools/analyse-presented.js` | non-uniform position **after shuffling** |
 | Answer length | `analyse.js` + `validateBank()` | correct answer longest in >40% of items (chance is 25%) |
 | Distractor plausibility | `tools/distractors.js` | any of eight blind-elimination heuristics >35%, near-duplicate distractors in one question, >1 invented-capability distractor per question |
+| Contrast | `tools/contrast.js` | any text pair below AA 4.5:1, any non-text pair below 3:1, a missing or un-offset focus ring, or a second palette block |
 | Reproducible build | manual | rebuilding from `src/` not byte-identical |
 
 `tools/distractors.js` deliberately **reports but does not gate** rationale length and
@@ -136,3 +138,15 @@ answers; the rest are authored judgement. Do not describe the app as authoritati
 When adding questions, correcting a length bias by extending one distractor pushes items
 into the adjacent rank and creates a mirror tell there. `tools/distractors.js` tests all
 four length ranks for exactly this reason; check the whole distribution, not one metric.
+
+## Theme
+
+There is **one** palette, dark, defined in a single `:root` block in
+`src/01-head.html`. The light/auto themes and the `#btnTheme` toggle were removed
+deliberately — see `readme.txt` §13. Do not reintroduce a `prefers-color-scheme`
+block or a `[data-theme]` selector: `tools/contrast.js` fails the build if a second
+palette comes into scope, because every pair it checks assumes one resolved theme.
+
+Colours belong in the palette, never inline. A new foreground/background
+combination needs a matching entry in the `PAIRS` list in `tools/contrast.js`, or
+it ships unverified.

@@ -19,3 +19,4 @@ cp "$ROOT/tools/analyse.js" "$ROOT/tools/analyse-presented.js" "$TMP/"
 
 # distractor quality guard - exits non-zero on any exploitable defect
 node "$ROOT/tools/distractors.js" "$OUT"
+node "$ROOT/tools/contrast.js" "$OUT"

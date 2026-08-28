@@ -56,7 +56,7 @@ function ringSvg(frac){
   const R = 58, C = 2 * Math.PI * R;
   const cls = frac >= GATE ? "var(--good)" : frac >= 0.6 ? "var(--warn)" : "var(--accent)";
   return '<svg width="132" height="132" viewBox="0 0 132 132">' +
-    '<circle cx="66" cy="66" r="' + R + '" fill="none" stroke="var(--panel-3)" stroke-width="10"/>' +
+    '<circle cx="66" cy="66" r="' + R + '" fill="none" stroke="var(--line-2)" stroke-width="10"/>' +
     '<circle cx="66" cy="66" r="' + R + '" fill="none" stroke="' + cls + '" stroke-width="10" ' +
     'stroke-linecap="round" stroke-dasharray="' + C + '" stroke-dashoffset="' +
     (C * (1 - frac)) + '" style="transition:stroke-dashoffset .6s cubic-bezier(.3,.9,.3,1)"/></svg>';

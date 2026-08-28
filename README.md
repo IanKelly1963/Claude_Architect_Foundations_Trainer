@@ -47,9 +47,12 @@ Start Trainer.cmd               optional localhost launcher for guaranteed persi
 Architecture_Foundations_Exam_Guide.md   the official exam guide this is built against
 src/                            source parts; numeric prefixes define build order
 tools/build.sh                  concatenates src/ into the HTML
-tools/check.sh                  JS syntax check + both bias analyses
+tools/check.sh                  JS syntax check, both bias analyses,
+                                distractor guard and contrast guard
 tools/analyse.js                measures the bank as stored
 tools/analyse-presented.js      measures the bank as the student actually sees it
+tools/distractors.js            catches distractors eliminable without knowledge
+tools/contrast.js               checks the dark palette against WCAG
 tools/apply_patch.py            surgically rewrites individual option texts by id
 tools/patches/                  the option rewrites applied to remove answer bias
 ```

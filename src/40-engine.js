@@ -30,7 +30,7 @@ function blankState(){
     tsHistory: {},       /* ts  -> [{c:1|0, q:qid, t:epoch}]  (capped)        */
     sessions: [],        /* one record per completed testing session          */
     cardStats: {},       /* cardId -> {seen, got, missed}  (excluded from score) */
-    prefs: { theme:"auto" }
+    prefs: {}
   };
 }
 

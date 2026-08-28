@@ -240,12 +240,35 @@ GATE 5 - Distractor quality guard (tools/distractors.js)
   CLAUDE_HEADLESS and --batch and says so in its explanation. Faithfulness to
   the source beats the house rule; the exemption carries its reason in code.
 
-GATE 6 - Reproducible build
+GATE 6 - Contrast guard (tools/contrast.js)
+  The app is a single file that cannot be screenshotted from the build
+  environment, so "high contrast" is measured rather than asserted. The tool
+  reads the palette out of the built HTML and checks every foreground /
+  background pair the stylesheet actually renders.
+  FAILS on:
+    - a text pair below WCAG AA 4.5:1
+    - a non-text pair below 3:1 (SC 1.4.11): control boundaries, focus rings,
+      progress-bar fills against their track, status borders
+    - a missing :focus-visible outline, or one without an offset
+    - color-scheme:dark not being declared
+    - hard-coded white text surviving in the stylesheet
+    - more than one palette block in scope (a light theme creeping back in)
+  REPORTS:
+    - how many text pairs also clear AAA 7:1. Currently 27 of 28. The one
+      exception is .chip.new at 6.49:1, an "untested" marker that is meant to
+      recede; lifting it would mean lifting --ink-3 far enough to collapse the
+      gap to --ink-2 and flatten the three-tier text hierarchy.
+
+  The pair list is maintained by hand. Inferring it from the CSS would need a
+  cascade resolver, and a wrong pair list that looks automatic is worse than a
+  short one that is true. A new colour combination means a new entry.
+
+GATE 7 - Reproducible build
   Deleting the HTML, rebuilding from src/, and comparing must give a
   byte-identical file. Last verified after the expansion: sha256 c2f2aed5e8b1,
   875,011 bytes, identical.
 
-GATE 7 - Manual, before any release
+GATE 8 - Manual, before any release
   - practice a set, confirm task-statement scores move on the dashboard
   - reload, confirm scores persisted
   - export JSON, reset, import, confirm exact restoration
@@ -253,6 +276,7 @@ GATE 7 - Manual, before any release
   - confirm mastery is withheld at the distinct-question floor
   - resize to 375px, confirm no horizontal page overflow in any view
   - confirm zero external network requests
+  - tab through each view and confirm the focus ring is visible everywhere
 
 
 --------------------------------------------------------------------------------
@@ -374,10 +398,11 @@ documentation, which is why the runtime probe and the launcher both exist.
   readme.txt                      this document
   src/                            32 source parts; numeric prefixes set order
   tools/build.sh                  concatenates src/ into the HTML
-  tools/check.sh                  runs gates 1, 3, 4 and 5
+  tools/check.sh                  runs gates 1, 3, 4, 5 and 6
   tools/analyse.js                bias analysis, as stored
   tools/analyse-presented.js      bias analysis, as the student sees it
   tools/distractors.js            distractor quality guard
+  tools/contrast.js               WCAG contrast guard for the dark theme
   tools/apply_patch.py            surgical option rewrites by id|letter
   tools/retag.py                  scenario reassignment by id
   tools/patches/                  every content migration, kept as a record
@@ -444,3 +469,48 @@ correcting a measured bias in one direction tends to create its mirror. Check
 the whole distribution afterwards, not just the metric that failed.
 
 ================================================================================
+
+
+--------------------------------------------------------------------------------
+13. THE INTERFACE
+--------------------------------------------------------------------------------
+
+The app ships a single dark theme. It previously carried three - auto, light
+and dark, cycled from a button in the top bar - and that was removed rather
+than extended.
+
+The reason is maintenance, not taste. Two palettes mean every colour decision
+is made twice and verified twice, and in practice only the one being looked at
+stays good. A toggle that can switch to the weaker of the two is a liability,
+not a feature. One palette, measured against WCAG on every build, is worth more
+than two that are merely plausible.
+
+What the palette is built on:
+
+  - Ground is #0b0b0a, not #000. Pure black gives no room to express elevation
+    below the card surface, and white text on it halates on OLED panels.
+  - Elevation is a lightness ramp (--bg / --panel / --panel-2 / --panel-3),
+    not shadow. On a dark ground a drop shadow reads as dirt; the shadow that
+    remains only anchors the card edge.
+  - Status hues are lifted and desaturated from their light-mode values.
+    Saturated colour vibrates against dark and cannot reach 4.5:1 as text.
+    Each hue carries four tokens: a light foreground for panels, a deep tinted
+    background, a mid-tone border, and a dark ink for text on a solid fill.
+  - Text has three tiers with a deliberate gap between them. --ink-3 sits at
+    6.49:1 at its worst rather than being pushed to 7:1, because closing that
+    last gap would put it 1.34:1 from --ink-2 and destroy the hierarchy.
+
+Three defects were found and fixed while doing this, none of them caused by
+the theme change:
+
+  - There were no :focus styles anywhere. The app is fully keyboard-driven -
+    1-4 to answer, Enter to submit, arrows to move through an exam - and a
+    keyboard user could not see where they were. There is now one focus ring,
+    on :focus-visible so a mouse click does not draw it.
+  - .stat-good, .stat-warn and .stat-bad were emitted by the readiness pill,
+    the mock-exam scaled score and the answer-review marker, but were never
+    defined in the stylesheet. All three rendered as plain inherited text.
+  - The mastery table had two columns headed "Score" showing the same value,
+    and its rows opened the notes on click with no keyboard route. The bar
+    column now carries a visually-hidden label, and rows are focusable and
+    respond to Enter and Space.

@@ -41,28 +41,15 @@ function paintReadiness(){
   }
 }
 
-/* theme: auto -> light -> dark -> auto */
-function cycleTheme(){
-  const order = ["auto","light","dark"];
-  const cur = S.prefs.theme || "auto";
-  S.prefs.theme = order[(order.indexOf(cur) + 1) % 3];
-  applyTheme(); save();
-}
-function applyTheme(){
-  const t = S.prefs.theme || "auto";
-  if(t === "auto") document.documentElement.removeAttribute("data-theme");
-  else document.documentElement.setAttribute("data-theme", t);
-  const b = el("btnTheme");
-  if(b){
-    b.textContent = t === "auto" ? "◑" : t === "light" ? "☀" : "☽";
-    b.title = "Theme: " + t + " (click to change)";
-  }
-}
-
 document.addEventListener("keydown", function(e){
   if(e.metaKey || e.ctrlKey || e.altKey) return;
   const tag = (e.target.tagName || "").toLowerCase();
   if(tag === "input" || tag === "textarea") return;
+
+  /* mastery-table rows open the notes on click; keyboard users need the same
+     route, so Enter and Space on a focused row fire the row's own handler */
+  const row = e.target.closest ? e.target.closest(".tstable tbody tr[tabindex]") : null;
+  if(row && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); row.click(); return; }
 
   if(FC && view === "cards"){
     if(e.key === " "){ e.preventDefault(); if(!FC.shown) flipCard(); return; }
