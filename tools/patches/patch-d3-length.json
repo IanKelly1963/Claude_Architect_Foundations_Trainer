@@ -1,0 +1,22 @@
+{
+  "d3-3.1-p|A": "Project CLAUDE.md is re-injected after compaction; conversation is not.",
+  "d3-3.4-j|A": "Committing to a structure before the dependencies are understood.",
+  "d3-3.4-l|A": "The criterion is ambiguity and scope, not the environment.",
+  "d3-3.6-a|A": "Add the `-p` flag: `claude -p \"Analyze this pull request\"`",
+  "d3-3.6-t|A": "No; developers are blocked and batch has no latency guarantee.",
+  "d3-3.2-q|A": "Frontmatter controlling tools, model and execution context.",
+  "d3-3.3-n|A": "Neither; they load at the same priority, so it is unresolved.",
+  "d3-3.3-k|A": "Without `paths` it always loads; with it, only on matching reads.",
+  "d3-3.6-i|A": "Supply prior findings and ask for new or unaddressed ones.",
+  "d3-3.6-k|A": "It carries no attachment to the reasoning behind the code.",
+  "d3-3.6-l|A": "`-p --output-format json --json-schema <s>`",
+  "d5-5.6-c|A": "Require publication or data-collection dates in subagent output.",
+  "d3-3.5-q|A": "Document what makes a test valuable here.",
+  "d3-3.2-j|A": "When the guidance must apply in every session automatically.",
+  "d3-3.5-i|A": "Together in one message, because the fixes interact.",
+  "d1-1.6-n|A": "The next step depends on what the previous one found.",
+  "d2-2.2-g|A": "A category and retryable flag, separating policy from outage.",
+  "d3-3.3-j|A": "It needs quoting, since the value starts with a special character in YAML.",
+  "d3-3.3-t|A": "Whether it should apply automatically or on request.",
+  "d3-3.4-r|A": "Several defensible approaches with differing consequences."
+}

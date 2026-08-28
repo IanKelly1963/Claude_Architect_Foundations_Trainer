@@ -112,10 +112,23 @@ Object.keys(HEURISTICS).forEach(name => {
 
 /* ------------------------------------------ 2. near-duplicate distractors */
 console.log("\n2. NEAR-DUPLICATE DISTRACTORS   two wrong options that say the same thing");
+
+/* Options that are predominantly a code literal are testing syntax
+   discrimination, where the whole point is that they differ by punctuation
+   the word tokeniser discards. Comparing `paths: ["src/**\/*.{ts,tsx}"]`
+   against `paths: ["src/**\/*.ts*"]` on words alone calls them identical when
+   a student must tell them apart precisely. Prose options are unaffected, so
+   genuinely interchangeable distractors are still caught. */
+function isCodeLiteral(text) {
+  const inTicks = (text.match(/`[^`]*`/g) || []).join("").length;
+  return inTicks / text.length > 0.6;
+}
+
 let dup = 0;
 BANK.forEach(q => {
   const d = q.options.filter(o => q.correct.indexOf(o.k) === -1);
   for (let i = 0; i < d.length; i++) for (let j = i + 1; j < d.length; j++) {
+    if (isCodeLiteral(d[i].text) && isCodeLiteral(d[j].text)) continue;
     const s = jaccard(d[i].text, d[j].text);
     if (s > 0.55) {
       dup++;

@@ -307,7 +307,7 @@
 { id:"d5-5.3-e", domain:5, ts:"5.3", scenario:3, type:"single",
   stem:"A coordinator receives 'search unavailable' from a subagent. Which recovery decision can it NOT make on that information alone?",
   options:[
-    {k:"A", text:"Whether to retry with a narrower query, since it knows neither the query nor the partial results."},
+    {k:"A", text:"Whether to retry with a narrower query, the query being unknown."},
     {k:"B", text:"Whether to log the failure for later analysis."},
     {k:"C", text:"Whether to mark the overall run as degraded."},
     {k:"D", text:"Whether to notify a human operator that one of the subagents has failed during the run."}
@@ -611,7 +611,7 @@
 { id:"d5-5.6-c", domain:5, ts:"5.6", scenario:3, type:"single",
   stem:"Two sources report adoption rates of 34% and 58%. One study collected data in 2023 and the other in 2026, but neither subagent recorded collection dates. What requirement prevents this being misread as a contradiction?",
   options:[
-    {k:"A", text:"Require publication or data-collection dates in every subagent's structured output for each finding."},
+    {k:"A", text:"Require publication or data-collection dates in subagent output."},
     {k:"B", text:"Require subagents to reject sources older than two years."},
     {k:"C", text:"Require the synthesis step to report only the higher of any two conflicting figures."},
     {k:"D", text:"Require subagents to note whether a source is peer-reviewed."}

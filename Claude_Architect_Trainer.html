@@ -2443,7 +2443,7 @@ const BANK_ALL = [
 { id:"d1-1.3-p", domain:1, ts:"1.3", scenario:3, type:"single",
   stem:"You need the synthesis subagent to keep source attribution intact. Which prompt structure best supports that?",
   options:[
-    {k:"A", text:"Findings as discrete records, each pairing a claim with its source and excerpt."},
+    {k:"A", text:"Discrete records pairing claim, source and excerpt."},
     {k:"B", text:"Findings as prose, with a numbered bibliography appended at the end."},
     {k:"C", text:"Findings as prose, with an instruction to cite carefully throughout."},
     {k:"D", text:"Findings as prose, followed by the full text of every source consulted."}
@@ -2746,7 +2746,7 @@ const BANK_ALL = [
 { id:"d1-1.4-s", domain:1, ts:"1.4", scenario:1, type:"single",
   stem:"Your team asks why the refund threshold is enforced in a hook rather than simply given to the model as a rule, when the model has never violated it in testing. What is the strongest response?",
   options:[
-    {k:"A", text:"Testing bounds the observed rate, not the true one, and the exceptions here move money."},
+    {k:"A", text:"Testing bounds the observed rate, not the true one."},
     {k:"B", text:"Hooks execute faster than the model's own reasoning about the threshold."},
     {k:"C", text:"Models cannot compare numeric values reliably enough to apply a threshold."},
     {k:"D", text:"Prompt rules stop applying once the conversation exceeds the context window."}
@@ -3147,7 +3147,7 @@ const BANK_ALL = [
 { id:"d1-1.6-n", domain:1, ts:"1.6", scenario:3, type:"single",
   stem:"Which signal most reliably indicates that a task needs adaptive decomposition rather than a fixed chain?",
   options:[
-    {k:"A", text:"The next useful step depends on what the previous step found."},
+    {k:"A", text:"The next step depends on what the previous one found."},
     {k:"B", text:"The task involves more than four distinct stages."},
     {k:"C", text:"The task will run for more than a few minutes."},
     {k:"D", text:"The task spans several different tools."}
@@ -3336,7 +3336,7 @@ const BANK_ALL = [
 { id:"d1-1.7-k", domain:1, ts:"1.7", scenario:1, type:"single",
   stem:"A support agent resumes a conversation after the customer replies two days later. The refund amount discussed earlier is now wrong, because the order was partially returned in between. What design would prevent this?",
   options:[
-    {k:"A", text:"Re-fetch the transactional facts on resume rather than trusting the stored ones."},
+    {k:"A", text:"Re-fetch the transactional facts on resume."},
     {k:"B", text:"Refuse to resume conversations older than 24 hours."},
     {k:"C", text:"Store the refund amount in the system prompt so it cannot be lost."},
     {k:"D", text:"Summarise the earlier conversation more aggressively before resuming."}
@@ -3393,7 +3393,7 @@ const BANK_ALL = [
 { id:"d1-1.7-n", domain:1, ts:"1.7", scenario:6, type:"single",
   stem:"A long extraction run is interrupted after 700 of 1,000 documents. On restart it begins again at document one. What design would avoid the rework?",
   options:[
-    {k:"A", text:"Persist per-document completion state, and resume from what is unfinished."},
+    {k:"A", text:"Persist per-document completion state."},
     {k:"B", text:"Resume the agent session, which retains how far it had progressed."},
     {k:"C", text:"Increase the timeout so the run is less likely to be interrupted."},
     {k:"D", text:"Process the documents in reverse order on the second attempt."}
@@ -3831,7 +3831,7 @@ const BANK_ALL = [
 { id:"d2-2.3-e", domain:2, ts:"2.3", scenario:3, type:"single",
   stem:"A document-analysis subagent has a general-purpose `fetch_url` tool and has begun pulling in blog posts and forum threads alongside the peer-reviewed sources it was meant to analyse. What is the cleanest correction?",
   options:[
-    {k:"A", text:"Replace `fetch_url` with a constrained `load_document` tool that validates the URL is a document source."},
+    {k:"A", text:"Replace `fetch_url` with a constrained `load_document`."},
     {k:"B", text:"Add a system prompt rule listing domains the subagent is not allowed to fetch from."},
     {k:"C", text:"Keep `fetch_url` and filter low-quality sources out of the synthesis step instead."},
     {k:"D", text:"Remove the tool entirely and have the coordinator fetch every document on the subagent's behalf."}
@@ -4364,7 +4364,7 @@ const BANK_ALL = [
 { id:"d2-2.2-g", domain:2, ts:"2.2", scenario:1, type:"single",
   stem:"A refund tool returns `isError: true` with the message 'Refund failed: customer not eligible'. The agent retries three times before telling the customer there was a system problem. What is missing?",
   options:[
-    {k:"A", text:"A category and retryable flag, distinguishing policy from outage."},
+    {k:"A", text:"A category and retryable flag."},
     {k:"B", text:"A longer, more descriptive error message."},
     {k:"C", text:"A retry limit configured in the agent loop."},
     {k:"D", text:"An error code the agent can look up in documentation."}
@@ -4497,7 +4497,7 @@ const BANK_ALL = [
 { id:"d2-2.2-n", domain:2, ts:"2.2", scenario:5, type:"single",
   stem:"Which error response best supports an agent deciding what to do next?",
   options:[
-    {k:"A", text:"`{errorCategory: 'transient', isRetryable: true, message: '...'}`"},
+    {k:"A", text:"`{errorCategory, isRetryable, message}`"},
     {k:"B", text:"`{error: 'Request could not be completed at this time'}`"},
     {k:"C", text:"`{error: true, code: 5031, trace: '...'}`"},
     {k:"D", text:"`{status: 'failed', retry: 'maybe'}`"}
@@ -5463,7 +5463,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Claude Code: Memory", url:"https://code.claude.com/docs/en/memory"}] },
 
-{ id:"d3-3.1-c", domain:3, ts:"3.1", scenario:2, type:"single",
+{ id:"d3-3.1-c", domain:3, ts:"3.1", scenario:3, type:"single",
   stem:"In a monorepo, each package should pull in only the standards files its maintainers consider relevant. Which CLAUDE.md feature supports this?",
   options:[
     {k:"A", text:"`@path/to/file` import syntax, letting each package reference the standards files it needs."},
@@ -5482,7 +5482,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Claude Code: Memory", url:"https://code.claude.com/docs/en/memory"}] },
 
-{ id:"d3-3.1-d", domain:3, ts:"3.1", scenario:2, type:"single",
+{ id:"d3-3.1-d", domain:3, ts:"3.1", scenario:1, type:"single",
   stem:"Behaviour differs between two of your sessions and you suspect different memory files are loading. Which command does the exam guide direct you to for verifying which memory files are loaded?",
   options:[
     {k:"A", text:"`/memory`"},
@@ -5616,7 +5616,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Claude Code: Skills", url:"https://code.claude.com/docs/en/skills"}] },
 
-{ id:"d3-3.2-e", domain:3, ts:"3.2", scenario:2, type:"single",
+{ id:"d3-3.2-e", domain:3, ts:"3.2", scenario:1, type:"single",
   stem:"Which frontmatter field prompts developers for required parameters when they invoke a skill without arguments?",
   options:[
     {k:"A", text:"`argument-hint`"},
@@ -5636,7 +5636,7 @@ const BANK_ALL = [
   note:"`argument-hint` is a Claude Code extension rather than part of the base Agent Skills specification, which lists only `allowed-tools`, `compatibility`, `description`, `license`, `metadata` and `name`. It is also display-only: it prompts, but does not enforce that arguments are supplied.",
   refs:[{label:"Claude Code: Skills", url:"https://code.claude.com/docs/en/skills"}] },
 
-{ id:"d3-3.2-f", domain:3, ts:"3.2", scenario:2, type:"single",
+{ id:"d3-3.2-f", domain:3, ts:"3.2", scenario:6, type:"single",
   stem:"When should a convention live in CLAUDE.md rather than in a skill?",
   options:[
     {k:"A", text:"When it is a universal standard that should apply in every session without needing to be invoked."},
@@ -5677,7 +5677,7 @@ const BANK_ALL = [
 { id:"d3-3.3-b", domain:3, ts:"3.3", scenario:2, type:"single",
   stem:"You want a rule to apply only when Claude works with Terraform files. Which frontmatter achieves this?",
   options:[
-    {k:"A", text:"`paths:` frontmatter with a glob list such as `[\"terraform/**/*\"]`."},
+    {k:"A", text:"`paths:` with a glob list such as `[\"terraform/**/*\"]`."},
     {k:"B", text:"`scope: terraform` naming the directory."},
     {k:"C", text:"`applies-to: \"*.tf\"` as a single string value."},
     {k:"D", text:"`when: editing terraform` as a natural language condition."}
@@ -5712,7 +5712,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Claude Code: Memory", url:"https://code.claude.com/docs/en/memory"}] },
 
-{ id:"d3-3.3-d", domain:3, ts:"3.3", scenario:2, type:"single",
+{ id:"d3-3.3-d", domain:3, ts:"3.3", scenario:1, type:"single",
   stem:"A rule file in `.claude/rules/` has no `paths` frontmatter. When does it load?",
   options:[
     {k:"A", text:"Unconditionally at launch, at the same priority as `.claude/CLAUDE.md`."},
@@ -5863,7 +5863,7 @@ const BANK_ALL = [
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d3-3.4-f", domain:3, ts:"3.4", scenario:2, type:"single",
+{ id:"d3-3.4-f", domain:3, ts:"3.4", scenario:3, type:"single",
   stem:"What is the primary benefit plan mode provides beyond simply thinking before acting?",
   options:[
     {k:"A", text:"It enables safe exploration of the codebase before any change is committed."},
@@ -5999,7 +5999,7 @@ const BANK_ALL = [
 { id:"d3-3.6-a", domain:3, ts:"3.6", scenario:5, type:"single",
   stem:"Your pipeline script runs `claude \"Analyze this pull request for security issues\"` but the job hangs indefinitely. Logs indicate Claude Code is waiting for interactive input. What is the correct approach?",
   options:[
-    {k:"A", text:"Add the `-p` flag to run non-interactively: `claude -p \"Analyze this pull request for security issues\"`"},
+    {k:"A", text:"Add the `-p` flag: `claude -p \"Analyze this pull request\"`"},
     {k:"B", text:"Set the environment variable `CLAUDE_HEADLESS=true` before running the command."},
     {k:"C", text:"Redirect stdin from /dev/null after the command."},
     {k:"D", text:"Add the `--batch` flag."}
@@ -6109,6 +6109,1602 @@ const BANK_ALL = [
     }
   },
   refs:[{label:"Claude Code: Headless", url:"https://code.claude.com/docs/en/headless"}] },
+
+/* ---- Domain 3 expansion: task statements 3.1, 3.2 and 3.3 ---- */
+
+{ id:"d3-3.1-g", domain:3, ts:"3.1", scenario:2, type:"single",
+  stem:"A monorepo has a root CLAUDE.md and one in `packages/api/`. A developer working in `packages/api/` reports that root conventions are being ignored. What is the likely cause?",
+  options:[
+    {k:"A", text:"The two files contain contradictory guidance."},
+    {k:"B", text:"A subdirectory CLAUDE.md replaces any file above it."},
+    {k:"C", text:"Only one CLAUDE.md is loaded per session."},
+    {k:"D", text:"Subdirectory files load before root files and are overridden."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Both files are concatenated, so nothing is discarded. When two loaded instructions conflict, one is followed arbitrarily, which reads from the outside like the root file being ignored.",
+    distractors:{
+      B:"Files accumulate rather than replacing one another; the package file adds to the root file.",
+      C:"Every file discovered up the tree is loaded, not just one.",
+      D:"Content is ordered root-downwards, so the subdirectory file is read last, not overridden."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-h", domain:3, ts:"3.1", scenario:4, type:"single",
+  stem:"A CLAUDE.md has grown to 1,400 lines and adherence has fallen noticeably. Which explanation fits the documented guidance?",
+  options:[
+    {k:"A", text:"Longer files consume more context and reduce adherence."},
+    {k:"B", text:"Files over 1,000 lines are truncated at load."},
+    {k:"C", text:"Instructions past the first 200 lines are ignored."},
+    {k:"D", text:"Long files are summarised before being injected."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The guidance is to target under about 200 lines precisely because a large instruction file competes with the work for attention. Nothing is dropped; it simply lands less reliably.",
+    distractors:{
+      C:"There is no 200-line cutoff for CLAUDE.md; that figure is a target for adherence, and the 200-line limit belongs to the auto-memory index.",
+      B:"Truncation applies only far above this size, at several megabytes.",
+      D:"CLAUDE.md is injected as written rather than summarised."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-i", domain:3, ts:"3.1", scenario:2, type:"single",
+  stem:"You want personal project preferences that are not shared with the team but apply to this repository only. Where do they belong?",
+  options:[
+    {k:"A", text:"`CLAUDE.local.md` at the project root, gitignored."},
+    {k:"B", text:"`~/.claude/CLAUDE.md`, which is personal."},
+    {k:"C", text:"`.claude/CLAUDE.md`, which is project-scoped."},
+    {k:"D", text:"A `personal` section inside the committed CLAUDE.md."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The local file is designed for exactly this: personal, project-specific, and kept out of version control alongside the shared file.",
+    distractors:{
+      B:"User-level configuration is personal but applies to every project, not just this one.",
+      C:"Anything in `.claude/CLAUDE.md` is committed and reaches the whole team.",
+      D:"A section inside a committed file is still committed, whatever it is labelled."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-j", domain:3, ts:"3.1", scenario:4, type:"single",
+  stem:"A developer adds `@../shared/standards.md` to their project CLAUDE.md and is prompted to approve it. Why?",
+  options:[
+    {k:"A", text:"The import resolves outside the working directory."},
+    {k:"B", text:"Imports always require approval on first use."},
+    {k:"C", text:"Relative imports are disallowed and must be made absolute."},
+    {k:"D", text:"The imported file exceeds the size allowed without confirmation."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"An import in a committed project file that points outside the working directory could pull in content the repository does not control, so it is surfaced for a decision the first time.",
+    distractors:{
+      B:"Imports resolving inside the project load without prompting.",
+      C:"Relative paths are supported and resolve against the file containing them.",
+      D:"Size is not what triggers the prompt; location is."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-k", domain:3, ts:"3.1", scenario:3, type:"single",
+  stem:"A team splits a large CLAUDE.md into five files and imports all five with `@`. Context usage is unchanged. Were they misled?",
+  options:[
+    {k:"A", text:"No: imports aid organisation, and all five still load at launch."},
+    {k:"B", text:"Yes: imports should have reduced usage by roughly the split ratio."},
+    {k:"C", text:"Yes: imported files load only when referenced in conversation."},
+    {k:"D", text:"No: imports increase usage because each file adds a header."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Imports are expanded at launch, so the same content enters context in a tidier arrangement. Reducing what loads requires path-scoped rules, not imports.",
+    distractors:{
+      B:"No reduction is expected, which is exactly the misunderstanding to correct.",
+      C:"Imports are not lazy; they expand when the containing file loads.",
+      D:"There is no per-file header overhead of any consequence."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-l", domain:3, ts:"3.1", scenario:5, type:"single",
+  stem:"A CI run needs project conventions but starts a fresh session each time with no conversation history. Where should those conventions live?",
+  options:[
+    {k:"A", text:"In the project CLAUDE.md, which loads on every session."},
+    {k:"B", text:"In a skill the pipeline invokes before the review step."},
+    {k:"C", text:"In the prompt string passed to each CI invocation."},
+    {k:"D", text:"In auto memory, which persists across sessions."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"CLAUDE.md is committed with the code and loads at the start of every session, so a fresh CI run picks it up without any extra step.",
+    distractors:{
+      C:"Inlining conventions into the prompt works but duplicates them in pipeline configuration, where they drift from the repository.",
+      B:"A skill must be invoked and is better suited to a specific procedure than to always-on standards.",
+      D:"Auto memory is machine-local and would not survive an ephemeral CI runner."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-m", domain:3, ts:"3.1", scenario:1, type:"single",
+  stem:"An instruction in CLAUDE.md is followed in most sessions but not all. The team wants certainty. What should they be told?",
+  options:[
+    {k:"A", text:"Use a hook; CLAUDE.md is context, not enforcement."},
+    {k:"B", text:"Move it to the top of the file, where adherence is highest."},
+    {k:"C", text:"Repeat it in a subdirectory CLAUDE.md for reinforcement."},
+    {k:"D", text:"Rephrase it as a numbered rule, which is followed more reliably."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The documentation is explicit that CLAUDE.md shapes behaviour without guaranteeing it. Anything that must happen at a specific point belongs in a hook.",
+    distractors:{
+      B:"Position helps at the margin and is worth doing, but it does not convert guidance into a guarantee.",
+      C:"Repetition raises salience and consumes more context, with the same probabilistic outcome.",
+      D:"Formatting affects clarity rather than bindingness."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-n", domain:3, ts:"3.1", scenario:4, type:"single",
+  stem:"In a large monorepo, another team's CLAUDE.md keeps getting picked up because it sits in a parent directory. What addresses this?",
+  options:[
+    {k:"A", text:"Exclude it by path in local settings."},
+    {k:"B", text:"Move your project higher in the tree than theirs."},
+    {k:"C", text:"Add a directive at the top of your file overriding theirs."},
+    {k:"D", text:"Delete the parent file, since it applies to no one."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Exclusion by path or glob is provided for exactly this monorepo case, and keeping it in local settings means the choice affects only your machine.",
+    distractors:{
+      B:"Restructuring the repository to change instruction inheritance is a large change for a configuration problem.",
+      C:"There is no override directive; files are concatenated rather than ranked.",
+      D:"The parent file belongs to another team and presumably applies to them."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-o", domain:3, ts:"3.1", scenario:6, type:"multi",
+  stem:"Which two locations hold instructions that are shared with teammates through version control? (Select 2.)",
+  options:[
+    {k:"A", text:"`./CLAUDE.md` at the project root."},
+    {k:"B", text:"`.claude/rules/testing.md` in the project."},
+    {k:"C", text:"`~/.claude/CLAUDE.md`."},
+    {k:"D", text:"`./CLAUDE.local.md`."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"Both live inside the repository and are committed, so anyone cloning it receives them.",
+    distractors:{
+      C:"User-level configuration sits in the home directory and is never committed.",
+      D:"The local file is intended to be gitignored precisely so it stays personal."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-p", domain:3, ts:"3.1", scenario:4, type:"single",
+  stem:"After running `/compact`, a developer notices an instruction they gave in conversation is no longer being followed, while CLAUDE.md rules still are. Why?",
+  options:[
+    {k:"A", text:"Project CLAUDE.md is re-injected after compaction; conversation is not."},
+    {k:"B", text:"Compaction removes the most recent turns first."},
+    {k:"C", text:"Conversation instructions expire after a fixed number of turns."},
+    {k:"D", text:"CLAUDE.md is exempt because it is loaded as a system prompt."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The root project file is re-read from disk and re-injected after compaction, so it survives. Anything said only in conversation is subject to summarisation like the rest of the history.",
+    distractors:{
+      B:"Compaction condenses older content; recent turns are the most likely to survive intact.",
+      C:"There is no turn-count expiry on instructions.",
+      D:"CLAUDE.md is delivered as a user message after the system prompt, not as part of it."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-q", domain:3, ts:"3.1", scenario:1, type:"single",
+  stem:"Which command shows which memory files actually loaded into the current session?",
+  options:[
+    {k:"A", text:"`/context`"},
+    {k:"B", text:"`/memory`"},
+    {k:"C", text:"`/status`"},
+    {k:"D", text:"`/init`"}
+  ],
+  correct:["A"],
+  explain:{
+    why:"`/context` reports what is in the current session, including a memory files section, which is what answers 'did it load?'.",
+    distractors:{
+      B:"`/memory` lists and opens memory file locations and toggles auto memory, which is adjacent but not the same question.",
+      C:"`/status` is not the documented command for inspecting loaded memory.",
+      D:"`/init` generates a starting CLAUDE.md rather than reporting on one."
+    }
+  },
+  note:"Note the split against the exam guide, which names `/memory` for verifying loaded files. On the exam answer `/memory`; in current Claude Code, `/memory` lists locations and `/context` shows what actually loaded.",
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-r", domain:3, ts:"3.1", scenario:4, type:"single",
+  stem:"A repository already uses `AGENTS.md` for another coding agent. The team wants both tools to read the same instructions. What is the recommended approach?",
+  options:[
+    {k:"A", text:"Create a CLAUDE.md that imports `AGENTS.md`."},
+    {k:"B", text:"Rename `AGENTS.md` to `CLAUDE.md` and update the other tool."},
+    {k:"C", text:"Maintain both files and keep them in sync manually."},
+    {k:"D", text:"Configure Claude Code to read `AGENTS.md` directly."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"An import keeps one source of truth while letting Claude-specific guidance be appended below it, and both tools keep reading the file they expect.",
+    distractors:{
+      C:"Manual synchronisation of two instruction files is exactly the drift this avoids.",
+      B:"Renaming breaks the other tool unless it is reconfigured, which may not be within your control.",
+      D:"Claude Code reads CLAUDE.md; it does not have a setting to read AGENTS.md instead."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-s", domain:3, ts:"3.1", scenario:6, type:"single",
+  stem:"An organisation wants a coding standard that individual projects cannot switch off. Where should it go?",
+  options:[
+    {k:"A", text:"The managed policy CLAUDE.md location."},
+    {k:"B", text:"A project CLAUDE.md committed to every repository."},
+    {k:"C", text:"Each developer's `~/.claude/CLAUDE.md`."},
+    {k:"D", text:"A `.claude/rules/` file with no `paths` frontmatter."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Managed policy is deployed centrally and cannot be excluded by individual settings, which is what 'cannot be switched off' requires.",
+    distractors:{
+      B:"A committed project file can be edited by anyone with repository access.",
+      C:"User-level files are personal and easily changed or removed.",
+      D:"An unconditional rule still lives in the repository and can be deleted."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.1-t", domain:3, ts:"3.1", scenario:4, type:"single",
+  stem:"Two CLAUDE.md files give different indentation rules. What actually happens?",
+  options:[
+    {k:"A", text:"Both load and one is followed arbitrarily."},
+    {k:"B", text:"The more specific file wins deterministically."},
+    {k:"C", text:"Claude reports the conflict and asks which to apply."},
+    {k:"D", text:"Neither is applied, since the instruction is ambiguous."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Contradictory instructions both enter context and one may be picked arbitrarily, which is why periodically auditing for conflicts across levels is recommended.",
+    distractors:{
+      B:"Ordering affects reading position rather than establishing precedence between conflicting claims.",
+      C:"No conflict detection or prompt exists.",
+      D:"Both instructions are present and one will be followed, rather than the topic being skipped."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.2-g", domain:3, ts:"3.2", scenario:2, type:"single",
+  stem:"A skill runs a codebase survey and returns a two-line summary, but the main conversation afterwards is full of its intermediate output. Which frontmatter option prevents that?",
+  options:[
+    {k:"A", text:"`context: fork`"},
+    {k:"B", text:"`allowed-tools`"},
+    {k:"C", text:"`disable-model-invocation`"},
+    {k:"D", text:"`argument-hint`"}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Forking runs the skill in an isolated subagent with its own window, so only the result returns and the survey output never enters the main conversation.",
+    distractors:{
+      B:"Tool restrictions bound what the skill may do; read-only tools can still emit thousands of lines.",
+      C:"That governs whether the model may invoke the skill, not where its output lands.",
+      D:"An autocomplete hint has no effect on execution."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-h", domain:3, ts:"3.2", scenario:2, type:"single",
+  stem:"You want a slash command available to every developer on the team without them configuring anything. Where does it go?",
+  options:[
+    {k:"A", text:"`.claude/commands/` in the repository."},
+    {k:"B", text:"`~/.claude/commands/` on each machine."},
+    {k:"C", text:"A `commands` block in `.claude/settings.json`."},
+    {k:"D", text:"A section in the project CLAUDE.md."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Project-scoped commands are committed with the code, so cloning or pulling the repository is all a developer has to do.",
+    distractors:{
+      B:"Home-directory commands are personal and would need setting up on every machine.",
+      C:"Commands are files rather than settings entries.",
+      D:"CLAUDE.md carries instructions, not command definitions."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-i", domain:3, ts:"3.2", scenario:2, type:"single",
+  stem:"A skill should never be able to delete files, whatever the model decides mid-run. Which field enforces that?",
+  options:[
+    {k:"A", text:"`allowed-tools`, omitting anything that can delete."},
+    {k:"B", text:"`description`, stating that deletion is out of scope."},
+    {k:"C", text:"`context: fork`, isolating any damage to the subagent."},
+    {k:"D", text:"`model`, choosing one less prone to destructive actions."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Restricting the tool list removes the capability for the duration of the skill, so nothing depends on the model's judgement.",
+    distractors:{
+      C:"Forking isolates context, not filesystem effects; a forked subagent with Bash deletes real files.",
+      B:"A description guides selection and behaviour without constraining what may be called.",
+      D:"Model choice shifts probabilities and provides no guarantee."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-j", domain:3, ts:"3.2", scenario:3, type:"single",
+  stem:"When is a skill the wrong mechanism, and CLAUDE.md the right one?",
+  options:[
+    {k:"A", text:"When it must apply in every session."},
+    {k:"B", text:"When the procedure has more than five steps."},
+    {k:"C", text:"When the workflow needs restricted tool access."},
+    {k:"D", text:"When the output would be verbose."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Skills load on invocation; CLAUDE.md loads every session. Always-on standards therefore belong in the instruction file.",
+    distractors:{
+      B:"Step count is a poor criterion, and a long procedure is a strong argument for a skill rather than against one.",
+      C:"Tool restriction is a skill capability, so this argues for a skill.",
+      D:"Verbose output argues for a forked skill, again not for CLAUDE.md."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-k", domain:3, ts:"3.2", scenario:2, type:"single",
+  stem:"A developer wants a personal variant of a shared team skill, with different defaults. What is the least disruptive approach?",
+  options:[
+    {k:"A", text:"A differently named skill in their user directory."},
+    {k:"B", text:"An identically named skill in their user directory to shadow the shared one."},
+    {k:"C", text:"A parameter added to the shared skill selecting between behaviours."},
+    {k:"D", text:"A branch of the repository with the skill modified."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A distinct name in personal configuration gives them the variant with no possibility of affecting teammates and nothing to coordinate.",
+    distractors:{
+      B:"Shadowing by name is confusing when discussing the skill with colleagues, since the same invocation does different things per machine.",
+      C:"Adding a parameter for one person's preference complicates a shared asset everyone must now understand.",
+      D:"A long-lived branch for a personal preference is a maintenance burden and drifts from main."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-l", domain:3, ts:"3.2", scenario:1, type:"single",
+  stem:"What does `argument-hint` actually do?",
+  options:[
+    {k:"A", text:"Shows an autocomplete hint; it does not enforce anything."},
+    {k:"B", text:"Rejects invocations that omit the named arguments."},
+    {k:"C", text:"Supplies default values when arguments are missing."},
+    {k:"D", text:"Validates argument types before the skill runs."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"It is display-only, appearing in the slash-command menu to tell the developer what the skill expects. Nothing is parsed or enforced from it.",
+    distractors:{
+      B:"No rejection occurs; the skill runs with whatever it was given.",
+      C:"It supplies no values, only a prompt to the human.",
+      D:"There is no type validation associated with the field."
+    }
+  },
+  note:"`argument-hint` is a Claude Code extension rather than part of the base Agent Skills specification, which lists only `allowed-tools`, `compatibility`, `description`, `license`, `metadata` and `name`.",
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-m", domain:3, ts:"3.2", scenario:4, type:"single",
+  stem:"A brainstorming skill explores several designs and discards most. Afterwards the main session keeps referring to rejected options. What would prevent this?",
+  options:[
+    {k:"A", text:"Running it forked, so only the chosen design returns."},
+    {k:"B", text:"Instructing the skill to state clearly which options it rejected."},
+    {k:"C", text:"Running `/compact` after the skill completes."},
+    {k:"D", text:"Restricting the skill's tools so it explores fewer options."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Exploratory reasoning is exactly the kind of output that should not persist. Forking keeps it in the subagent and returns only the conclusion.",
+    distractors:{
+      B:"Explicit rejections still leave the rejected material in context, where it continues to influence later answers.",
+      C:"Compaction shrinks the transcript but keeps a summarised trace of the discarded options.",
+      D:"Exploring fewer options makes the brainstorm worse to solve a context problem."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-n", domain:3, ts:"3.2", scenario:2, type:"single",
+  stem:"A team keeps a long deployment runbook in CLAUDE.md. It is used roughly once a fortnight. What is the better home for it?",
+  options:[
+    {k:"A", text:"A skill, invoked when a deployment is happening."},
+    {k:"B", text:"A `.claude/rules/` file with no path scoping."},
+    {k:"C", text:"A subdirectory CLAUDE.md under the deployment folder."},
+    {k:"D", text:"Left where it is, since deployments are important."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A multi-step procedure needed occasionally is the textbook case for a skill: it loads when invoked and costs nothing on the many sessions that never deploy.",
+    distractors:{
+      C:"A subdirectory file is better than the root, but it still loads whenever anyone touches that directory for unrelated reasons.",
+      B:"An unscoped rule loads every session, which is the cost being avoided.",
+      D:"Importance is not the criterion; frequency of relevance is."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-o", domain:3, ts:"3.2", scenario:3, type:"multi",
+  stem:"Which two are genuine effects of `context: fork` on a skill? (Select 2.)",
+  options:[
+    {k:"A", text:"The skill runs with a fresh context window."},
+    {k:"B", text:"Its intermediate output stays out of the main conversation."},
+    {k:"C", text:"Its file writes are rolled back when it completes."},
+    {k:"D", text:"It gains access to tools the main session lacks."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"Forking is a context mechanism: the skill executes in an isolated subagent and only its result comes back, which is what keeps verbose work from polluting the session.",
+    distractors:{
+      C:"Filesystem effects are real and permanent; forking isolates context, not side effects.",
+      D:"Tool access comes from configuration and `allowed-tools`, not from where the skill runs."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-p", domain:3, ts:"3.2", scenario:5, type:"single",
+  stem:"A CI pipeline needs a repeatable review procedure with restricted tools. Which mechanism fits best?",
+  options:[
+    {k:"A", text:"A project skill with `allowed-tools` set."},
+    {k:"B", text:"A CLAUDE.md section describing the procedure."},
+    {k:"C", text:"A shell script that pipes instructions into the prompt."},
+    {k:"D", text:"A user-level command on the CI runner."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A skill packages the procedure with its tool restrictions, is committed with the repository, and can be invoked identically by CI and by developers.",
+    distractors:{
+      C:"Piping instructions works but loses the tool restriction and duplicates the procedure outside the repository.",
+      B:"CLAUDE.md cannot restrict tools and would load the procedure into every session.",
+      D:"A runner-local command is invisible to developers and lost when the runner is recreated."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-q", domain:3, ts:"3.2", scenario:1, type:"single",
+  stem:"What distinguishes a skill from a slash command in practice?",
+  options:[
+    {k:"A", text:"Frontmatter controlling tools, model and execution context."},
+    {k:"B", text:"A skill can be invoked by the model; a command cannot."},
+    {k:"C", text:"A command is project-scoped; a skill is always personal."},
+    {k:"D", text:"A command may take arguments; a skill may not."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The frontmatter is the substantive difference: it lets a skill declare tool restrictions, a model, and whether to run forked.",
+    distractors:{
+      C:"Both can be project-scoped or personal depending on where the file lives.",
+      B:"Both can be invoked by name, and skills can additionally be selected by the model.",
+      D:"Both accept arguments."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-r", domain:3, ts:"3.2", scenario:2, type:"single",
+  stem:"A skill's description reads 'Helps with database work.' It is invoked for migrations, query tuning and schema review, performing poorly at all three. What is the fix?",
+  options:[
+    {k:"A", text:"Split it into three skills with specific descriptions."},
+    {k:"B", text:"Expand the single skill to handle all three well."},
+    {k:"C", text:"Add `disable-model-invocation` so it is only used deliberately."},
+    {k:"D", text:"Restrict its tools to database operations."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Three different procedures under one vague description means the wrong one runs. Separate skills give each a description precise enough to be selected correctly.",
+    distractors:{
+      B:"One skill covering three procedures is long, and the model still has to work out which part applies.",
+      C:"Manual invocation stops accidental selection while leaving the developer to pick among three behaviours in one skill.",
+      D:"Tool restriction bounds what it may do without clarifying which job it is doing."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-s", domain:3, ts:"3.2", scenario:4, type:"single",
+  stem:"After adding twelve skills, developers report that unexpected ones activate. What is the most likely cause?",
+  options:[
+    {k:"A", text:"Overlapping descriptions make the model's choice ambiguous."},
+    {k:"B", text:"Skills beyond ten are selected at random."},
+    {k:"C", text:"Skills without `argument-hint` default to always-on."},
+    {k:"D", text:"Project skills override user skills, changing behaviour."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Skill selection is driven by descriptions in the same way tool selection is. Twelve overlapping descriptions make the choice ambiguous, and the symptom is skills firing when a neighbour was meant.",
+    distractors:{
+      B:"There is no such threshold or randomisation.",
+      C:"The hint is display-only and does not affect activation.",
+      D:"Precedence between scopes does not by itself cause unexpected activation."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.2-t", domain:3, ts:"3.2", scenario:6, type:"single",
+  stem:"Which statement about where skills live is correct?",
+  options:[
+    {k:"A", text:"`.claude/skills/` is shared; `~/.claude/skills/` is personal."},
+    {k:"B", text:"Both locations are personal; skills are never shared."},
+    {k:"C", text:"Skills must live in `~/.claude/skills/` and be symlinked into projects."},
+    {k:"D", text:"Skills are declared in settings rather than as files."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The project directory is committed and reaches the team; the home directory is private to one machine. That mirrors how commands are scoped.",
+    distractors:{
+      B:"Project skills are shared, which is much of their value.",
+      C:"Project skills live in the repository directly; no symlink is required.",
+      D:"Skills are directories containing a SKILL.md, not settings entries."
+    }
+  },
+  refs:[R_SKILL] },
+
+{ id:"d3-3.3-g", domain:3, ts:"3.3", scenario:2, type:"single",
+  stem:"A rule in `.claude/rules/` has `paths: [\"src/api/**/*.ts\"]`. When does it load?",
+  options:[
+    {k:"A", text:"When Claude reads a file matching that pattern."},
+    {k:"B", text:"At launch, like every other rule file."},
+    {k:"C", text:"When any tool call is made inside `src/api/`."},
+    {k:"D", text:"When the user mentions the API in conversation."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Path-scoped rules trigger on reading a matching file, which is what keeps unrelated conventions out of context in sessions that never touch that area.",
+    distractors:{
+      B:"Only rules without a `paths` field load unconditionally at launch.",
+      C:"It is reading a matching file that triggers loading, rather than tool use generally.",
+      D:"Loading is driven by file paths, not by conversation topic."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-h", domain:3, ts:"3.3", scenario:4, type:"single",
+  stem:"You need one rule to cover `.ts`, `.tsx` and `.mts` under `src/`. Which frontmatter is correct?",
+  options:[
+    {k:"A", text:"`paths: [\"src/**/*.{ts,tsx,mts}\"]`"},
+    {k:"B", text:"`paths: \"src/**/*.ts,tsx,mts\"`"},
+    {k:"C", text:"`paths: [\"src/**/*.(ts|tsx|mts)\"]`"},
+    {k:"D", text:"`paths: [\"src/**/*.ts*\"]`"}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Brace expansion is the supported way to match several extensions in one glob, and the field takes a list.",
+    distractors:{
+      D:"A trailing wildcard would also match unintended extensions such as `.tsbuildinfo`.",
+      C:"Parenthesised alternation is regular-expression syntax rather than glob syntax.",
+      B:"The field expects a list, and comma-separated extensions in one string is not a glob."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-i", domain:3, ts:"3.3", scenario:2, type:"single",
+  stem:"Conventions for database migrations need to apply wherever migration files live, and they are scattered across several service directories. Which mechanism fits?",
+  options:[
+    {k:"A", text:"A path-scoped rule on the migration filename."},
+    {k:"B", text:"A CLAUDE.md in each service's migrations folder."},
+    {k:"C", text:"A section in the root CLAUDE.md."},
+    {k:"D", text:"A skill invoked before writing a migration."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A glob follows the file type wherever it lives, which is exactly the case that directory-bound files handle badly.",
+    distractors:{
+      B:"One file per service duplicates the same conventions and drifts as services are added.",
+      C:"A root section loads in every session regardless of relevance and relies on inference.",
+      D:"A skill must be invoked, so a migration written without invoking it gets no conventions."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-j", domain:3, ts:"3.3", scenario:4, type:"single",
+  stem:"A team notices their `paths` glob starting with `**` is not matching. What is the likely YAML problem?",
+  options:[
+    {k:"A", text:"It needs quoting in YAML."},
+    {k:"B", text:"`**` is unsupported and must be written as `*/*`."},
+    {k:"C", text:"Globs must be absolute paths from the repository root."},
+    {k:"D", text:"The field must be a string rather than a list."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A YAML scalar beginning with `*` is parsed as an alias, so a pattern starting with `**` has to be quoted to be read as text.",
+    distractors:{
+      B:"`**` is supported and is what crosses directory levels.",
+      C:"Patterns are relative to the project and need not be absolute.",
+      D:"The field takes a list of patterns."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-k", domain:3, ts:"3.3", scenario:1, type:"single",
+  stem:"What is the practical difference between a rule with `paths` and one without?",
+  options:[
+    {k:"A", text:"Without `paths` it always loads; with it, only on matching reads."},
+    {k:"B", text:"Without `paths` it never loads; the field is required."},
+    {k:"C", text:"Without `paths` it applies only to the rules directory itself."},
+    {k:"D", text:"Without `paths` it is treated as documentation and ignored."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The field is what makes a rule conditional. Omitting it gives an unconditional rule loaded at launch, at the same priority as the project CLAUDE.md.",
+    distractors:{
+      B:"Absence of the field means always rather than never.",
+      C:"Rules are not scoped to their own directory.",
+      D:"Unconditional rules are loaded and applied, not ignored."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-l", domain:3, ts:"3.3", scenario:4, type:"single",
+  stem:"A team wants one shared set of security rules used across several repositories. What does the rules directory support?",
+  options:[
+    {k:"A", text:"Symlinking a shared directory or file into `.claude/rules/`."},
+    {k:"B", text:"An `extends` field referencing a remote rules package."},
+    {k:"C", text:"A URL in the `paths` field pointing at shared rules."},
+    {k:"D", text:"Nothing; rules must be copied into each repository."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Symlinks are resolved and loaded normally, so a single maintained rules directory can be linked into many projects.",
+    distractors:{
+      B:"There is no `extends` mechanism for rules.",
+      C:"`paths` holds file globs, not URLs.",
+      D:"Copying works but is what the symlink support exists to avoid."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-m", domain:3, ts:"3.3", scenario:3, type:"single",
+  stem:"Which is the strongest argument for path-scoped rules over one large CLAUDE.md?",
+  options:[
+    {k:"A", text:"Irrelevant conventions never enter context."},
+    {k:"B", text:"Rules are enforced, whereas CLAUDE.md is advisory."},
+    {k:"C", text:"Rules can restrict which tools are available."},
+    {k:"D", text:"Rules survive compaction while CLAUDE.md does not."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Conditional loading is the point. A session that never touches Terraform never pays for the Terraform conventions, leaving more of the window for the work.",
+    distractors:{
+      B:"Both are context and neither is enforced; a hook is what enforces.",
+      D:"Project CLAUDE.md is re-injected after compaction, so this has it backwards.",
+      C:"Tool restriction is a skill capability, not a rules one."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-n", domain:3, ts:"3.3", scenario:3, type:"single",
+  stem:"An unconditional rule and the project CLAUDE.md give conflicting advice. Which takes precedence?",
+  options:[
+    {k:"A", text:"Neither; they load at equal priority."},
+    {k:"B", text:"The rule, since `.claude/rules/` is more specific."},
+    {k:"C", text:"CLAUDE.md, since it is the primary instruction file."},
+    {k:"D", text:"Whichever file was modified most recently."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Rules without `paths` load at the same priority as the project CLAUDE.md, so a contradiction between them has no defined winner and should be removed at source.",
+    distractors:{
+      B:"Being in the rules directory does not confer precedence when the rule is unconditional.",
+      C:"CLAUDE.md has no special standing over an unconditional rule.",
+      D:"Modification time plays no part in instruction precedence."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-o", domain:3, ts:"3.3", scenario:6, type:"multi",
+  stem:"Which two conventions are best expressed as path-scoped rules? (Select 2.)",
+  options:[
+    {k:"A", text:"Test file conventions, where tests sit beside the code they cover."},
+    {k:"B", text:"Terraform standards, where `.tf` files appear under several services."},
+    {k:"C", text:"The project's build and test commands."},
+    {k:"D", text:"The team's code review etiquette."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"Both attach to a file type that appears across many directories, which is precisely where a glob beats a directory-bound file.",
+    distractors:{
+      C:"Build commands are needed in every session regardless of which files are open, so they belong in CLAUDE.md.",
+      D:"Review etiquette is not tied to any file pattern."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-p", domain:3, ts:"3.3", scenario:4, type:"single",
+  stem:"A rule's `paths` list contains one invalid pattern alongside three valid ones. What happens?",
+  options:[
+    {k:"A", text:"The invalid pattern matches nothing; the others keep working."},
+    {k:"B", text:"The whole rule is skipped."},
+    {k:"C", text:"Claude Code fails to start until it is corrected."},
+    {k:"D", text:"The invalid pattern is treated as matching everything."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"An unparseable pattern simply matches nothing, and the rule's remaining patterns continue to function, so a typo degrades coverage rather than breaking the session.",
+    distractors:{
+      B:"The rule remains active through its valid patterns.",
+      C:"Startup is not blocked by a bad glob.",
+      D:"Matching everything would be the dangerous failure mode; it does the opposite."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-q", domain:3, ts:"3.3", scenario:5, type:"single",
+  stem:"A CI job edits only Terraform files. Which rules load?",
+  options:[
+    {k:"A", text:"Unconditional rules, plus any whose `paths` match those files."},
+    {k:"B", text:"All rules in the directory, since CI loads everything."},
+    {k:"C", text:"Only rules whose `paths` match; unconditional ones are skipped."},
+    {k:"D", text:"No rules, since CI runs non-interactively."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Unconditional rules always load, and path-scoped ones load when a matching file is read. CI behaves the same way as an interactive session in this respect.",
+    distractors:{
+      C:"Unconditional rules are not skipped; absence of `paths` means always.",
+      B:"Rules for unrelated file types do not load just because the run is automated.",
+      D:"Non-interactive mode does not disable rule loading."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-r", domain:3, ts:"3.3", scenario:2, type:"single",
+  stem:"A developer puts a rules file in `~/.claude/rules/` expecting the team to get it. What is wrong?",
+  options:[
+    {k:"A", text:"User-level rules are personal and are not shared."},
+    {k:"B", text:"User-level rules are unsupported and never load."},
+    {k:"C", text:"User-level rules load only in projects without their own rules."},
+    {k:"D", text:"User-level rules require a matching project rule to activate."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Rules in the home directory apply to every project on that machine and are never committed, so nobody else receives them.",
+    distractors:{
+      B:"They are supported and load before project rules.",
+      C:"They load regardless of what the project defines.",
+      D:"No pairing with a project rule is needed."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-s", domain:3, ts:"3.3", scenario:4, type:"single",
+  stem:"Why might a path-scoped rule be preferable to a subdirectory CLAUDE.md even when the files are all in one directory today?",
+  options:[
+    {k:"A", text:"The rule keeps working when the files move or spread."},
+    {k:"B", text:"Rules load faster than CLAUDE.md files."},
+    {k:"C", text:"Rules can be excluded per developer; CLAUDE.md cannot."},
+    {k:"D", text:"Rules take precedence over any CLAUDE.md."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A pattern follows the file type, so reorganising directories or adding a second location does not silently drop the conventions.",
+    distractors:{
+      B:"Load performance is not a meaningful difference between them.",
+      C:"Both can be excluded through settings.",
+      D:"An unconditional rule sits at the same priority as the project CLAUDE.md rather than above it."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.3-t", domain:3, ts:"3.3", scenario:6, type:"single",
+  stem:"A team asks whether to use `.claude/rules/` or skills for their per-language style guides. Which consideration decides it?",
+  options:[
+    {k:"A", text:"Whether it should apply automatically or on request."},
+    {k:"B", text:"Whether the guidance exceeds 200 lines."},
+    {k:"C", text:"Whether the languages are compiled or interpreted."},
+    {k:"D", text:"Whether the team uses a monorepo."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Rules load by themselves when a matching file is touched; skills wait to be invoked. Style guides should apply whenever the file type is being edited, which points to rules.",
+    distractors:{
+      B:"Length affects how you organise the content rather than which mechanism applies it.",
+      C:"Language implementation has no bearing on the loading mechanism.",
+      D:"Repository layout matters for path patterns but does not decide between the two."
+    }
+  },
+  refs:[R_MEM] },
+
+/* ---- Domain 3 expansion: task statements 3.4, 3.5 and 3.6 ---- */
+
+{ id:"d3-3.4-g", domain:3, ts:"3.4", scenario:2, type:"single",
+  stem:"A ticket reads: 'Add a null check to `formatDate` so it returns an empty string for null input.' Which mode fits?",
+  options:[
+    {k:"A", text:"Direct execution."},
+    {k:"B", text:"Plan mode, to check every caller first."},
+    {k:"C", text:"Plan mode, since date handling is subtle."},
+    {k:"D", text:"Direct execution, after an Explore subagent maps the callers."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The change is one conditional in one function, the desired behaviour is stated, and there is no competing approach. That is the canonical direct-execution case.",
+    distractors:{
+      B:"Checking callers is prudent in general, but the specified behaviour is a safe default that does not change existing non-null results.",
+      C:"Date handling can be subtle, though the subtlety here is already resolved by the ticket saying what null should produce.",
+      D:"An exploration pass before a one-line change costs more than the change itself."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.4-h", domain:3, ts:"3.4", scenario:4, type:"single",
+  stem:"You must choose between two authentication libraries with different session models, affecting roughly 30 files. Which approach fits?",
+  options:[
+    {k:"A", text:"Plan mode, since two viable approaches differ architecturally."},
+    {k:"B", text:"Direct execution with the more popular library."},
+    {k:"C", text:"Direct execution of both, then keep whichever is cleaner."},
+    {k:"D", text:"Plan mode only if the first attempt runs into trouble."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Two defensible options with different downstream consequences is exactly what planning is for. The cost of choosing wrong is 30 files of rework.",
+    distractors:{
+      B:"Popularity is a weak proxy for fit, and the session models are what actually differ.",
+      C:"Implementing both is a genuine spike technique, but at 30 files each it is far more expensive than comparing designs first.",
+      D:"The difficulty is stated in the requirement rather than something that might emerge later."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.4-i", domain:3, ts:"3.4", scenario:4, type:"single",
+  stem:"A discovery phase produces thousands of lines of search output, and by implementation the agent has lost earlier decisions. What addresses this?",
+  options:[
+    {k:"A", text:"Run discovery in an Explore subagent and return a summary."},
+    {k:"B", text:"Increase the context window for the whole session."},
+    {k:"C", text:"Run `/compact` between the phases."},
+    {k:"D", text:"Repeat the decisions in the implementation prompt."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Isolating discovery keeps the verbose output out of the main window entirely, so the conversation retains the decisions rather than the search transcripts.",
+    distractors:{
+      C:"Compaction reclaims room after the output has already displaced the decisions, and summarises lossily.",
+      B:"A bigger window holds more search output alongside the decisions rather than separating them.",
+      D:"Restating decisions helps but treats the symptom while the transcripts keep accumulating."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.4-j", domain:3, ts:"3.4", scenario:1, type:"single",
+  stem:"What does plan mode chiefly protect against?",
+  options:[
+    {k:"A", text:"Committing to a structure too early."},
+    {k:"B", text:"Writing code that fails to compile."},
+    {k:"C", text:"Exceeding the session's token budget."},
+    {k:"D", text:"Editing files outside the repository."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"It allows exploration and design while changing nothing, so a wrong structural assumption is discovered when correcting it is still cheap.",
+    distractors:{
+      B:"Compilation errors are caught by building and are not what planning addresses.",
+      C:"Exploration during planning consumes tokens like any other work.",
+      D:"Path restrictions are a permissions concern rather than a mode concern."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.4-k", domain:3, ts:"3.4", scenario:4, type:"single",
+  stem:"A developer stays in plan mode for a mechanical rename across 45 files after the approach is settled. What is the cost?",
+  options:[
+    {k:"A", text:"Ceremony on work whose shape is already known."},
+    {k:"B", text:"Plan mode cannot express multi-file changes."},
+    {k:"C", text:"The plan expires before the edits can be applied."},
+    {k:"D", text:"Plan mode forbids more than ten files per plan."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Once the approach is decided the remaining work is execution. Continuing to plan adds review overhead without reducing any remaining risk.",
+    distractors:{
+      B:"Plans routinely describe multi-file changes.",
+      C:"Plans do not expire.",
+      D:"There is no such file limit."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.4-l", domain:3, ts:"3.4", scenario:2, type:"single",
+  stem:"A bug report includes a stack trace pointing at one line, and the fix is evident from it. A colleague insists on plan mode for all production fixes. What is the strongest counter-argument?",
+  options:[
+    {k:"A", text:"The criterion is ambiguity, not environment."},
+    {k:"B", text:"Plan mode is unavailable for hotfixes."},
+    {k:"C", text:"Production fixes are too urgent to plan."},
+    {k:"D", text:"A stack trace already constitutes a plan."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"What earns planning is competing approaches or a wide blast radius. A localised fix with an evident cause has neither, whatever environment it is destined for.",
+    distractors:{
+      C:"Urgency is a poor reason to skip design on a genuinely ambiguous change, so this proves too much.",
+      B:"Plan mode is available for any change.",
+      D:"A stack trace localises a fault; it does not weigh alternatives or scope."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.4-m", domain:3, ts:"3.4", scenario:4, type:"single",
+  stem:"Which pair of tasks is correctly assigned?",
+  options:[
+    {k:"A", text:"Service extraction to plan mode; a typo fix to direct execution."},
+    {k:"B", text:"A typo fix to plan mode; service extraction to direct execution."},
+    {k:"C", text:"Both to plan mode, for consistency."},
+    {k:"D", text:"Both to direct execution, since planning slows delivery."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Service extraction involves boundary decisions and many files; a typo has one obvious correct outcome. The modes match the risk.",
+    distractors:{
+      B:"Exactly inverted, and the expensive half is the extraction.",
+      C:"Uniform planning adds overhead to trivial work without reducing any risk.",
+      D:"Uniform direct execution commits to a service structure before examining dependencies."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.4-n", domain:3, ts:"3.4", scenario:4, type:"single",
+  stem:"A plan is approved and implementation begins, but a dependency emerges that invalidates part of it. What is the appropriate response?",
+  options:[
+    {k:"A", text:"Return to planning for the affected part, keeping the rest."},
+    {k:"B", text:"Continue as planned and fix the consequences afterwards."},
+    {k:"C", text:"Abandon the plan entirely and restart."},
+    {k:"D", text:"Implement a workaround so the original plan still holds."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Plans are hypotheses about a codebase. New evidence invalidates the part it touches, and re-planning that part is cheaper than either forcing it through or discarding sound work.",
+    distractors:{
+      B:"Proceeding on a known-invalid plan is how expensive rework happens.",
+      C:"Discarding the whole plan throws away the parts the discovery did not affect.",
+      D:"A workaround preserves the plan at the cost of the design it was supposed to produce."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.4-o", domain:3, ts:"3.4", scenario:4, type:"multi",
+  stem:"Which two are appropriate uses of the Explore subagent? (Select 2.)",
+  options:[
+    {k:"A", text:"Locating every file matching several naming conventions."},
+    {k:"B", text:"Mapping how a feature is wired across an unfamiliar service."},
+    {k:"C", text:"Applying a rename across files already identified."},
+    {k:"D", text:"Writing the implementation once the design is agreed."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"Both are broad discovery producing verbose intermediate output where only the conclusion matters, which is what the subagent isolates.",
+    distractors:{
+      C:"Applying a known change to a known list is execution, not discovery.",
+      D:"Implementation belongs in the main session where the decisions live."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.4-p", domain:3, ts:"3.4", scenario:3, type:"single",
+  stem:"A developer says plan mode is unnecessary because they can always undo changes with version control. What does that miss?",
+  options:[
+    {k:"A", text:"Reverting recovers the files but not the time or the reasoning."},
+    {k:"B", text:"Version control cannot revert multi-file changes."},
+    {k:"C", text:"Plan mode commits changes that cannot be reverted."},
+    {k:"D", text:"Reverting requires a clean working tree, which is rare."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Undo restores the code, not the hours spent going the wrong way or the design insight that would have avoided it. Planning is about choosing well, not about recoverability.",
+    distractors:{
+      B:"Multi-file reverts are routine.",
+      C:"Plan mode makes no changes at all, which is its defining property.",
+      D:"A dirty tree complicates reverting but is not the substantive objection."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.4-q", domain:3, ts:"3.4", scenario:5, type:"single",
+  stem:"A CI job runs Claude Code non-interactively to apply a scripted refactor. Is plan mode relevant?",
+  options:[
+    {k:"A", text:"No; the approach is decided and nobody reads the plan."},
+    {k:"B", text:"Yes; every automated change should be planned first."},
+    {k:"C", text:"Yes; plan mode is required for non-interactive runs."},
+    {k:"D", text:"No; plan mode is unavailable outside interactive sessions."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Planning exists to inform a decision. In an unattended run applying a predetermined transformation, there is no decision left and nobody to read the output.",
+    distractors:{
+      B:"Automation is a reason to have decided carefully beforehand, not to plan on every execution.",
+      C:"Nothing requires it, and it would block the job waiting for approval.",
+      D:"Availability is not the point; relevance is, and the decision was made before the run."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d3-3.4-r", domain:3, ts:"3.4", scenario:6, type:"single",
+  stem:"Which signal most strongly indicates a task needs plan mode?",
+  options:[
+    {k:"A", text:"Several defensible approaches with differing costs."},
+    {k:"B", text:"The task will touch more than five files."},
+    {k:"C", text:"The developer is unfamiliar with the language."},
+    {k:"D", text:"The task is expected to take over an hour."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Genuine choice between approaches is where a wrong early commitment is expensive, and where exploring before deciding pays for itself.",
+    distractors:{
+      B:"File count correlates loosely but a mechanical change across twenty files needs no plan.",
+      C:"Unfamiliarity argues for reading and asking questions rather than for a formal plan.",
+      D:"Duration follows from the work rather than from whether the approach is contested."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.4-s", domain:3, ts:"3.4", scenario:4, type:"single",
+  stem:"During planning the agent proposes a design that assumes a caching layer the codebase does not have. What does this indicate about the planning phase?",
+  options:[
+    {k:"A", text:"Exploration was too shallow before the design was drawn."},
+    {k:"B", text:"Plan mode cannot inspect the codebase."},
+    {k:"C", text:"The plan should be implemented and the cache added."},
+    {k:"D", text:"Planning always produces idealised designs."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Planning is exploration followed by design. A design resting on something that does not exist means the exploration did not go far enough to establish what does.",
+    distractors:{
+      C:"Building a caching layer to satisfy a plan inverts the dependency and expands scope considerably.",
+      B:"Reading the codebase is exactly what plan mode is for.",
+      D:"A plan grounded in real exploration describes the codebase as it is."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.4-t", domain:3, ts:"3.4", scenario:4, type:"single",
+  stem:"How do plan mode and direct execution combine on a large migration?",
+  options:[
+    {k:"A", text:"Plan the approach, then execute it directly."},
+    {k:"B", text:"Plan and execute each file in alternation."},
+    {k:"C", text:"Execute first, then plan the remaining files."},
+    {k:"D", text:"They are alternatives and should not be combined."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Uncertainty concentrates in the choice of approach. Resolve that first, then the remaining work is mechanical and suits direct execution.",
+    distractors:{
+      B:"Alternating per file re-opens a decision that was already made once.",
+      C:"Executing before deciding is what planning exists to prevent.",
+      D:"Combining them is the recommended pattern for exactly this shape of work."
+    }
+  },
+  refs:[R_SUB] },
+
+{ id:"d3-3.5-g", domain:3, ts:"3.5", scenario:5, type:"single",
+  stem:"A developer has described a formatting requirement three times in prose and received three different interpretations. What should they try next?",
+  options:[
+    {k:"A", text:"Give two or three input/output examples."},
+    {k:"B", text:"Rewrite the description using more precise terminology."},
+    {k:"C", text:"Break the description into numbered steps."},
+    {k:"D", text:"Ask the model to restate the requirement first."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Three failures is evidence that prose is the wrong medium here. Concrete pairs pin down exactly the edge behaviour the descriptions kept leaving open.",
+    distractors:{
+      D:"Restating surfaces a misunderstanding but does not supply the correct answer.",
+      B:"More precise words is the fourth attempt at the approach that has already failed three times.",
+      C:"Numbering clarifies sequence while leaving each step's edge cases open."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.5-h", domain:3, ts:"3.5", scenario:5, type:"single",
+  stem:"You are about to implement rate limiting in a domain you do not know well. Which technique surfaces considerations you have not thought of?",
+  options:[
+    {k:"A", text:"Have Claude ask you questions before implementing."},
+    {k:"B", text:"Ask for three implementations and compare."},
+    {k:"C", text:"Implement, then review against a checklist."},
+    {k:"D", text:"Supply examples of the behaviour you expect."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The interview pattern inverts the flow: rather than you specifying what you do not know to specify, the model raises burst handling, storage and failure modes as questions before any code exists.",
+    distractors:{
+      B:"Three implementations built on the same incomplete understanding share its blind spots.",
+      C:"Reviewing afterwards catches problems once the design is already in code.",
+      D:"Examples require knowing the expected behaviour, which is the gap."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.5-i", domain:3, ts:"3.5", scenario:6, type:"single",
+  stem:"Four defects are found. Fixing the pagination bug changes what the retry logic must do, and the error handling depends on both. How should they be reported?",
+  options:[
+    {k:"A", text:"Together, because the fixes interact."},
+    {k:"B", text:"One at a time in dependency order."},
+    {k:"C", text:"One at a time in severity order."},
+    {k:"D", text:"Split into two messages by subsystem."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Interacting fixes made one at a time each disturb the last. Reporting them together lets the model design a coherent solution across all four at once.",
+    distractors:{
+      B:"Dependency order is the best of the sequential options, but each fix is still made without sight of the others.",
+      C:"Severity ordering ignores the interaction entirely.",
+      D:"The premise says three of the four interact, so splitting separates dependent fixes."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.5-j", domain:3, ts:"3.5", scenario:6, type:"single",
+  stem:"Which order supports test-driven iteration?",
+  options:[
+    {k:"A", text:"Write the tests first, then iterate on failures."},
+    {k:"B", text:"Implement, then write tests matching the implementation."},
+    {k:"C", text:"Write tests and implementation in a single request."},
+    {k:"D", text:"Write performance tests only, and check correctness by reading."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Tests written first are an executable specification, and each failure is precise, verifiable feedback that drives the next iteration.",
+    distractors:{
+      B:"Tests derived from the implementation encode its bugs as expected behaviour.",
+      C:"Generating both together means the tests inherit whatever misunderstanding shaped the code, so they pass while being wrong.",
+      D:"Performance says nothing about correctness."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.5-k", domain:3, ts:"3.5", scenario:5, type:"single",
+  stem:"A migration script mishandles nulls in one column. What communicates the fix most reliably?",
+  options:[
+    {k:"A", text:"A test case with the null input and expected output."},
+    {k:"B", text:"An instruction to handle nulls correctly."},
+    {k:"C", text:"A request for defensive null checks throughout."},
+    {k:"D", text:"The schema, showing which columns are nullable."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A concrete pair says what correct means here: whether the null should become a default, be skipped, or propagate. That is precisely the ambiguity the instruction leaves open.",
+    distractors:{
+      B:"'Correctly' is the undefined term, so this restates the problem.",
+      C:"Blanket checks add noise everywhere without specifying the intended semantics.",
+      D:"The schema shows which columns can be null, not what should happen when they are."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.5-l", domain:3, ts:"3.5", scenario:5, type:"single",
+  stem:"A CI reviewer's output format varies between runs despite detailed formatting instructions. What is the most effective fix?",
+  options:[
+    {k:"A", text:"Few-shot examples of the exact output shape."},
+    {k:"B", text:"Repeating the format instructions at the end of the prompt."},
+    {k:"C", text:"Raising `max_tokens` so nothing is truncated."},
+    {k:"D", text:"Asking the model to check its formatting before responding."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Demonstration beats description for format. A worked example shows the shape unambiguously in a way that instructions about the shape do not.",
+    distractors:{
+      B:"Repetition raises salience slightly and leaves the description-versus-demonstration gap in place.",
+      C:"Variation is not truncation; fields are being omitted by choice.",
+      D:"Self-checking against the same ambiguous description reproduces the same variance."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.5-m", domain:3, ts:"3.5", scenario:3, type:"single",
+  stem:"When is fixing issues one at a time the better approach?",
+  options:[
+    {k:"A", text:"When the issues are independent."},
+    {k:"B", text:"When there are more than three issues."},
+    {k:"C", text:"When the issues interact."},
+    {k:"D", text:"Always, since smaller changes review more easily."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Independent problems can each be fixed and verified without disturbing the others, which is what makes sequential iteration clean.",
+    distractors:{
+      C:"Interacting issues are the case for a single combined message.",
+      B:"Count is not the criterion; whether the fixes interact is.",
+      D:"For interacting problems, small sequential changes produce churn as each undoes the last."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.5-n", domain:3, ts:"3.5", scenario:1, type:"single",
+  stem:"How many input/output examples does the guidance suggest for clarifying a transformation?",
+  options:[
+    {k:"A", text:"Two or three."},
+    {k:"B", text:"One, to avoid conflicting patterns."},
+    {k:"C", text:"Ten or more, for full coverage."},
+    {k:"D", text:"As many as fit in the context window."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A small number is enough to pin down the transformation, including its edge behaviour, without spending context on redundant demonstrations.",
+    distractors:{
+      B:"One example cannot show a contrast, and contrast is what conveys where the boundary lies.",
+      C:"Ten costs substantial context for diminishing returns.",
+      D:"Filling the window with examples crowds out the work itself."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.5-o", domain:3, ts:"3.5", scenario:4, type:"single",
+  stem:"An agent generates a utility that passes tests but uses an approach the team would reject in review. What would have surfaced this earlier?",
+  options:[
+    {k:"A", text:"Stating the constraints the team cares about upfront."},
+    {k:"B", text:"Writing more tests covering additional inputs."},
+    {k:"C", text:"Asking for a second implementation to compare."},
+    {k:"D", text:"Running the code under a profiler."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Tests encode behaviour, not house preferences about approach. If the team cares about a particular style or dependency policy, that has to be stated or it cannot be satisfied.",
+    distractors:{
+      C:"A second implementation might happen to be acceptable, but the criterion is still unstated so it is a coin flip.",
+      B:"More tests deepen behavioural coverage without expressing a preference about approach.",
+      D:"Profiling measures performance rather than acceptability."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.5-p", domain:3, ts:"3.5", scenario:6, type:"multi",
+  stem:"Which two are effective iterative refinement techniques? (Select 2.)",
+  options:[
+    {k:"A", text:"Sharing specific test failures rather than describing them."},
+    {k:"B", text:"Having the model ask questions before implementing."},
+    {k:"C", text:"Repeating the same instruction with stronger wording."},
+    {k:"D", text:"Raising the temperature to explore alternatives."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"Both replace vague direction with concrete signal: an actual failure says exactly what is wrong, and an interview surfaces requirements before code is written.",
+    distractors:{
+      C:"Emphasis does not add information, so it tends to reproduce the same output.",
+      D:"Higher temperature adds variance rather than insight, and degrades unrelated parts of the output."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.5-q", domain:3, ts:"3.5", scenario:5, type:"single",
+  stem:"A test-generation prompt produces tests for behaviour the team considers not worth testing. What is the most direct fix?",
+  options:[
+    {k:"A", text:"Document what makes a test valuable here."},
+    {k:"B", text:"Request fewer tests per run."},
+    {k:"C", text:"Filter out short tests afterwards."},
+    {k:"D", text:"Use a larger model."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"'Worth testing' is a team judgement the model cannot infer. Writing the criteria down is what lets it prioritise the same way the team would.",
+    distractors:{
+      B:"Fewer tests of the same kind is less noise, not better selection.",
+      C:"Length is a poor proxy for value; some important assertions are short.",
+      D:"A stronger model still has to guess at an unstated standard."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d3-3.5-r", domain:3, ts:"3.5", scenario:5, type:"single",
+  stem:"A developer reports 'this function is too slow' and receives three unrelated optimisations. What was missing?",
+  options:[
+    {k:"A", text:"A measurement of where the time goes."},
+    {k:"B", text:"An instruction to optimise only the hot path."},
+    {k:"C", text:"A larger context window for the analysis."},
+    {k:"D", text:"An example of acceptable performance."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Without a profile, optimisation is guesswork over plausible candidates. A measurement turns it into a targeted change against evidence.",
+    distractors:{
+      D:"A target figure defines success but still does not say which code to change.",
+      B:"Naming the hot path presumes you know which it is, which is what the measurement establishes.",
+      C:"Context capacity is not the limit; evidence is."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.5-s", domain:3, ts:"3.5", scenario:3, type:"single",
+  stem:"Why are concrete examples more effective than prose for communicating a transformation?",
+  options:[
+    {k:"A", text:"They pin down edge behaviour that prose leaves implicit."},
+    {k:"B", text:"They consume fewer tokens than prose."},
+    {k:"C", text:"They are processed before the rest of the prompt."},
+    {k:"D", text:"They cannot be misinterpreted under any circumstances."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A description covers the general case and leaves boundaries to inference. A pair showing what a specific awkward input should produce settles those boundaries directly.",
+    distractors:{
+      B:"Examples often cost more tokens than a sentence; their advantage is precision.",
+      C:"Position in the prompt confers no processing priority.",
+      D:"Examples can still be over- or under-generalised; they are better, not infallible."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.5-t", domain:3, ts:"3.5", scenario:4, type:"single",
+  stem:"An agent asked to refactor a module produces a change that is correct but much larger than intended. What would have constrained it?",
+  options:[
+    {k:"A", text:"Stating the scope boundary before starting."},
+    {k:"B", text:"Asking for the change in smaller instalments afterwards."},
+    {k:"C", text:"Reviewing the diff and reverting the excess."},
+    {k:"D", text:"Restricting the tools to read-only."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Scope is a requirement like any other. Saying which files or concerns are in bounds prevents the sprawl rather than pruning it afterwards.",
+    distractors:{
+      B:"Splitting after the fact means the oversized change was already produced and reviewed.",
+      C:"Reverting parts of an interdependent refactor is delicate and may leave it inconsistent.",
+      D:"Read-only tools prevent refactoring altogether."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.6-g", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"A pipeline step parses Claude Code's response with a regular expression over prose, and breaks whenever the wording changes. What should it use instead?",
+  options:[
+    {k:"A", text:"`--output-format json` with `--json-schema`."},
+    {k:"B", text:"`--output-format text` with a stricter prompt."},
+    {k:"C", text:"A post-processing model call to extract fields."},
+    {k:"D", text:"A fixed template in the system prompt."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A declared schema makes the response shape a contract rather than a convention, so downstream parsing stops depending on phrasing.",
+    distractors:{
+      B:"A stricter prompt reduces variation without guaranteeing it, so the regular expression stays fragile.",
+      C:"A second model call to parse the first is expensive and introduces its own variability.",
+      D:"A template guides output without constraining it."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d3-3.6-h", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"A CI job invoking `claude` hangs with no output. Logs show it waiting for input. What is the fix?",
+  options:[
+    {k:"A", text:"Add `-p` to run non-interactively."},
+    {k:"B", text:"Set `CI=true` in the environment."},
+    {k:"C", text:"Pipe `yes` into the command."},
+    {k:"D", text:"Add `--no-tty` to the invocation."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"`-p` is the documented print mode: it processes the prompt, writes the result to stdout and exits without waiting for input.",
+    distractors:{
+      B:"A conventional CI variable is respected by many tools but is not what switches Claude Code's mode.",
+      C:"Feeding input to a prompt that expects none is a workaround that does not change the command's mode.",
+      D:"`--no-tty` is not a Claude Code flag."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d3-3.6-i", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"An automated reviewer posts the same three findings on every push. What is the most direct fix?",
+  options:[
+    {k:"A", text:"Supply prior findings and ask for new or unaddressed ones."},
+    {k:"B", text:"Review only the first push of each pull request."},
+    {k:"C", text:"Deduplicate by comparing comment text before posting."},
+    {k:"D", text:"Reduce sensitivity so fewer findings are produced."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Giving the reviewer its own prior output lets it distinguish what is new, and also lets it notice when an earlier finding has since been fixed.",
+    distractors:{
+      C:"Text comparison is brittle when the same issue is reworded, and it cannot tell that a finding is now resolved.",
+      B:"Reviewing only the first push leaves later commits, where fixes often introduce new problems, unreviewed.",
+      D:"Lowering sensitivity suppresses genuine findings to solve a duplication problem."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d3-3.6-j", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"Generated tests duplicate scenarios the suite already covers. What is the most direct remedy?",
+  options:[
+    {k:"A", text:"Include the existing tests in context."},
+    {k:"B", text:"Instruct the model not to duplicate tests."},
+    {k:"C", text:"Discard generated tests that pass immediately."},
+    {k:"D", text:"Generate tests only for changed files."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The model cannot avoid duplicating what it has never seen. Supplying the suite lets it identify genuine gaps instead of regenerating coverage.",
+    distractors:{
+      B:"The instruction is unactionable without knowledge of what exists.",
+      C:"Passing is not evidence of duplication; a good new test for correct code also passes.",
+      D:"Narrowing scope helps but duplication persists within the changed files."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d3-3.6-k", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"Why is an independent instance better than the generating session for reviewing generated code?",
+  options:[
+    {k:"A", text:"It carries no attachment to the code's reasoning."},
+    {k:"B", text:"It runs with a larger context window."},
+    {k:"C", text:"It has access to the full repository history."},
+    {k:"D", text:"It uses a different model version."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"The generating session already justified each decision and tends to re-accept those justifications. A fresh instance evaluates the code as written.",
+    distractors:{
+      B:"Window size is a configuration choice available to either.",
+      C:"Repository access is likewise a configuration matter.",
+      D:"Both typically run the same model; independence is about context, not version."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d3-3.6-l", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"Which flag combination produces machine-parseable structured findings from a CI run?",
+  options:[
+    {k:"A", text:"`-p --output-format json --json-schema`"},
+    {k:"B", text:"`-p --format structured`"},
+    {k:"C", text:"`--print-json --schema <schema>`"},
+    {k:"D", text:"`-p --output json`"}
+  ],
+  correct:["A"],
+  explain:{
+    why:"`-p` gives non-interactive execution, `--output-format json` wraps the response, and `--json-schema` constrains the content, which appears in a `structured_output` field.",
+    distractors:{
+      B:"`--format structured` is not a Claude Code flag.",
+      C:"Neither `--print-json` nor a bare `--schema` exists.",
+      D:"The flag is `--output-format`, not `--output`."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d3-3.6-m", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"A CI review misses issues that depend on project conventions it has no knowledge of. Where should those conventions live?",
+  options:[
+    {k:"A", text:"In CLAUDE.md, which loads on every run."},
+    {k:"B", text:"In the pipeline's environment variables."},
+    {k:"C", text:"In a wiki the reviewer is told to consult."},
+    {k:"D", text:"In comments in the source files."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"CLAUDE.md is committed with the code and loads automatically, so a fresh CI session has the project's standards without any extra plumbing.",
+    distractors:{
+      C:"A wiki the agent cannot fetch is not context, and telling it to consult one it cannot reach changes nothing.",
+      B:"Environment variables carry configuration values rather than review criteria.",
+      D:"Source comments are seen only when that file is read, so cross-cutting conventions are missed."
+    }
+  },
+  refs:[R_MEM] },
+
+{ id:"d3-3.6-n", domain:3, ts:"3.6", scenario:5, type:"multi",
+  stem:"Which two practices improve automated review quality in CI? (Select 2.)",
+  options:[
+    {k:"A", text:"Passing prior findings so only new issues are reported."},
+    {k:"B", text:"Documenting review criteria in CLAUDE.md."},
+    {k:"C", text:"Reusing the session that generated the code."},
+    {k:"D", text:"Raising the temperature to surface more findings."}
+  ],
+  correct:["A","B"],
+  explain:{
+    why:"One removes duplicate noise across pushes, the other gives the reviewer the project-specific standards it otherwise has to guess at. Both raise signal.",
+    distractors:{
+      C:"The generating session carries its own justifications and is the weaker reviewer.",
+      D:"Higher temperature adds variance rather than insight, and inflates false positives."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d3-3.6-o", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"A team wants CI output to be reproducible regardless of a developer's local configuration. Which consideration matters?",
+  options:[
+    {k:"A", text:"Ensuring the run does not inherit ambient local settings."},
+    {k:"B", text:"Pinning the temperature to 0."},
+    {k:"C", text:"Running the job on the same machine each time."},
+    {k:"D", text:"Using the same prompt wording as developers use locally."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Reproducibility in CI depends on the run being hermetic. If local configuration can leak in, the same commit produces different behaviour on different machines.",
+    distractors:{
+      B:"Temperature affects sampling variation but not configuration drift, which is the stated concern.",
+      C:"A fixed machine hides the problem rather than removing it, and defeats elastic runners.",
+      D:"Matching wording aids comparison but does not control which settings are loaded."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d3-3.6-p", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"A pipeline needs to branch on whether the review found blocking issues. What makes that reliable?",
+  options:[
+    {k:"A", text:"A schema field the pipeline reads, rather than parsing prose."},
+    {k:"B", text:"Grepping the output for the word 'blocking'."},
+    {k:"C", text:"Counting the number of findings returned."},
+    {k:"D", text:"Checking whether the response exceeds a length threshold."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"A declared field is a stable contract. Anything that branches on the result should read a value the schema guarantees rather than inferring it from wording.",
+    distractors:{
+      B:"Keyword matching breaks the moment the phrasing changes, which is the fragility being removed.",
+      C:"Finding count says nothing about severity; ten trivial notes are not a blocker.",
+      D:"Response length is unrelated to whether anything blocking was found."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d3-3.6-q", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"A nightly job analyses the whole repository for technical debt; results are read the next morning. Which API suits it?",
+  options:[
+    {k:"A", text:"The batch API, for the cost saving."},
+    {k:"B", text:"The synchronous API, for predictable completion."},
+    {k:"C", text:"Either, since latency is irrelevant overnight."},
+    {k:"D", text:"The batch API, but only if results are needed within an hour."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Nothing is blocked on the result until morning, which is exactly the latency-tolerant profile the batch API is priced for.",
+    distractors:{
+      C:"Both would work, but choosing the synchronous API forfeits a substantial saving for no benefit.",
+      B:"Predictability has no value when nobody is waiting.",
+      D:"An hourly requirement would argue against batch, which has no latency guarantee."
+    }
+  },
+  refs:[R_BATCH] },
+
+{ id:"d3-3.6-r", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"A CI reviewer flags many findings developers dismiss. Which change most directly improves precision?",
+  options:[
+    {k:"A", text:"Define which categories to report and which to skip."},
+    {k:"B", text:"Ask the model to be more conservative."},
+    {k:"C", text:"Report only findings above a confidence threshold."},
+    {k:"D", text:"Limit the reviewer to five findings per pull request."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Categorical criteria are a decision rule the model can apply consistently. Vague calibration language is not anchored to anything and does not reliably shift behaviour.",
+    distractors:{
+      B:"'Conservative' is undefined, so the effect is unpredictable.",
+      C:"Self-reported confidence is poorly calibrated to correctness.",
+      D:"A cap hides findings without improving which ones are chosen."
+    }
+  },
+  refs:[R_PROMPT] },
+
+{ id:"d3-3.6-s", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"Why does `-p` matter specifically for CI rather than being a convenience?",
+  options:[
+    {k:"A", text:"Without it the job blocks waiting for input."},
+    {k:"B", text:"Without it the output is not written to stdout."},
+    {k:"C", text:"Without it tool use is disabled."},
+    {k:"D", text:"Without it the exit code is always zero."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Interactive mode expects a terminal and a person. In CI there is neither, so the job hangs until the runner's timeout rather than failing usefully.",
+    distractors:{
+      B:"Print mode is what routes the result to stdout, but the blocking behaviour is the reason the job never completes at all.",
+      C:"Tool use is available in both modes.",
+      D:"Exit codes are not governed by this flag."
+    }
+  },
+  refs:[R_HEAD] },
+
+{ id:"d3-3.6-t", domain:3, ts:"3.6", scenario:5, type:"single",
+  stem:"A team asks whether to run the pre-merge check through the batch API to save cost. What is the correct advice?",
+  options:[
+    {k:"A", text:"No; developers are blocked and batch has no latency guarantee."},
+    {k:"B", text:"Yes; batch usually completes within minutes."},
+    {k:"C", text:"Yes, with a synchronous fallback if the batch is slow."},
+    {k:"D", text:"No; the batch API cannot process code."}
+  ],
+  correct:["A"],
+  explain:{
+    why:"Batch offers up to a 24-hour window with no guaranteed latency, which is unusable when a merge is waiting on the answer.",
+    distractors:{
+      B:"Usual completion time is not a guarantee, and the tail is what blocks a developer.",
+      C:"A dual path is more complexity than simply matching each API to its workload.",
+      D:"Batch processes any content; the constraint is latency, not subject matter."
+    }
+  },
+  refs:[R_BATCH] },
 
 /* ---------------- Domain 4: Prompt Engineering & Structured Output ---------------- */
 
@@ -6514,7 +8110,7 @@ const BANK_ALL = [
 { id:"d4-4.4-d", domain:4, ts:"4.4", scenario:5, type:"single",
   stem:"Developers dismiss many findings but you cannot tell which code constructs trigger the bad ones. What addition to the structured finding output enables systematic analysis?",
   options:[
-    {k:"A", text:"A `detected_pattern` field naming the construct that triggered the finding."},
+    {k:"A", text:"A `detected_pattern` field naming the trigger."},
     {k:"B", text:"A free-text `notes` field where the model explains its reasoning."},
     {k:"C", text:"A timestamp so dismissals can be correlated with deployment dates."},
     {k:"D", text:"A `severity` field so dismissals can be grouped by severity level."}
@@ -7103,7 +8699,7 @@ const BANK_ALL = [
 { id:"d5-5.3-e", domain:5, ts:"5.3", scenario:3, type:"single",
   stem:"A coordinator receives 'search unavailable' from a subagent. Which recovery decision can it NOT make on that information alone?",
   options:[
-    {k:"A", text:"Whether to retry with a narrower query, since it knows neither the query nor the partial results."},
+    {k:"A", text:"Whether to retry with a narrower query, the query being unknown."},
     {k:"B", text:"Whether to log the failure for later analysis."},
     {k:"C", text:"Whether to mark the overall run as degraded."},
     {k:"D", text:"Whether to notify a human operator that one of the subagents has failed during the run."}
@@ -7407,7 +9003,7 @@ const BANK_ALL = [
 { id:"d5-5.6-c", domain:5, ts:"5.6", scenario:3, type:"single",
   stem:"Two sources report adoption rates of 34% and 58%. One study collected data in 2023 and the other in 2026, but neither subagent recorded collection dates. What requirement prevents this being misread as a contradiction?",
   options:[
-    {k:"A", text:"Require publication or data-collection dates in every subagent's structured output for each finding."},
+    {k:"A", text:"Require publication or data-collection dates in subagent output."},
     {k:"B", text:"Require subagents to reject sources older than two years."},
     {k:"C", text:"Require the synthesis step to report only the higher of any two conflicting figures."},
     {k:"D", text:"Require subagents to note whether a source is peer-reviewed."}

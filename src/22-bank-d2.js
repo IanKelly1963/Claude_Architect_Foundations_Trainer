@@ -307,7 +307,7 @@
 { id:"d2-2.3-e", domain:2, ts:"2.3", scenario:3, type:"single",
   stem:"A document-analysis subagent has a general-purpose `fetch_url` tool and has begun pulling in blog posts and forum threads alongside the peer-reviewed sources it was meant to analyse. What is the cleanest correction?",
   options:[
-    {k:"A", text:"Replace `fetch_url` with a constrained `load_document` tool that validates the URL is a document source."},
+    {k:"A", text:"Replace `fetch_url` with a constrained `load_document`."},
     {k:"B", text:"Add a system prompt rule listing domains the subagent is not allowed to fetch from."},
     {k:"C", text:"Keep `fetch_url` and filter low-quality sources out of the synthesis step instead."},
     {k:"D", text:"Remove the tool entirely and have the coordinator fetch every document on the subagent's behalf."}

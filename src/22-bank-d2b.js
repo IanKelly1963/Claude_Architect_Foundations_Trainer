@@ -269,7 +269,7 @@
 { id:"d2-2.2-g", domain:2, ts:"2.2", scenario:1, type:"single",
   stem:"A refund tool returns `isError: true` with the message 'Refund failed: customer not eligible'. The agent retries three times before telling the customer there was a system problem. What is missing?",
   options:[
-    {k:"A", text:"A category and retryable flag, distinguishing policy from outage."},
+    {k:"A", text:"A category and retryable flag."},
     {k:"B", text:"A longer, more descriptive error message."},
     {k:"C", text:"A retry limit configured in the agent loop."},
     {k:"D", text:"An error code the agent can look up in documentation."}
@@ -402,7 +402,7 @@
 { id:"d2-2.2-n", domain:2, ts:"2.2", scenario:5, type:"single",
   stem:"Which error response best supports an agent deciding what to do next?",
   options:[
-    {k:"A", text:"`{errorCategory: 'transient', isRetryable: true, message: '...'}`"},
+    {k:"A", text:"`{errorCategory, isRetryable, message}`"},
     {k:"B", text:"`{error: 'Request could not be completed at this time'}`"},
     {k:"C", text:"`{error: true, code: 5031, trace: '...'}`"},
     {k:"D", text:"`{status: 'failed', retry: 'maybe'}`"}

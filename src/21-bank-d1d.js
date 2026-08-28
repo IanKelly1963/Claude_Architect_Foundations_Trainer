@@ -156,7 +156,7 @@
 { id:"d1-1.3-p", domain:1, ts:"1.3", scenario:3, type:"single",
   stem:"You need the synthesis subagent to keep source attribution intact. Which prompt structure best supports that?",
   options:[
-    {k:"A", text:"Findings as discrete records, each pairing a claim with its source and excerpt."},
+    {k:"A", text:"Discrete records pairing claim, source and excerpt."},
     {k:"B", text:"Findings as prose, with a numbered bibliography appended at the end."},
     {k:"C", text:"Findings as prose, with an instruction to cite carefully throughout."},
     {k:"D", text:"Findings as prose, followed by the full text of every source consulted."}
@@ -459,7 +459,7 @@
 { id:"d1-1.4-s", domain:1, ts:"1.4", scenario:1, type:"single",
   stem:"Your team asks why the refund threshold is enforced in a hook rather than simply given to the model as a rule, when the model has never violated it in testing. What is the strongest response?",
   options:[
-    {k:"A", text:"Testing bounds the observed rate, not the true one, and the exceptions here move money."},
+    {k:"A", text:"Testing bounds the observed rate, not the true one."},
     {k:"B", text:"Hooks execute faster than the model's own reasoning about the threshold."},
     {k:"C", text:"Models cannot compare numeric values reliably enough to apply a threshold."},
     {k:"D", text:"Prompt rules stop applying once the conversation exceeds the context window."}

@@ -39,7 +39,7 @@
   },
   refs:[{label:"Claude Code: Memory", url:"https://code.claude.com/docs/en/memory"}] },
 
-{ id:"d3-3.1-c", domain:3, ts:"3.1", scenario:2, type:"single",
+{ id:"d3-3.1-c", domain:3, ts:"3.1", scenario:3, type:"single",
   stem:"In a monorepo, each package should pull in only the standards files its maintainers consider relevant. Which CLAUDE.md feature supports this?",
   options:[
     {k:"A", text:"`@path/to/file` import syntax, letting each package reference the standards files it needs."},
@@ -58,7 +58,7 @@
   },
   refs:[{label:"Claude Code: Memory", url:"https://code.claude.com/docs/en/memory"}] },
 
-{ id:"d3-3.1-d", domain:3, ts:"3.1", scenario:2, type:"single",
+{ id:"d3-3.1-d", domain:3, ts:"3.1", scenario:1, type:"single",
   stem:"Behaviour differs between two of your sessions and you suspect different memory files are loading. Which command does the exam guide direct you to for verifying which memory files are loaded?",
   options:[
     {k:"A", text:"`/memory`"},
@@ -192,7 +192,7 @@
   },
   refs:[{label:"Claude Code: Skills", url:"https://code.claude.com/docs/en/skills"}] },
 
-{ id:"d3-3.2-e", domain:3, ts:"3.2", scenario:2, type:"single",
+{ id:"d3-3.2-e", domain:3, ts:"3.2", scenario:1, type:"single",
   stem:"Which frontmatter field prompts developers for required parameters when they invoke a skill without arguments?",
   options:[
     {k:"A", text:"`argument-hint`"},
@@ -212,7 +212,7 @@
   note:"`argument-hint` is a Claude Code extension rather than part of the base Agent Skills specification, which lists only `allowed-tools`, `compatibility`, `description`, `license`, `metadata` and `name`. It is also display-only: it prompts, but does not enforce that arguments are supplied.",
   refs:[{label:"Claude Code: Skills", url:"https://code.claude.com/docs/en/skills"}] },
 
-{ id:"d3-3.2-f", domain:3, ts:"3.2", scenario:2, type:"single",
+{ id:"d3-3.2-f", domain:3, ts:"3.2", scenario:6, type:"single",
   stem:"When should a convention live in CLAUDE.md rather than in a skill?",
   options:[
     {k:"A", text:"When it is a universal standard that should apply in every session without needing to be invoked."},
@@ -253,7 +253,7 @@
 { id:"d3-3.3-b", domain:3, ts:"3.3", scenario:2, type:"single",
   stem:"You want a rule to apply only when Claude works with Terraform files. Which frontmatter achieves this?",
   options:[
-    {k:"A", text:"`paths:` frontmatter with a glob list such as `[\"terraform/**/*\"]`."},
+    {k:"A", text:"`paths:` with a glob list such as `[\"terraform/**/*\"]`."},
     {k:"B", text:"`scope: terraform` naming the directory."},
     {k:"C", text:"`applies-to: \"*.tf\"` as a single string value."},
     {k:"D", text:"`when: editing terraform` as a natural language condition."}
@@ -288,7 +288,7 @@
   },
   refs:[{label:"Claude Code: Memory", url:"https://code.claude.com/docs/en/memory"}] },
 
-{ id:"d3-3.3-d", domain:3, ts:"3.3", scenario:2, type:"single",
+{ id:"d3-3.3-d", domain:3, ts:"3.3", scenario:1, type:"single",
   stem:"A rule file in `.claude/rules/` has no `paths` frontmatter. When does it load?",
   options:[
     {k:"A", text:"Unconditionally at launch, at the same priority as `.claude/CLAUDE.md`."},
@@ -439,7 +439,7 @@
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d3-3.4-f", domain:3, ts:"3.4", scenario:2, type:"single",
+{ id:"d3-3.4-f", domain:3, ts:"3.4", scenario:3, type:"single",
   stem:"What is the primary benefit plan mode provides beyond simply thinking before acting?",
   options:[
     {k:"A", text:"It enables safe exploration of the codebase before any change is committed."},
@@ -575,7 +575,7 @@
 { id:"d3-3.6-a", domain:3, ts:"3.6", scenario:5, type:"single",
   stem:"Your pipeline script runs `claude \"Analyze this pull request for security issues\"` but the job hangs indefinitely. Logs indicate Claude Code is waiting for interactive input. What is the correct approach?",
   options:[
-    {k:"A", text:"Add the `-p` flag to run non-interactively: `claude -p \"Analyze this pull request for security issues\"`"},
+    {k:"A", text:"Add the `-p` flag: `claude -p \"Analyze this pull request\"`"},
     {k:"B", text:"Set the environment variable `CLAUDE_HEADLESS=true` before running the command."},
     {k:"C", text:"Redirect stdin from /dev/null after the command."},
     {k:"D", text:"Add the `--batch` flag."}

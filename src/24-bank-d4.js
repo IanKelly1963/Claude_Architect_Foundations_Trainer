@@ -403,7 +403,7 @@
 { id:"d4-4.4-d", domain:4, ts:"4.4", scenario:5, type:"single",
   stem:"Developers dismiss many findings but you cannot tell which code constructs trigger the bad ones. What addition to the structured finding output enables systematic analysis?",
   options:[
-    {k:"A", text:"A `detected_pattern` field naming the construct that triggered the finding."},
+    {k:"A", text:"A `detected_pattern` field naming the trigger."},
     {k:"B", text:"A free-text `notes` field where the model explains its reasoning."},
     {k:"C", text:"A timestamp so dismissals can be correlated with deployment dates."},
     {k:"D", text:"A `severity` field so dismissals can be grouped by severity level."}

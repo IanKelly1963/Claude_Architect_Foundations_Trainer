@@ -365,7 +365,7 @@
 { id:"d1-1.6-n", domain:1, ts:"1.6", scenario:3, type:"single",
   stem:"Which signal most reliably indicates that a task needs adaptive decomposition rather than a fixed chain?",
   options:[
-    {k:"A", text:"The next useful step depends on what the previous step found."},
+    {k:"A", text:"The next step depends on what the previous one found."},
     {k:"B", text:"The task involves more than four distinct stages."},
     {k:"C", text:"The task will run for more than a few minutes."},
     {k:"D", text:"The task spans several different tools."}
@@ -554,7 +554,7 @@
 { id:"d1-1.7-k", domain:1, ts:"1.7", scenario:1, type:"single",
   stem:"A support agent resumes a conversation after the customer replies two days later. The refund amount discussed earlier is now wrong, because the order was partially returned in between. What design would prevent this?",
   options:[
-    {k:"A", text:"Re-fetch the transactional facts on resume rather than trusting the stored ones."},
+    {k:"A", text:"Re-fetch the transactional facts on resume."},
     {k:"B", text:"Refuse to resume conversations older than 24 hours."},
     {k:"C", text:"Store the refund amount in the system prompt so it cannot be lost."},
     {k:"D", text:"Summarise the earlier conversation more aggressively before resuming."}
@@ -611,7 +611,7 @@
 { id:"d1-1.7-n", domain:1, ts:"1.7", scenario:6, type:"single",
   stem:"A long extraction run is interrupted after 700 of 1,000 documents. On restart it begins again at document one. What design would avoid the rework?",
   options:[
-    {k:"A", text:"Persist per-document completion state, and resume from what is unfinished."},
+    {k:"A", text:"Persist per-document completion state."},
     {k:"B", text:"Resume the agent session, which retains how far it had progressed."},
     {k:"C", text:"Increase the timeout so the run is less likely to be interrupted."},
     {k:"D", text:"Process the documents in reverse order on the second attempt."}
