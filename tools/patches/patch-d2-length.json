@@ -1,0 +1,12 @@
+{
+  "d2-2.1-s|A": "That `run_lint` covers type checking and `run_build` does not.",
+  "d2-2.1-t|A": "A name is a label; the description states applicability and boundaries.",
+  "d2-2.2-g|A": "A category and retryable flag, distinguishing policy from outage.",
+  "d2-2.2-m|A": "It cannot choose between fixing the path, escalating, or listing.",
+  "d2-2.2-n|A": "`{errorCategory: 'transient', isRetryable: true, message: '...'}`",
+  "d2-2.2-r|A": "It simplifies the agent but hides latency and removes its options.",
+  "d2-2.2-s|A": "Recovery depends on the failure kind, which the message omits.",
+  "d2-2.4-r|A": "Return an excerpt with a handle for fetching the rest.",
+  "d2-2.5-o|A": "Restrict the search to the relevant directories.",
+  "d2-2.5-r|A": "It answered from the earlier copy still in context."
+}

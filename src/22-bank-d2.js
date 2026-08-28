@@ -323,7 +323,7 @@
   },
   refs:[{label:"Agent SDK: Subagents", url:"https://code.claude.com/docs/en/agent-sdk/subagents"}] },
 
-{ id:"d2-2.3-f", domain:2, ts:"2.3", scenario:6, type:"single",
+{ id:"d2-2.3-f", domain:2, ts:"2.3", scenario:2, type:"single",
   stem:"Which `tool_choice` value allows the model to respond with plain text instead of calling a tool?",
   options:[
     {k:"A", text:"`\"auto\"`"},
@@ -400,7 +400,7 @@
   },
   refs:[{label:"Claude Code: MCP", url:"https://code.claude.com/docs/en/mcp"}] },
 
-{ id:"d2-2.4-d", domain:2, ts:"2.4", scenario:4, type:"single",
+{ id:"d2-2.4-d", domain:2, ts:"2.4", scenario:3, type:"single",
   stem:"You need Jira integration for your agent. A well-maintained community MCP server for Jira exists. What is the recommended approach?",
   options:[
     {k:"A", text:"Use the existing community server, reserving custom builds for team-specific workflows."},
